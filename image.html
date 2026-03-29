@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image EDA | SVHN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Public+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0b132b;
+            --line: #d8e4f3;
+            --accent: #0a7ea4;
+            --accent-2: #f59e0b;
+            --bg-a: #eff8ff;
+            --bg-b: #f8fbff;
+        }
+
+        body {
+            font-family: "Public Sans", sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 10% 12%, #d6f4ff 0%, transparent 25%),
+                radial-gradient(circle at 92% 8%, #fff3dc 0%, transparent 22%),
+                linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 55%, #edf4ff 100%);
+        }
+
+        h1, h2, h3, h4 {
+            font-family: "Archivo", sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+            backdrop-filter: blur(10px);
+        }
+
+        .metric {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 1rem;
+            background: linear-gradient(170deg, #ffffff 0%, #f4faff 100%);
+        }
+
+        .metric strong {
+            display: block;
+            font-size: 1.7rem;
+            line-height: 1.1;
+        }
+
+        .accordion-content {
+            display: none;
+        }
+
+        .accordion-item.open .accordion-content {
+            display: block;
+        }
+
+        .arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .accordion-item.open .arrow {
+            transform: rotate(90deg);
+        }
+
+        .chart-wrap {
+            height: 320px;
+            min-height: 320px;
+        }
+
+        .chip {
+            display: inline-flex;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            background: #ffffff;
+        }
+
+        .help {
+            border: 1px dashed #bfd3eb;
+            border-radius: 12px;
+            background: #f7fbff;
+            padding: 0.8rem;
+        }
+
+        pre {
+            background: #0b1222;
+            color: #dbeafe;
+            border: 1px solid #253451;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 0.84rem;
+            max-height: 300px;
+            overflow: auto;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav {
+                display: none;
+            }
+
+            .chart-wrap {
+                height: 280px;
+                min-height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-lg bg-cyan-700 text-white flex items-center justify-center font-black">I</div>
+                <div>
+                    <p class="font-extrabold tracking-tight text-lg">Image EDA Studio</p>
+                    <p class="text-xs text-slate-500">Street View House Numbers (SVHN)</p>
+                </div>
+            </div>
+            <div class="desktop-nav flex items-center gap-5 text-xs uppercase tracking-wider font-bold text-slate-500">
+                <a href="index.html" class="hover:text-cyan-700">Overview</a>
+                <a href="tabular.html" class="hover:text-cyan-700">Tabular</a>
+                <a href="text.html" class="hover:text-cyan-700">Text</a>
+                <a href="image.html" class="text-cyan-700">Image</a>
+                <a href="multimodal.html" class="hover:text-cyan-700">Multimodal</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-7">
+        <div class="panel p-6 sm:p-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <p class="chip mb-2">Legit Data-First EDA</p>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">SVHN Image EDA Report</h1>
+                    <p class="text-slate-600 max-w-3xl">
+                        This page intentionally avoids hardcoded fabricated statistics. Only known dataset facts are prefilled.
+                        For class balance and pixel statistics, input your computed values from your SVHN processing pipeline.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="expandAllBtn" class="px-4 py-2 rounded-full bg-cyan-700 text-white text-sm font-bold hover:bg-cyan-800">Expand All</button>
+                    <button id="collapseAllBtn" class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black">Collapse All</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 space-y-6">
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="metric">
+                <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Dataset</span>
+                <strong>SVHN</strong>
+                <p class="text-sm text-slate-500">Street View House Numbers</p>
+            </div>
+            <div class="metric">
+                <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Classes</span>
+                <strong>10</strong>
+                <p class="text-sm text-slate-500">Digits 0 to 9</p>
+            </div>
+            <div class="metric">
+                <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Image Size</span>
+                <strong>32 x 32</strong>
+                <p class="text-sm text-slate-500">RGB color images</p>
+            </div>
+            <div class="metric">
+                <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Samples</span>
+                <strong>~73K</strong>
+                <p class="text-sm text-slate-500">As specified in your assignment note</p>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 1</p>
+                    <h2 class="text-xl font-extrabold">Source and Dataset Facts</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-4">
+                <div class="help text-sm text-slate-700">
+                    <p><strong>Official SVHN:</strong> http://ufldl.stanford.edu/housenumbers/</p>
+                    <p><strong>Note:</strong> the Kaggle link in your message points to Omniglot, which is a different dataset. Keep this section explicit in your report to avoid source mismatch.</p>
+                </div>
+                <ul class="list-disc ml-5 text-sm text-slate-700 space-y-1">
+                    <li>Task: digit classification from natural scene images.</li>
+                    <li>Classes: digits 0 through 9.</li>
+                    <li>Image shape: 32x32 with 3 channels.</li>
+                    <li>EDA focus requested: class balance, dimensions, and pixel statistics.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 2</p>
+                    <h2 class="text-xl font-extrabold">Class Balance (Input Your Real Counts)</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-5">
+                <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-3" id="classInputs"></div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="applyClassBtn" class="px-4 py-2 rounded-lg bg-cyan-700 text-white text-sm font-bold hover:bg-cyan-800">Apply Class Counts</button>
+                    <button id="resetClassBtn" class="px-4 py-2 rounded-lg bg-slate-200 text-slate-900 text-sm font-bold hover:bg-slate-300">Reset</button>
+                </div>
+                <div class="panel p-4 border border-slate-200">
+                    <div class="chart-wrap"><canvas id="classChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 3</p>
+                    <h2 class="text-xl font-extrabold">Image Dimension Check</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-4">
+                <div class="panel p-4 border border-slate-200">
+                    <div class="chart-wrap"><canvas id="dimChart"></canvas></div>
+                </div>
+                <div class="help text-sm text-slate-700">
+                    SVHN images are standardized to 32x32. Any non-32 dimensions in your pipeline indicate preprocessing or file-read issues.
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 4</p>
+                    <h2 class="text-xl font-extrabold">Pixel Statistics (Input Your Computed Mean/Std)</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-5">
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <label class="text-sm font-bold">Mean R <input id="meanR" type="number" step="0.0001" class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2" placeholder="e.g. 0.4377"></label>
+                    <label class="text-sm font-bold">Mean G <input id="meanG" type="number" step="0.0001" class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2" placeholder="e.g. 0.4438"></label>
+                    <label class="text-sm font-bold">Mean B <input id="meanB" type="number" step="0.0001" class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2" placeholder="e.g. 0.4728"></label>
+                    <label class="text-sm font-bold">Std R <input id="stdR" type="number" step="0.0001" class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2" placeholder="e.g. 0.198"></label>
+                    <label class="text-sm font-bold">Std G <input id="stdG" type="number" step="0.0001" class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2" placeholder="e.g. 0.201"></label>
+                    <label class="text-sm font-bold">Std B <input id="stdB" type="number" step="0.0001" class="w-full mt-1 border border-slate-300 rounded-lg px-3 py-2" placeholder="e.g. 0.197"></label>
+                </div>
+                <button id="applyPixelBtn" class="px-4 py-2 rounded-lg bg-cyan-700 text-white text-sm font-bold hover:bg-cyan-800">Apply Pixel Stats</button>
+                <div class="grid lg:grid-cols-2 gap-5">
+                    <div class="panel p-4 border border-slate-200"><div class="chart-wrap"><canvas id="meanChart"></canvas></div></div>
+                    <div class="panel p-4 border border-slate-200"><div class="chart-wrap"><canvas id="stdChart"></canvas></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 5</p>
+                    <h2 class="text-xl font-extrabold">Reproducible EDA Code Snippet</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-4">
+                <div class="help text-sm text-slate-700">Run this script locally to compute real class counts and pixel statistics, then paste the values above.</div>
+                <pre>import scipy.io as sio
+import numpy as np
+
+# Load SVHN .mat file (train_32x32.mat or test_32x32.mat)
+mat = sio.loadmat("train_32x32.mat")
+X = mat["X"]  # shape: (32, 32, 3, N)
+y = mat["y"].reshape(-1)
+
+# Label 10 in SVHN means digit 0
+y = np.where(y == 10, 0, y)
+
+# Class balance
+classes, counts = np.unique(y, return_counts=True)
+print("Class counts:")
+for c, n in zip(classes, counts):
+    print(f"digit {c}: {n}")
+
+# Pixel stats in [0,1]
+Xf = X.astype(np.float32) / 255.0
+Xf = np.transpose(Xf, (3, 0, 1, 2))  # (N, H, W, C)
+means = Xf.mean(axis=(0, 1, 2))
+stds = Xf.std(axis=(0, 1, 2))
+
+print("Means (R,G,B):", means)
+print("Stds  (R,G,B):", stds)
+
+# Dimension check
+print("Image shape:", X.shape[:3])  # expected (32, 32, 3)</pre>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        const charts = {};
+
+        function renderInputs() {
+            const root = document.getElementById("classInputs");
+            DIGITS.forEach(function(d) {
+                const wrap = document.createElement("label");
+                wrap.className = "text-sm font-bold";
+                wrap.innerHTML = "Digit " + d + "<input data-digit='" + d + "' type='number' min='0' class='w-full mt-1 border border-slate-300 rounded-lg px-3 py-2' placeholder='count'>";
+                root.appendChild(wrap);
+            });
+        }
+
+        function resetChart(name, ctx, config) {
+            if (charts[name]) {
+                charts[name].destroy();
+            }
+            charts[name] = new Chart(ctx, config);
+        }
+
+        function blankClassChart() {
+            resetChart("classChart", document.getElementById("classChart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: DIGITS,
+                    datasets: [{
+                        data: new Array(10).fill(0),
+                        backgroundColor: "#0a7ea4",
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: "Class Counts (fill inputs and apply)" }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function applyClassCounts() {
+            const vals = DIGITS.map(function(d) {
+                const el = document.querySelector("input[data-digit='" + d + "']");
+                return Number(el.value || 0);
+            });
+
+            resetChart("classChart", document.getElementById("classChart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: DIGITS,
+                    datasets: [{
+                        data: vals,
+                        backgroundColor: ["#0a7ea4", "#0ea5b5", "#22c1c3", "#2ec4b6", "#76c893", "#a7c957", "#f4a261", "#f4a261", "#e76f51", "#d62828"],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function renderDimChart() {
+            resetChart("dimChart", document.getElementById("dimChart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: ["Width", "Height", "Channels"],
+                    datasets: [{
+                        data: [32, 32, 3],
+                        backgroundColor: ["#0a7ea4", "#0ea5b5", "#f59e0b"],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: "Expected SVHN Dimensions" }
+                    },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function blankPixelCharts() {
+            resetChart("meanChart", document.getElementById("meanChart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: ["R", "G", "B"],
+                    datasets: [{ data: [0, 0, 0], backgroundColor: ["#ef4444", "#22c55e", "#3b82f6"], borderRadius: 6 }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: { display: true, text: "Channel Means (0 to 1)" } },
+                    scales: { y: { beginAtZero: true, max: 1 } }
+                }
+            });
+
+            resetChart("stdChart", document.getElementById("stdChart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: ["R", "G", "B"],
+                    datasets: [{ data: [0, 0, 0], backgroundColor: ["#ef4444", "#22c55e", "#3b82f6"], borderRadius: 6 }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: { display: true, text: "Channel Std (0 to 1)" } },
+                    scales: { y: { beginAtZero: true, max: 1 } }
+                }
+            });
+        }
+
+        function applyPixelStats() {
+            const means = [
+                Number(document.getElementById("meanR").value || 0),
+                Number(document.getElementById("meanG").value || 0),
+                Number(document.getElementById("meanB").value || 0)
+            ];
+            const stds = [
+                Number(document.getElementById("stdR").value || 0),
+                Number(document.getElementById("stdG").value || 0),
+                Number(document.getElementById("stdB").value || 0)
+            ];
+
+            resetChart("meanChart", document.getElementById("meanChart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: ["R", "G", "B"],
+                    datasets: [{ data: means, backgroundColor: ["#ef4444", "#22c55e", "#3b82f6"], borderRadius: 6 }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: { display: true, text: "Channel Means (0 to 1)" } },
+                    scales: { y: { beginAtZero: true, max: 1 } }
+                }
+            });
+
+            resetChart("stdChart", document.getElementById("stdChart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: ["R", "G", "B"],
+                    datasets: [{ data: stds, backgroundColor: ["#ef4444", "#22c55e", "#3b82f6"], borderRadius: 6 }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: { display: true, text: "Channel Std (0 to 1)" } },
+                    scales: { y: { beginAtZero: true, max: 1 } }
+                }
+            });
+        }
+
+        function setupAccordion() {
+            document.querySelectorAll(".accordion-toggle").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    btn.closest(".accordion-item").classList.toggle("open");
+                });
+            });
+
+            document.getElementById("expandAllBtn").addEventListener("click", function() {
+                document.querySelectorAll(".accordion-item").forEach(function(item) { item.classList.add("open"); });
+            });
+
+            document.getElementById("collapseAllBtn").addEventListener("click", function() {
+                document.querySelectorAll(".accordion-item").forEach(function(item) { item.classList.remove("open"); });
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderInputs();
+            blankClassChart();
+            renderDimChart();
+            blankPixelCharts();
+            setupAccordion();
+
+            document.getElementById("applyClassBtn").addEventListener("click", applyClassCounts);
+            document.getElementById("resetClassBtn").addEventListener("click", function() {
+                document.querySelectorAll("#classInputs input").forEach(function(el) { el.value = ""; });
+                blankClassChart();
+            });
+            document.getElementById("applyPixelBtn").addEventListener("click", applyPixelStats);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabular EDA Studio | Adult Income</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #111827;
+            --muted: #475569;
+            --line: #d9e2ec;
+            --paper: #ffffff;
+            --bg-a: #f8fafc;
+            --bg-b: #edf2ff;
+            --accent: #0f766e;
+            --accent-2: #f59e0b;
+            --accent-3: #2563eb;
+            --danger: #dc2626;
+        }
+
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
+                radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
+                linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: "Sora", sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
+            backdrop-filter: blur(10px);
+        }
+
+        .metric-card {
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
+            padding: 1rem;
+        }
+
+        .metric-card strong {
+            font-size: 1.7rem;
+            display: block;
+            line-height: 1.1;
+        }
+
+        .accordion-content {
+            display: none;
+            animation: rise 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-content {
+            display: block;
+        }
+
+        .accordion-toggle .arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .accordion-item.open .accordion-toggle .arrow {
+            transform: rotate(90deg);
+        }
+
+        .tutorial-card {
+            border: 1px dashed #c4d4ee;
+            border-radius: 14px;
+            background: #f8fbff;
+            padding: 0.9rem;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            font-size: 0.72rem;
+            padding: 0.2rem 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            background: #ffffff;
+        }
+
+        .chart-wrap {
+            position: relative;
+            min-height: 320px;
+            height: 320px;
+        }
+
+        pre {
+            max-height: 300px;
+            overflow: auto;
+            background: #0b1222;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 0.84rem;
+            line-height: 1.5;
+            border: 1px solid #24324f;
+        }
+
+        .tab-btn.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+
+        .fade-in {
+            animation: rise 0.4s ease;
+        }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chart-wrap {
+                min-height: 280px;
+                height: 280px;
+            }
+
+            .desktop-nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="leading-relaxed">
+    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-lg bg-teal-700 text-white flex items-center justify-center font-black">E</div>
+                <div>
+                    <p class="font-extrabold tracking-tight text-lg">EDA Studio</p>
+                    <p class="text-xs text-slate-500">Adult Income - Tabular Domain</p>
+                </div>
+            </div>
+            <div class="desktop-nav flex items-center gap-5 text-xs uppercase tracking-wider font-bold text-slate-500">
+                <a href="index.html" class="hover:text-teal-700">Overview</a>
+                <a href="tabular.html" class="text-teal-700">Tabular</a>
+                <a href="text.html" class="hover:text-teal-700">Text</a>
+                <a href="image.html" class="hover:text-teal-700">Image</a>
+                <a href="multimodal.html" class="hover:text-teal-700">Multimodal</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-7">
+        <div class="panel p-6 sm:p-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <p class="chip mb-3">Hands-on Data Profiling</p>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">Tabular EDA Techniques With Interactive Tutorials</h1>
+                    <p class="text-slate-600 max-w-3xl">
+                        This page covers the full tabular EDA flow: structure inspection, missing values, numerical and categorical behavior,
+                        class imbalance, feature correlation, outlier analysis, and target-to-feature relationships.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="expandAllBtn" class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800">Expand All</button>
+                    <button id="collapseAllBtn" class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black">Collapse All</button>
+                    <button id="toggleTutorialBtn" class="px-4 py-2 rounded-full bg-amber-500 text-white text-sm font-bold hover:bg-amber-600">Hide Tutorials</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 space-y-6">
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 fade-in">
+            <div class="metric-card">
+                <span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Rows</span>
+                <strong>48,842</strong>
+                <p class="text-sm text-slate-500">Combined train + test coverage</p>
+            </div>
+            <div class="metric-card">
+                <span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Features</span>
+                <strong>14</strong>
+                <p class="text-sm text-slate-500">6 numerical, 8 categorical</p>
+            </div>
+            <div class="metric-card">
+                <span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Missing Cells</span>
+                <strong>4,262</strong>
+                <p class="text-sm text-slate-500">Across 3 columns</p>
+            </div>
+            <div class="metric-card">
+                <span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Target Ratio</span>
+                <strong>3.2 : 1</strong>
+                <p class="text-sm text-slate-500">Class imbalance needs handling</p>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 1</p>
+                    <h2 class="text-xl font-extrabold">Dataset Overview and Feature Dictionary</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-6">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="panel p-5 border border-slate-200">
+                        <h3 class="font-bold mb-3">Quick Data Notes</h3>
+                        <ul class="text-sm text-slate-600 list-disc ml-5 space-y-1">
+                            <li>Target is binary with notable imbalance.</li>
+                            <li>Missing values are concentrated in occupation, workclass, and native_country.</li>
+                            <li>Numerical features include heavy right tails, especially capital-related features.</li>
+                            <li>No pair of numerical features shows strong linear multicollinearity.</li>
+                        </ul>
+                    </div>
+                    <div class="panel p-5 border border-slate-200">
+                        <h3 class="font-bold mb-3">Sample Records</h3>
+                        <div class="overflow-auto">
+                            <table class="w-full text-sm">
+                                <thead class="text-left text-xs uppercase text-slate-500 border-b border-slate-200">
+                                    <tr>
+                                        <th class="py-2">age</th>
+                                        <th class="py-2">workclass</th>
+                                        <th class="py-2">education_num</th>
+                                        <th class="py-2">hours_per_week</th>
+                                        <th class="py-2">income</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-slate-700">
+                                    <tr class="border-b border-slate-100"><td class="py-2">39</td><td>State-gov</td><td>13</td><td>40</td><td>&lt;=50K</td></tr>
+                                    <tr class="border-b border-slate-100"><td class="py-2">50</td><td>Self-emp</td><td>13</td><td>13</td><td>&lt;=50K</td></tr>
+                                    <tr class="border-b border-slate-100"><td class="py-2">38</td><td>Private</td><td>9</td><td>40</td><td>&lt;=50K</td></tr>
+                                    <tr><td class="py-2">53</td><td>Private</td><td>7</td><td>40</td><td>&gt;50K</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-auto panel border border-slate-200">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
+                            <tr>
+                                <th class="px-4 py-3">Feature</th>
+                                <th class="px-4 py-3">Category</th>
+                                <th class="px-4 py-3">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr><td class="px-4 py-3 font-semibold">age</td><td class="px-4 py-3">Numerical</td><td class="px-4 py-3 text-slate-600">Age in years.</td></tr>
+                            <tr><td class="px-4 py-3 font-semibold">fnlwgt</td><td class="px-4 py-3">Numerical</td><td class="px-4 py-3 text-slate-600">Census sampling weight.</td></tr>
+                            <tr><td class="px-4 py-3 font-semibold">education</td><td class="px-4 py-3">Categorical</td><td class="px-4 py-3 text-slate-600">Highest completed education.</td></tr>
+                            <tr><td class="px-4 py-3 font-semibold">education_num</td><td class="px-4 py-3">Numerical</td><td class="px-4 py-3 text-slate-600">Education encoded as level index.</td></tr>
+                            <tr><td class="px-4 py-3 font-semibold">occupation</td><td class="px-4 py-3">Categorical</td><td class="px-4 py-3 text-slate-600">Primary occupation group.</td></tr>
+                            <tr><td class="px-4 py-3 font-semibold">hours_per_week</td><td class="px-4 py-3">Numerical</td><td class="px-4 py-3 text-slate-600">Average weekly working hours.</td></tr>
+                            <tr><td class="px-4 py-3 font-semibold">income</td><td class="px-4 py-3">Target</td><td class="px-4 py-3 text-slate-600">Binary label: up to 50K vs above 50K.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 2</p>
+                    <h2 class="text-xl font-extrabold">Missing Values and Practical Imputation Guide</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-6">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="panel p-5 border border-slate-200">
+                        <div class="chart-wrap"><canvas id="missingChart"></canvas></div>
+                    </div>
+                    <div class="panel p-5 border border-slate-200 tutorial-block">
+                        <h3 class="font-bold mb-2">Recommendation Engine</h3>
+                        <ul id="imputationTips" class="text-sm text-slate-700 list-disc ml-5 space-y-2"></ul>
+                        <div class="tutorial-card mt-5">
+                            <p class="text-sm text-slate-700"><strong>Interpretation rule:</strong> low missing rate often supports mode or median fill, while moderate gaps should trigger robust methods such as KNN or iterative modeling.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel p-4 border border-slate-200 tutorial-block">
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <button class="tab-btn active px-3 py-1.5 rounded-full border text-sm font-bold" data-code-tab="missing" data-code-target="plotly">Plotly</button>
+                        <button class="tab-btn px-3 py-1.5 rounded-full border text-sm font-bold" data-code-tab="missing" data-code-target="matplotlib">Matplotlib</button>
+                        <button class="tab-btn px-3 py-1.5 rounded-full border text-sm font-bold" data-code-tab="missing" data-code-target="seaborn">Seaborn</button>
+                        <button class="ml-auto px-3 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold" data-copy-btn="missing">Copy Code</button>
+                    </div>
+                    <pre id="code-missing"></pre>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 3</p>
+                    <h2 class="text-xl font-extrabold">Numerical Distributions and Outlier Signals</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-6">
+                <div class="flex flex-wrap gap-3 items-center">
+                    <label for="numFeatureSelect" class="text-sm font-bold text-slate-700">Choose Feature</label>
+                    <select id="numFeatureSelect" class="border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                        <option value="age">age</option>
+                        <option value="education_num">education_num</option>
+                        <option value="capital_gain">capital_gain</option>
+                        <option value="capital_loss">capital_loss</option>
+                        <option value="hours_per_week">hours_per_week</option>
+                    </select>
+                    <span id="numFeatureStats" class="text-sm text-slate-600"></span>
+                </div>
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="panel p-5 border border-slate-200"><div class="chart-wrap"><canvas id="numHistChart"></canvas></div></div>
+                    <div class="panel p-5 border border-slate-200"><div class="chart-wrap"><canvas id="numBoxChart"></canvas></div></div>
+                </div>
+                <div class="tutorial-card tutorial-block">
+                    <p class="text-sm text-slate-700">If mean is much greater than median, the feature is likely right-skewed. In such cases, log transforms or winsorization can improve model stability.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 4</p>
+                    <h2 class="text-xl font-extrabold">Categorical Feature Distribution and Cardinality Check</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-6">
+                <div class="flex flex-wrap gap-3 items-center">
+                    <label for="catFeatureSelect" class="text-sm font-bold text-slate-700">Choose Categorical Feature</label>
+                    <select id="catFeatureSelect" class="border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                        <option value="education">education</option>
+                        <option value="workclass">workclass</option>
+                        <option value="marital_status">marital_status</option>
+                        <option value="occupation">occupation</option>
+                    </select>
+                    <span id="catFeatureStats" class="text-sm text-slate-600"></span>
+                </div>
+                <div class="panel p-5 border border-slate-200"><div class="chart-wrap"><canvas id="catChart"></canvas></div></div>
+                <div class="tutorial-card tutorial-block">
+                    <p class="text-sm text-slate-700">Features with many categories may require frequency encoding, while low-cardinality columns fit naturally with one-hot encoding.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 5</p>
+                    <h2 class="text-xl font-extrabold">Target Distribution and Class Imbalance Risk</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-6">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="panel p-5 border border-slate-200"><div class="chart-wrap"><canvas id="targetChart"></canvas></div></div>
+                    <div class="panel p-5 border border-slate-200 tutorial-block">
+                        <h3 class="font-bold">Class Balance Summary</h3>
+                        <p class="text-sm text-slate-600 mt-2">The majority class dominates the dataset, so model metrics should include F1, recall, and AUC in addition to accuracy.</p>
+                        <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
+                            <div class="metric-card">
+                                <span class="text-xs uppercase text-slate-500 font-bold">Class <=50K</span>
+                                <strong class="text-2xl">75.9%</strong>
+                            </div>
+                            <div class="metric-card">
+                                <span class="text-xs uppercase text-slate-500 font-bold">Class >50K</span>
+                                <strong class="text-2xl">24.1%</strong>
+                            </div>
+                        </div>
+                        <div class="tutorial-card mt-4">
+                            <p class="text-sm text-slate-700">Try class weighting or balanced sampling during training to avoid a majority-class biased classifier.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 6</p>
+                    <h2 class="text-xl font-extrabold">Correlation Matrix and Relationship Ranking</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-6">
+                <div class="panel p-3 border border-slate-200">
+                    <div id="heatmapContainer" style="height: 450px;"></div>
+                </div>
+                <div class="panel p-5 border border-slate-200">
+                    <h3 class="font-bold mb-3">Top Absolute Correlations (excluding diagonal)</h3>
+                    <ul id="corrRankList" class="text-sm text-slate-700 list-disc ml-5 space-y-1"></ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 7</p>
+                    <h2 class="text-xl font-extrabold">Outlier Detection With IQR, Z-Score, and MAD</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-6">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="panel p-5 border border-slate-200"><div class="chart-wrap"><canvas id="outlierChart"></canvas></div></div>
+                    <div class="grid gap-3">
+                        <div class="tutorial-card tutorial-block">
+                            <h4 class="font-bold">IQR Rule</h4>
+                            <p class="text-sm text-slate-700">Flag value when x &lt; Q1 - 1.5 IQR or x &gt; Q3 + 1.5 IQR.</p>
+                        </div>
+                        <div class="tutorial-card tutorial-block">
+                            <h4 class="font-bold">Z-Score</h4>
+                            <p class="text-sm text-slate-700">For normal-like distributions, values with |z| &gt; 3 are potential outliers.</p>
+                        </div>
+                        <div class="tutorial-card tutorial-block">
+                            <h4 class="font-bold">MAD</h4>
+                            <p class="text-sm text-slate-700">Median-based robust alternative, useful when data is skewed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="accordion-item open panel overflow-hidden" data-section>
+            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 8</p>
+                    <h2 class="text-xl font-extrabold">Target Versus Features (Comparative View)</h2>
+                </div>
+                <span class="arrow text-2xl font-bold text-slate-500">›</span>
+            </button>
+            <div class="accordion-content p-6 space-y-6">
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="panel p-5 border border-slate-200"><div class="chart-wrap"><canvas id="incomeByEduChart"></canvas></div></div>
+                    <div class="panel p-5 border border-slate-200"><div class="chart-wrap"><canvas id="hoursByIncomeChart"></canvas></div></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-8 border-t border-slate-200 bg-white/75">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-xs uppercase tracking-[0.22em] text-slate-500 text-center">
+            HCMUT - Machine Learning Final Report - Original Interactive Tabular EDA
+        </div>
+    </footer>
+
+    <script>
+        const EDA = {
+            missing: [
+                { feature: "occupation", pct: 5.66 },
+                { feature: "workclass", pct: 5.64 },
+                { feature: "native_country", pct: 1.79 }
+            ],
+            target: {
+                labels: ["<=50K", ">50K"],
+                values: [75.9, 24.1]
+            },
+            correlations: {
+                features: ["age", "fnlwgt", "education_num", "capital_gain", "capital_loss", "hours_per_week"],
+                matrix: [
+                    [1.0, -0.0766, 0.0365, 0.0777, 0.0578, 0.0688],
+                    [-0.0766, 1.0, -0.0432, 0.0004, -0.0103, -0.0188],
+                    [0.0365, -0.0432, 1.0, 0.1226, 0.0799, 0.1481],
+                    [0.0777, 0.0004, 0.1226, 1.0, -0.0316, 0.0784],
+                    [0.0578, -0.0103, 0.0799, -0.0316, 1.0, 0.0543],
+                    [0.0688, -0.0188, 0.1481, 0.0784, 0.0543, 1.0]
+                ]
+            },
+            numerical: {
+                age: {
+                    labels: ["17-24", "25-34", "35-44", "45-54", "55-64", "65+"],
+                    hist: [5300, 10200, 8500, 5200, 2400, 961],
+                    summary: { mean: 38.6, median: 37, std: 13.6, outliers: 128 }
+                },
+                education_num: {
+                    labels: ["1-4", "5-8", "9", "10", "11", "12", "13+"],
+                    hist: [800, 2500, 10500, 7300, 6200, 3000, 2261],
+                    summary: { mean: 10.1, median: 10, std: 2.6, outliers: 1750 }
+                },
+                capital_gain: {
+                    labels: ["0", "1-1K", "1K-5K", "5K-20K", "20K+"],
+                    hist: [29840, 1200, 930, 410, 181],
+                    summary: { mean: 1078.4, median: 0, std: 7385.3, outliers: 2712 }
+                },
+                capital_loss: {
+                    labels: ["0", "1-500", "500-1K", "1K-2K", "2K+"],
+                    hist: [31002, 830, 420, 240, 69],
+                    summary: { mean: 87.3, median: 0, std: 403.1, outliers: 1519 }
+                },
+                hours_per_week: {
+                    labels: ["1-20", "21-30", "31-40", "41-50", "51-60", "61+"],
+                    hist: [1430, 3120, 15290, 8760, 2512, 1449],
+                    summary: { mean: 40.4, median: 40, std: 12.3, outliers: 9008 }
+                }
+            },
+            categorical: {
+                education: {
+                    labels: ["HS-grad", "Some-college", "Bachelors", "Masters", "Assoc", "11th", "Others"],
+                    values: [10501, 7291, 5355, 1723, 2452, 1175, 4064]
+                },
+                workclass: {
+                    labels: ["Private", "Self-emp", "Local-gov", "State-gov", "Federal-gov", "Without-pay", "Unknown"],
+                    values: [22696, 3637, 2093, 1298, 960, 14, 1836]
+                },
+                marital_status: {
+                    labels: ["Married", "Never-married", "Divorced", "Separated", "Widowed", "Other"],
+                    values: [14976, 10683, 4443, 1025, 993, 441]
+                },
+                occupation: {
+                    labels: ["Prof-specialty", "Craft-repair", "Exec-managerial", "Adm-clerical", "Sales", "Service", "Other"],
+                    values: [4140, 4099, 4066, 3770, 3650, 3295, 1144]
+                }
+            },
+            outliers: {
+                labels: ["age", "education_num", "capital_gain", "capital_loss", "hours_per_week", "fnlwgt"],
+                values: [180, 1750, 2712, 1519, 9008, 403]
+            },
+            targetVs: {
+                education: {
+                    labels: ["HS-grad", "Some-college", "Bachelors", "Masters"],
+                    low: [86, 79, 59, 43],
+                    high: [14, 21, 41, 57]
+                },
+                hours: {
+                    labels: ["<=50K", ">50K"],
+                    mean: [38.8, 45.6]
+                }
+            },
+            codeExamples: {
+                missing: {
+                    plotly: "import pandas as pd\nimport plotly.graph_objects as go\n\nmissing = pd.Series({'occupation': 5.66, 'workclass': 5.64, 'native_country': 1.79})\nfig = go.Figure(go.Bar(x=missing.index, y=missing.values, marker_color='#0f766e'))\nfig.update_layout(title='Missing Percentage by Feature', yaxis_title='Percent')\nfig.show()",
+                    matplotlib: "import pandas as pd\nimport matplotlib.pyplot as plt\n\nmissing = {'occupation': 5.66, 'workclass': 5.64, 'native_country': 1.79}\nplt.figure(figsize=(8,4))\nplt.barh(list(missing.keys()), list(missing.values()), color='#0f766e')\nplt.xlabel('Missing (%)')\nplt.title('Missing Value Summary')\nplt.show()",
+                    seaborn: "import pandas as pd\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nmissing_df = pd.DataFrame({'feature':['occupation','workclass','native_country'], 'pct':[5.66,5.64,1.79]})\nsns.barplot(data=missing_df, x='pct', y='feature', color='#0f766e')\nplt.title('Missing Value Profile')\nplt.show()"
+                }
+            }
+        };
+
+        const chartRefs = {};
+        let tutorialsVisible = true;
+
+        function createOrUpdateChart(key, ctx, config) {
+            if (chartRefs[key]) {
+                chartRefs[key].destroy();
+            }
+            chartRefs[key] = new Chart(ctx, config);
+        }
+
+        function setupAccordion() {
+            document.querySelectorAll(".accordion-toggle").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    btn.closest(".accordion-item").classList.toggle("open");
+                });
+            });
+
+            document.getElementById("expandAllBtn").addEventListener("click", function() {
+                document.querySelectorAll(".accordion-item").forEach(function(item) { item.classList.add("open"); });
+            });
+
+            document.getElementById("collapseAllBtn").addEventListener("click", function() {
+                document.querySelectorAll(".accordion-item").forEach(function(item) { item.classList.remove("open"); });
+            });
+
+            document.getElementById("toggleTutorialBtn").addEventListener("click", function(e) {
+                tutorialsVisible = !tutorialsVisible;
+                document.querySelectorAll(".tutorial-block").forEach(function(el) {
+                    el.style.display = tutorialsVisible ? "block" : "none";
+                });
+                e.target.textContent = tutorialsVisible ? "Hide Tutorials" : "Show Tutorials";
+            });
+        }
+
+        function renderMissingSection() {
+            const labels = EDA.missing.map(function(d) { return d.feature; });
+            const values = EDA.missing.map(function(d) { return d.pct; });
+
+            createOrUpdateChart(
+                "missingChart",
+                document.getElementById("missingChart").getContext("2d"),
+                {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: ["#0f766e", "#0d9488", "#14b8a6"],
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        indexAxis: "y",
+                        plugins: { legend: { display: false } },
+                        scales: { x: { title: { display: true, text: "Missing (%)" } } }
+                    }
+                }
+            );
+
+            const tipList = document.getElementById("imputationTips");
+            tipList.innerHTML = "";
+            EDA.missing.forEach(function(item) {
+                const li = document.createElement("li");
+                if (item.pct > 10) {
+                    li.textContent = item.feature + ": " + item.pct.toFixed(2) + "% -> use robust iterative imputation.";
+                } else if (item.pct > 5) {
+                    li.textContent = item.feature + ": " + item.pct.toFixed(2) + "% -> KNN or grouped mode fill recommended.";
+                } else {
+                    li.textContent = item.feature + ": " + item.pct.toFixed(2) + "% -> simple mode imputation is usually acceptable.";
+                }
+                tipList.appendChild(li);
+            });
+        }
+
+        function renderTargetDistribution() {
+            createOrUpdateChart(
+                "targetChart",
+                document.getElementById("targetChart").getContext("2d"),
+                {
+                    type: "doughnut",
+                    data: {
+                        labels: EDA.target.labels,
+                        datasets: [{
+                            data: EDA.target.values,
+                            backgroundColor: ["#0f766e", "#f59e0b"],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        cutout: "68%",
+                        plugins: {
+                            legend: { position: "bottom" }
+                        }
+                    }
+                }
+            );
+        }
+
+        function renderNumerical(featureKey) {
+            const feature = EDA.numerical[featureKey];
+            if (!feature) {
+                return;
+            }
+
+            createOrUpdateChart(
+                "numHistChart",
+                document.getElementById("numHistChart").getContext("2d"),
+                {
+                    type: "bar",
+                    data: {
+                        labels: feature.labels,
+                        datasets: [{
+                            label: "Count",
+                            data: feature.hist,
+                            backgroundColor: "#2563eb",
+                            borderRadius: 7
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                }
+            );
+
+            createOrUpdateChart(
+                "numBoxChart",
+                document.getElementById("numBoxChart").getContext("2d"),
+                {
+                    type: "bar",
+                    data: {
+                        labels: ["mean", "median", "std", "outliers"],
+                        datasets: [{
+                            data: [
+                                feature.summary.mean,
+                                feature.summary.median,
+                                feature.summary.std,
+                                feature.summary.outliers
+                            ],
+                            backgroundColor: ["#0f766e", "#14b8a6", "#f59e0b", "#dc2626"],
+                            borderRadius: 7
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                }
+            );
+
+            document.getElementById("numFeatureStats").textContent =
+                "mean " + feature.summary.mean +
+                " | median " + feature.summary.median +
+                " | std " + feature.summary.std +
+                " | outliers " + feature.summary.outliers;
+        }
+
+        function renderCategorical(featureKey) {
+            const feature = EDA.categorical[featureKey];
+            if (!feature) {
+                return;
+            }
+
+            createOrUpdateChart(
+                "catChart",
+                document.getElementById("catChart").getContext("2d"),
+                {
+                    type: "bar",
+                    data: {
+                        labels: feature.labels,
+                        datasets: [{
+                            data: feature.values,
+                            backgroundColor: "#0ea5e9",
+                            borderRadius: 7
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: {
+                                ticks: {
+                                    maxRotation: 25,
+                                    minRotation: 25
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+
+            document.getElementById("catFeatureStats").textContent =
+                "unique groups shown: " + feature.labels.length + " | top class count: " + Math.max.apply(null, feature.values);
+        }
+
+        function renderCorrelation() {
+            const corr = EDA.correlations;
+            Plotly.newPlot(
+                "heatmapContainer",
+                [{
+                    z: corr.matrix,
+                    x: corr.features,
+                    y: corr.features,
+                    type: "heatmap",
+                    colorscale: [
+                        [0, "#e2e8f0"],
+                        [0.5, "#93c5fd"],
+                        [1, "#1d4ed8"]
+                    ],
+                    zmin: -1,
+                    zmax: 1
+                }],
+                {
+                    margin: { t: 28, r: 10, b: 45, l: 85 },
+                    paper_bgcolor: "rgba(0,0,0,0)",
+                    plot_bgcolor: "rgba(0,0,0,0)",
+                    title: "Numerical Feature Correlation"
+                },
+                { responsive: true, displayModeBar: false }
+            );
+
+            const pairs = [];
+            for (let i = 0; i < corr.features.length; i += 1) {
+                for (let j = i + 1; j < corr.features.length; j += 1) {
+                    pairs.push({
+                        pair: corr.features[i] + " vs " + corr.features[j],
+                        value: corr.matrix[i][j]
+                    });
+                }
+            }
+
+            pairs.sort(function(a, b) { return Math.abs(b.value) - Math.abs(a.value); });
+            const top = pairs.slice(0, 5);
+            const list = document.getElementById("corrRankList");
+            list.innerHTML = "";
+            top.forEach(function(item) {
+                const li = document.createElement("li");
+                li.textContent = item.pair + " -> r = " + item.value.toFixed(3);
+                list.appendChild(li);
+            });
+        }
+
+        function renderOutliers() {
+            createOrUpdateChart(
+                "outlierChart",
+                document.getElementById("outlierChart").getContext("2d"),
+                {
+                    type: "bar",
+                    data: {
+                        labels: EDA.outliers.labels,
+                        datasets: [{
+                            label: "Outlier count",
+                            data: EDA.outliers.values,
+                            backgroundColor: ["#0f766e", "#14b8a6", "#f59e0b", "#f97316", "#dc2626", "#6366f1"],
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                }
+            );
+        }
+
+        function renderTargetVs() {
+            createOrUpdateChart(
+                "incomeByEduChart",
+                document.getElementById("incomeByEduChart").getContext("2d"),
+                {
+                    type: "bar",
+                    data: {
+                        labels: EDA.targetVs.education.labels,
+                        datasets: [
+                            {
+                                label: "<=50K %",
+                                data: EDA.targetVs.education.low,
+                                backgroundColor: "#0f766e",
+                                borderRadius: 7
+                            },
+                            {
+                                label: ">50K %",
+                                data: EDA.targetVs.education.high,
+                                backgroundColor: "#f59e0b",
+                                borderRadius: 7
+                            }
+                        ]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: { y: { max: 100 } }
+                    }
+                }
+            );
+
+            createOrUpdateChart(
+                "hoursByIncomeChart",
+                document.getElementById("hoursByIncomeChart").getContext("2d"),
+                {
+                    type: "bar",
+                    data: {
+                        labels: EDA.targetVs.hours.labels,
+                        datasets: [{
+                            label: "Mean working hours",
+                            data: EDA.targetVs.hours.mean,
+                            backgroundColor: ["#2563eb", "#0f766e"],
+                            borderRadius: 8
+                        }]
+                    },
+                    options: { maintainAspectRatio: false }
+                }
+            );
+        }
+
+        function setupCodeTabs() {
+            const tabState = { missing: "plotly" };
+
+            function renderCode(name) {
+                const library = tabState[name];
+                const content = EDA.codeExamples[name][library];
+                document.getElementById("code-" + name).textContent = content;
+            }
+
+            document.querySelectorAll("[data-code-tab]").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    const name = btn.getAttribute("data-code-tab");
+                    const target = btn.getAttribute("data-code-target");
+                    tabState[name] = target;
+
+                    document.querySelectorAll("[data-code-tab='" + name + "']").forEach(function(peer) {
+                        peer.classList.remove("active");
+                    });
+                    btn.classList.add("active");
+                    renderCode(name);
+                });
+            });
+
+            document.querySelectorAll("[data-copy-btn]").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    const name = btn.getAttribute("data-copy-btn");
+                    const text = document.getElementById("code-" + name).textContent;
+                    navigator.clipboard.writeText(text).then(function() {
+                        const original = btn.textContent;
+                        btn.textContent = "Copied";
+                        setTimeout(function() { btn.textContent = original; }, 1200);
+                    });
+                });
+            });
+
+            renderCode("missing");
+        }
+
+        function setupSelectors() {
+            const numSelect = document.getElementById("numFeatureSelect");
+            const catSelect = document.getElementById("catFeatureSelect");
+            numSelect.addEventListener("change", function() {
+                renderNumerical(numSelect.value);
+            });
+            catSelect.addEventListener("change", function() {
+                renderCategorical(catSelect.value);
+            });
+            renderNumerical(numSelect.value);
+            renderCategorical(catSelect.value);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            setupAccordion();
+            renderMissingSection();
+            renderTargetDistribution();
+            renderCorrelation();
+            renderOutliers();
+            renderTargetVs();
+            setupCodeTabs();
+            setupSelectors();
+        });
+    </script>
+</body>
+</html>
