@@ -1,61 +1,1741 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabular Data Analysis | ML HCMUT</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-modal EDA | ML HCMUT</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50">
-    <!-- Navbar (Same as index.html) -->
-    
-    <div class="max-w-5xl mx-auto px-8 py-12">
-        <header class="mb-12">
-            <h1 class="text-4xl font-bold mb-4">Domain: Tabular Data Analysis</h1>
-            <p class="text-lg text-slate-600">Handling outliers and scaling features for traditional classifiers.</p>
-        </header>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
 
-        <!-- Dynamic Content Section -->
-        <div class="grid md:grid-cols-3 gap-8 mb-12">
-            <div class="col-span-2 space-y-8 text-slate-700 leading-relaxed">
-                
-                <!-- CONTENT BOX: TABULAR EXAMPLE -->
-                <section class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="text-2xl font-bold mb-4 text-slate-900">1. Exploratory Data Analysis (EDA)</h2>
-                    <p class="mb-4">We identified significant skewness in the feature distribution and 5% missing values in the "Income" column.</p>
-                    <div class="w-full h-64 bg-slate-100 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-300">
-                        <span class="text-slate-400 font-mono">[ Placeholder: Heatmap Correlation Matrix ]</span>
-                    </div>
-                </section>
+      .chart-box {
+        position: relative;
+        height: 22rem;
+        width: 100%;
+      }
 
-                <section class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="text-2xl font-bold mb-4 text-slate-900">2. Preprocessing & Models</h2>
-                    <ul class="list-disc ml-6 space-y-2">
-                        <li><strong>Scaling:</strong> RobustScaler for outlier-prone features.</li>
-                        <li><strong>Encoding:</strong> One-Hot Encoding for categorical data.</li>
-                        <li><strong>Models:</strong> Logistic Regression (L2 penalty), SVM (RBF kernel), and Random Forest.</li>
-                    </ul>
-                </section>
+      .chart-box canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
 
-            </div>
+      .plot-box {
+        position: relative;
+        height: 34rem;
+        width: 100%;
+      }
 
-            <!-- Sidebar Info -->
-            <aside class="space-y-6">
-                <div class="bg-blue-900 text-white p-6 rounded-xl">
-                    <h4 class="font-bold mb-2 uppercase text-xs tracking-widest text-blue-300">Quick Stats</h4>
-                    <ul class="space-y-4">
-                        <li>
-                            <span class="block text-2xl font-bold">89.4%</span>
-                            <span class="text-sm opacity-70 italic font-light">Accuracy (RF)</span>
-                        </li>
-                        <li>
-                            <span class="block text-2xl font-bold">14</span>
-                            <span class="text-sm opacity-70 italic font-light">Input Features</span>
-                        </li>
-                    </ul>
-                </div>
-            </aside>
+      .loading-state {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #64748b;
+        font-style: italic;
+        padding: 1rem;
+      }
+
+      #gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 1rem;
+      }
+
+      .gallery-card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .chart-box {
+          height: 20rem;
+        }
+
+        .plot-box {
+          height: 30rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <nav
+      class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200"
+    >
+      <div
+        class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="h-9 w-9 rounded-lg bg-blue-700 text-white flex items-center justify-center font-black"
+            >M</div
+          >
+          <div>
+            <p class="font-extrabold tracking-tight text-lg">Multi-modal EDA</p>
+            <p class="text-xs text-slate-500"
+              >Image and caption analytics dashboard</p
+            >
+          </div>
         </div>
-    </div>
-</body>
+        <div
+          class="hidden lg:flex items-center gap-4 text-xs uppercase tracking-wider font-bold text-slate-500"
+        >
+          <a href="index.html" class="hover:text-blue-600">Home</a>
+          <a href="#overview" class="hover:text-blue-600">Overview</a>
+          <a href="#quality" class="hover:text-blue-600">Quality</a>
+          <a href="#images" class="hover:text-blue-600">Images</a>
+          <a href="#colors" class="hover:text-blue-600">Colors</a>
+          <a href="#text" class="hover:text-blue-600">Text</a>
+          <a href="#tsne" class="hover:text-blue-600">t-SNE</a>
+          <a href="#gallery" class="hover:text-blue-600">Gallery</a>
+          <a href="#bias" class="hover:text-blue-600">Bias</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+      <header class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+        <h1 class="text-4xl font-bold mb-3"
+          >Domain: Multi-modal Data Analysis</h1
+        >
+        <p class="text-lg text-slate-600 mb-8"
+          >Comprehensive exploratory analysis over image and text modalities.</p
+        >
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+            <span
+              class="text-xs uppercase tracking-wide text-slate-500 font-semibold"
+              >Images</span
+            >
+            <p
+              class="text-3xl font-extrabold text-slate-900 mt-1"
+              data-stat="total_images"
+              >-</p
+            >
+          </div>
+          <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+            <span
+              class="text-xs uppercase tracking-wide text-slate-500 font-semibold"
+              >Captions</span
+            >
+            <p
+              class="text-3xl font-extrabold text-slate-900 mt-1"
+              data-stat="total_captions"
+              >-</p
+            >
+          </div>
+          <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+            <span
+              class="text-xs uppercase tracking-wide text-slate-500 font-semibold"
+              >Unique Tokens</span
+            >
+            <p
+              class="text-3xl font-extrabold text-slate-900 mt-1"
+              data-stat="vocab_size"
+              >-</p
+            >
+          </div>
+          <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+            <span
+              class="text-xs uppercase tracking-wide text-slate-500 font-semibold"
+              >Avg Captions/Image</span
+            >
+            <p class="text-3xl font-extrabold text-slate-900 mt-1" id="avg-caps"
+              >-</p
+            >
+          </div>
+        </div>
+      </header>
+
+      <section id="overview" class="space-y-4">
+        <h2 class="text-2xl font-bold text-slate-900">Dataset Overview</h2>
+        <p class="text-slate-600"
+          >High-level statistics and caption length distribution showing balance
+          and quality.</p
+        >
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4">Key Findings</h3>
+          <div
+            id="key-findings"
+            class="grid md:grid-cols-2 xl:grid-cols-3 gap-4"
+          ></div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Caption Token Length Distribution</h3
+          >
+          <div class="chart-box">
+            <canvas id="token-hist"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section id="quality" class="space-y-4">
+        <h2 class="text-2xl font-bold text-slate-900">Data Quality Metrics</h2>
+        <p class="text-slate-600"
+          >Assessment of duplicates, outliers, and token length statistics.</p
+        >
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div id="quality-badges" class="grid sm:grid-cols-2 gap-4"></div>
+        </div>
+      </section>
+
+      <section id="images" class="space-y-4">
+        <h2 class="text-2xl font-bold text-slate-900">Image Modality</h2>
+        <p class="text-slate-600"
+          >Resolution distribution, aspect ratios, and visual
+          characteristics.</p
+        >
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Resolution Analysis</h3
+          >
+          <div class="chart-box">
+            <canvas id="res-scatter"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Aspect Ratio Distribution</h3
+          >
+          <div class="chart-box">
+            <canvas id="aspect-hist"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section id="colors" class="space-y-4">
+        <h2 class="text-2xl font-bold text-slate-900"
+          >Colour Profile Analysis</h2
+        >
+        <p class="text-slate-600"
+          >Dominant colour per category and brightness/contrast
+          characteristics.</p
+        >
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Global RGB Distribution</h3
+          >
+          <div class="chart-box">
+            <canvas id="rgb-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Global Brightness Distribution</h3
+          >
+          <div class="chart-box">
+            <canvas id="global-brightness-hist"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Category Colour Swatches</h3
+          >
+          <div id="swatches" class="flex flex-wrap gap-3"></div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Brightness and Contrast by Category</h3
+          >
+          <div class="chart-box">
+            <canvas id="brightness-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Bounding Box Area Distribution</h3
+          >
+          <div class="chart-box">
+            <canvas id="bbox-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section id="text" class="space-y-4">
+        <h2 class="text-2xl font-bold text-slate-900">Text Modality</h2>
+        <p class="text-slate-600"
+          >Vocabulary, POS tags, n-grams, and caption statistics.</p
+        >
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Top Content Words</h3
+          >
+          <div class="chart-box">
+            <canvas id="vocab-bar"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >POS Tag Distribution</h3
+          >
+          <div class="chart-box">
+            <canvas id="pos-donut"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4">N-grams</h3>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button
+              type="button"
+              class="ngram-tab px-4 py-2 rounded-full border text-sm font-semibold bg-blue-700 text-white border-blue-700"
+              data-ngram="bigrams"
+              >Bigrams</button
+            >
+            <button
+              type="button"
+              class="ngram-tab px-4 py-2 rounded-full border text-sm font-semibold bg-white text-slate-600 border-slate-300 hover:border-blue-600"
+              data-ngram="trigrams"
+              >Trigrams</button
+            >
+          </div>
+          <div class="chart-box">
+            <canvas id="ngram-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-2"
+            >Caption Similarity</h3
+          >
+          <p class="text-sm text-slate-600 mb-4"
+            >Jaccard similarity between caption pairs for each image. Lower
+            values indicate diverse annotations.</p
+          >
+          <div class="chart-box">
+            <canvas id="jaccard-hist"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-2"
+            >Object-Word Alignment</h3
+          >
+          <p class="text-sm text-slate-600 mb-4"
+            >Comparison between objects present in images and mentions in
+            captions.</p
+          >
+          <div class="chart-box">
+            <canvas id="align-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section id="tsne" class="space-y-4">
+        <h2 class="text-2xl font-bold text-slate-900">Embedding Spaces</h2>
+        <p class="text-slate-600"
+          >2D projections of image and caption embeddings using t-SNE.</p
+        >
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >CLIP Image Embeddings</h3
+          >
+          <div
+            id="tsne-div"
+            class="plot-box border border-slate-200 rounded-lg bg-slate-50"
+          >
+            <p class="loading-state">Loading CLIP embeddings...</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4">Text Embeddings</h3>
+          <div
+            id="tsne-text-div"
+            class="plot-box border border-slate-200 rounded-lg bg-slate-50"
+          >
+            <p class="loading-state">Loading text embeddings...</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="gallery" class="space-y-4">
+        <h2 class="text-2xl font-bold text-slate-900">Category Gallery</h2>
+        <p class="text-slate-600"
+          >Sample images and captions organized by category.</p
+        >
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <div id="gallery-tabs" class="flex flex-wrap gap-2 mb-4"></div>
+          <div id="gallery-grid"></div>
+        </div>
+      </section>
+
+      <section id="bias" class="space-y-4">
+        <h2 class="text-2xl font-bold text-slate-900">Advanced Analysis</h2>
+        <p class="text-slate-600"
+          >Gender representation, object frequency, and difficulty metrics.</p
+        >
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-2"
+            >Gender Representation</h3
+          >
+          <p id="gender-ratio" class="font-semibold text-slate-700 mb-4"></p>
+          <div class="chart-box">
+            <canvas id="gender-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Top Objects by Frequency</h3
+          >
+          <div class="chart-box">
+            <canvas id="obj-freq-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Caption Difficulty</h3
+          >
+          <div class="chart-box">
+            <canvas id="diff-hist"></canvas>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-4">
+          <div
+            class="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+          >
+            <h3 class="text-base font-bold text-slate-900 mb-4"
+              >Easiest Captions</h3
+            >
+            <div id="easiest-strip" class="flex gap-2 flex-wrap"></div>
+          </div>
+          <div
+            class="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+          >
+            <h3 class="text-base font-bold text-slate-900 mb-4"
+              >Hardest Captions</h3
+            >
+            <div id="hardest-strip" class="flex gap-2 flex-wrap"></div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4"
+            >Category Co-occurrence</h3
+          >
+          <div
+            id="cooccur-div"
+            class="plot-box border border-slate-200 rounded-lg bg-slate-50"
+          >
+            <p class="loading-state">Loading heatmap...</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-4">LDA Topics</h3>
+          <div
+            id="topics-grid"
+            class="grid md:grid-cols-2 xl:grid-cols-3 gap-4"
+          ></div>
+        </div>
+      </section>
+    </main>
+
+    <footer
+      class="bg-slate-100 py-8 text-center text-slate-500 border-t border-slate-200"
+    >
+      <p
+        >(c) 2026 Programming for AI and Data Science - Multi-modal EDA
+        Report</p
+      >
+    </footer>
+
+    <script>
+      const REMOTE_DATA_BASE =
+        "https://thaiquangphat.github.io/yoyo-programming-for-ai-ds/assignment-1/multimodal/data";
+      const LOCAL_DATA_BASES = ["./data", "./assets/data/multimodal"];
+      const DEFAULT_KEY_FINDINGS = [
+        "Short captions (8-12 tokens) dominate the dataset.",
+        'Heavy object frequency imbalance where "person" appears in most images.',
+        "Gender bias appears in language usage with higher male-word frequency.",
+        "Limited linguistic diversity where top content words cover many captions.",
+        "A small amount of duplicate captions exists across different images.",
+        "Most images are landscape-oriented around 640 x 427 pixels.",
+      ];
+
+      const chartRegistry = new Map();
+
+      function escapeHTML(text) {
+        return String(text)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function toArray(value) {
+        return Array.isArray(value) ? value : [];
+      }
+
+      function midpointLabels(binEdges, digits = 0) {
+        const edges = toArray(binEdges);
+        if (edges.length < 2) return [];
+
+        const labels = [];
+        for (let i = 0; i < edges.length - 1; i += 1) {
+          const mid = (edges[i] + edges[i + 1]) / 2;
+          labels.push(mid.toFixed(digits));
+        }
+        return labels;
+      }
+
+      function formatNumber(value) {
+        if (typeof value === "number") {
+          return value.toLocaleString();
+        }
+        return value ?? "-";
+      }
+
+      function showPanelError(panelId, message) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
+        panel.innerHTML = `<p class="loading-state !text-rose-600 !not-italic">${escapeHTML(message)}</p>`;
+      }
+
+      function showCanvasError(canvasId, message) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || !canvas.parentElement) return;
+        canvas.parentElement.innerHTML = `<p class="text-sm text-rose-600">${escapeHTML(message)}</p>`;
+      }
+
+      function resolveDataSources(resourceName) {
+        const file = resourceName.endsWith(".json")
+          ? resourceName
+          : `${resourceName}.json`;
+        return [
+          ...LOCAL_DATA_BASES.map((base) => `${base}/${file}`),
+          `${REMOTE_DATA_BASE}/${file}`,
+        ];
+      }
+
+      async function fetchJSON(url) {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`Failed to load ${url}: ${response.status}`);
+        }
+        return response.json();
+      }
+
+      async function loadJSON(resourceName) {
+        const sources = resolveDataSources(resourceName);
+        let lastError = null;
+
+        for (const source of sources) {
+          try {
+            return await fetchJSON(source);
+          } catch (error) {
+            lastError = error;
+          }
+        }
+
+        throw lastError || new Error(`Could not load ${resourceName}`);
+      }
+
+      async function loadDataMap(names) {
+        const entries = await Promise.allSettled(
+          names.map((name) => loadJSON(name)),
+        );
+        const result = {};
+
+        entries.forEach((entry, index) => {
+          const name = names[index];
+          if (entry.status === "fulfilled") {
+            result[name] = entry.value;
+            return;
+          }
+          console.warn(`Dataset not available: ${name}`, entry.reason);
+        });
+
+        return result;
+      }
+
+      function createChart(canvasId, config) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || typeof Chart === "undefined") {
+          return null;
+        }
+
+        const existing = chartRegistry.get(canvasId);
+        if (existing) {
+          existing.destroy();
+        }
+
+        const chart = new Chart(canvas, {
+          ...config,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            ...(config.options || {}),
+          },
+        });
+
+        chartRegistry.set(canvasId, chart);
+        return chart;
+      }
+
+      function setHeroStats(stats) {
+        document.querySelectorAll("[data-stat]").forEach((element) => {
+          const key = element.dataset.stat;
+          element.textContent = formatNumber(stats[key]);
+        });
+
+        const avgCaps = document.getElementById("avg-caps");
+        if (avgCaps && typeof stats.avg_caps_per_image === "number") {
+          avgCaps.textContent = stats.avg_caps_per_image.toFixed(2);
+        }
+      }
+
+      function renderKeyFindings(summary) {
+        const findingsRoot = document.getElementById("key-findings");
+        if (!findingsRoot) return;
+
+        const findings = toArray(summary?.key_findings).length
+          ? summary.key_findings
+          : DEFAULT_KEY_FINDINGS;
+        findingsRoot.innerHTML = findings
+          .map((finding, index) => {
+            return `
+                    <article class="rounded-lg border border-blue-100 bg-blue-50 p-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wide text-blue-900 mb-2">Finding ${index + 1}</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">${escapeHTML(finding)}</p>
+                    </article>
+                `;
+          })
+          .join("");
+      }
+
+      function renderQualityBadges(dq) {
+        const root = document.getElementById("quality-badges");
+        if (!root) return;
+
+        const duplicateCount = Number(dq?.duplicate_captions ?? 0);
+        const outlierCount = Number(dq?.outlier_captions_gt40 ?? 0);
+
+        const duplicateTone =
+          duplicateCount === 0
+            ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+            : "bg-amber-50 border-amber-300 text-amber-800";
+
+        const outlierTone =
+          outlierCount === 0
+            ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+            : "bg-rose-50 border-rose-300 text-rose-800";
+
+        root.innerHTML = `
+                <article class="rounded-lg border p-4 ${duplicateTone}">
+                    <p class="text-sm font-semibold">Duplicate Captions</p>
+                    <p class="text-3xl font-extrabold mt-1">${formatNumber(duplicateCount)}</p>
+                </article>
+                <article class="rounded-lg border p-4 ${outlierTone}">
+                    <p class="text-sm font-semibold">Outlier Captions (&gt; 40 tokens)</p>
+                    <p class="text-3xl font-extrabold mt-1">${formatNumber(outlierCount)}</p>
+                </article>
+            `;
+      }
+
+      function chooseTextColor(hexColor) {
+        const hex = String(hexColor || "").replace("#", "");
+        if (!/^[0-9a-fA-F]{6}$/.test(hex)) {
+          return "#0f172a";
+        }
+        const r = parseInt(hex.slice(0, 2), 16);
+        const g = parseInt(hex.slice(2, 4), 16);
+        const b = parseInt(hex.slice(4, 6), 16);
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        return luminance > 0.62 ? "#0f172a" : "#f8fafc";
+      }
+
+      function setTabActive(buttons, activeButton) {
+        buttons.forEach((button) => {
+          button.classList.remove(
+            "bg-blue-700",
+            "text-white",
+            "border-blue-700",
+          );
+          button.classList.add(
+            "bg-white",
+            "text-slate-600",
+            "border-slate-300",
+            "hover:border-blue-600",
+          );
+        });
+
+        activeButton.classList.remove(
+          "bg-white",
+          "text-slate-600",
+          "border-slate-300",
+          "hover:border-blue-600",
+        );
+        activeButton.classList.add(
+          "bg-blue-700",
+          "text-white",
+          "border-blue-700",
+        );
+      }
+
+      function resolveAssetCandidates(relativePath) {
+        const normalized = String(relativePath || "").replace(/^\.?\//, "");
+        const fileName = normalized.split("/").pop() || "";
+
+        return [
+          `./data/${normalized}`,
+          `./assets/data/multimodal/${normalized}`,
+          `${REMOTE_DATA_BASE}/${normalized}`,
+          `./references/Assignment 1_ Multi-modal EDA_files/${fileName}`,
+        ];
+      }
+
+      function resolveHoverThumbPath(thumbValue) {
+        if (!thumbValue) return "";
+        const str = String(thumbValue);
+        if (
+          str.startsWith("data:") ||
+          str.startsWith("http://") ||
+          str.startsWith("https://")
+        ) {
+          return str;
+        }
+        return `${REMOTE_DATA_BASE}/${str.replace(/^\.?\//, "")}`;
+      }
+
+      function assignImageWithFallback(imgElement, candidates) {
+        const urls = candidates.filter(Boolean);
+        let current = 0;
+
+        const tryNext = () => {
+          if (current >= urls.length) {
+            imgElement.onerror = null;
+            return;
+          }
+          imgElement.src = urls[current];
+          current += 1;
+        };
+
+        imgElement.onerror = tryNext;
+        tryNext();
+      }
+
+      function observeOnce(element, callback) {
+        if (!element) return;
+
+        if (!("IntersectionObserver" in window)) {
+          callback();
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            if (!entries[0].isIntersecting) return;
+            observer.disconnect();
+            callback();
+          },
+          { threshold: 0.1 },
+        );
+
+        observer.observe(element);
+      }
+
+      function renderDifficultyStrip(stripId, images, manifestById) {
+        const root = document.getElementById(stripId);
+        if (!root) return;
+
+        root.innerHTML = "";
+        toArray(images)
+          .slice(0, 5)
+          .forEach((item) => {
+            const imageMeta = manifestById.get(item.image_id);
+            if (!imageMeta) return;
+
+            const thumb = document.createElement("img");
+            thumb.className =
+              "w-20 h-20 rounded-md object-cover border border-slate-200";
+            thumb.title = `Score: ${Number(item.score ?? 0).toFixed(3)}`;
+            thumb.alt = `Image ${imageMeta.image_id}`;
+            assignImageWithFallback(
+              thumb,
+              resolveAssetCandidates(imageMeta.thumb_path),
+            );
+            root.appendChild(thumb);
+          });
+      }
+
+      function renderGallery(manifest) {
+        const tabRoot = document.getElementById("gallery-tabs");
+        const gridRoot = document.getElementById("gallery-grid");
+        if (!tabRoot || !gridRoot) return;
+
+        const categories = toArray(manifest?.categories);
+        const imagesByCat = manifest?.images_by_cat || {};
+        if (!categories.length) {
+          gridRoot.innerHTML =
+            '<p class="text-sm text-rose-600">Gallery data is unavailable.</p>';
+          return;
+        }
+
+        const renderCategory = (category) => {
+          gridRoot.innerHTML = "";
+          toArray(imagesByCat[category]).forEach((imageInfo) => {
+            const card = document.createElement("article");
+            card.className =
+              "gallery-card bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm";
+
+            const image = document.createElement("img");
+            image.loading = "lazy";
+            image.alt =
+              imageInfo?.captions?.[0] || `Image ${imageInfo?.image_id || ""}`;
+            assignImageWithFallback(
+              image,
+              resolveAssetCandidates(imageInfo.thumb_path),
+            );
+
+            const caption = document.createElement("p");
+            caption.className = "text-xs text-slate-600 leading-relaxed p-3";
+            caption.textContent =
+              imageInfo?.captions?.[0] || "No caption available.";
+
+            card.appendChild(image);
+            card.appendChild(caption);
+            gridRoot.appendChild(card);
+          });
+        };
+
+        const tabs = categories.map((category, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = category;
+          button.className =
+            "px-4 py-2 rounded-full border text-sm font-semibold";
+          if (index === 0) {
+            button.classList.add(
+              "bg-blue-700",
+              "text-white",
+              "border-blue-700",
+            );
+          } else {
+            button.classList.add(
+              "bg-white",
+              "text-slate-600",
+              "border-slate-300",
+              "hover:border-blue-600",
+            );
+          }
+
+          button.addEventListener("click", () => {
+            setTabActive(tabs, button);
+            renderCategory(category);
+          });
+
+          tabRoot.appendChild(button);
+          return button;
+        });
+
+        tabs[0].click();
+      }
+
+      function renderLdaTopics(lda) {
+        const topicsRoot = document.getElementById("topics-grid");
+        if (!topicsRoot) return;
+
+        topicsRoot.innerHTML = "";
+        toArray(lda?.topics).forEach((topic) => {
+          const topicCard = document.createElement("article");
+          topicCard.className =
+            "rounded-lg border border-slate-200 p-4 bg-slate-50";
+
+          const title = document.createElement("h4");
+          title.className = "text-sm font-bold text-slate-900 mb-3";
+          title.textContent = `Topic ${topic.topic_id}`;
+
+          const chartHolder = document.createElement("div");
+          chartHolder.className = "chart-box !h-56";
+
+          const canvas = document.createElement("canvas");
+          chartHolder.appendChild(canvas);
+
+          topicCard.appendChild(title);
+          topicCard.appendChild(chartHolder);
+          topicsRoot.appendChild(topicCard);
+
+          const topWords = toArray(topic.top_words).slice(0, 8);
+          new Chart(canvas, {
+            type: "bar",
+            data: {
+              labels: topWords.map((item) => item.word),
+              datasets: [
+                {
+                  label: "Weight",
+                  data: topWords.map((item) => item.weight),
+                  backgroundColor: "#8b5cf6",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              indexAxis: "y",
+              plugins: {
+                legend: { display: false },
+              },
+              scales: {
+                x: {
+                  display: false,
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+        });
+      }
+
+      async function initializeDashboard() {
+        const datasetNames = [
+          "stats_overview",
+          "eda_summary",
+          "data_quality",
+          "image_stats",
+          "color_profiles",
+          "category_color_profiles",
+          "brightness_by_category",
+          "bbox_area_by_category",
+          "vocab_freq",
+          "pos_distribution",
+          "ngrams",
+          "jaccard_similarity",
+          "object_word_align",
+          "bias",
+          "difficulty",
+          "gallery_manifest",
+          "lda_topics",
+        ];
+
+        const data = await loadDataMap(datasetNames);
+
+        if (data.stats_overview) {
+          setHeroStats(data.stats_overview);
+        }
+
+        renderKeyFindings(
+          data.eda_summary || { key_findings: DEFAULT_KEY_FINDINGS },
+        );
+
+        if (data.data_quality?.token_len_histogram) {
+          const histogram = data.data_quality.token_len_histogram;
+          createChart("token-hist", {
+            type: "bar",
+            data: {
+              labels: midpointLabels(histogram.bin_edges, 0),
+              datasets: [
+                {
+                  label: "Number of captions",
+                  data: histogram.counts,
+                  backgroundColor: "#7ec8a0",
+                  borderWidth: 0,
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Caption Token Length Distribution",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: true },
+              },
+              scales: {
+                x: { title: { display: true, text: "Tokens per caption" } },
+                y: { title: { display: true, text: "Count" } },
+              },
+            },
+          });
+          renderQualityBadges(data.data_quality);
+        } else {
+          showCanvasError("token-hist", "Token histogram data is unavailable.");
+          document.getElementById("quality-badges").innerHTML =
+            '<p class="text-sm text-rose-600">Quality metrics are unavailable.</p>';
+        }
+
+        if (data.image_stats?.scatter_sample) {
+          createChart("res-scatter", {
+            type: "scatter",
+            data: {
+              datasets: [
+                {
+                  label: "Image samples",
+                  data: data.image_stats.scatter_sample,
+                  backgroundColor: "rgba(79, 134, 198, 0.25)",
+                  pointRadius: 3,
+                  pointHoverRadius: 5,
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Image Width vs Height Distribution",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: true },
+              },
+              scales: {
+                x: { title: { display: true, text: "Width (pixels)" } },
+                y: { title: { display: true, text: "Height (pixels)" } },
+              },
+            },
+          });
+
+          const aspect = data.image_stats.aspect_histogram;
+          createChart("aspect-hist", {
+            type: "bar",
+            data: {
+              labels: midpointLabels(aspect.bin_edges, 2),
+              datasets: [
+                {
+                  label: "Count",
+                  data: aspect.counts,
+                  backgroundColor: "#4f86c6",
+                  borderWidth: 0,
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Aspect Ratio Distribution",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: false },
+              },
+              scales: {
+                x: {
+                  title: { display: true, text: "Aspect ratio (width/height)" },
+                },
+                y: { title: { display: true, text: "Count" } },
+              },
+            },
+          });
+        } else {
+          showCanvasError(
+            "res-scatter",
+            "Image resolution data is unavailable.",
+          );
+          showCanvasError("aspect-hist", "Aspect ratio data is unavailable.");
+        }
+
+        if (data.color_profiles?.channel_means) {
+          createChart("rgb-chart", {
+            type: "bar",
+            data: {
+              labels: ["Red", "Green", "Blue"],
+              datasets: [
+                {
+                  label: "Mean Channel Value",
+                  data: [
+                    data.color_profiles.channel_means.R,
+                    data.color_profiles.channel_means.G,
+                    data.color_profiles.channel_means.B,
+                  ],
+                  backgroundColor: ["#ff6b6b", "#51cf66", "#4ecdc4"],
+                  borderColor: ["#ff5252", "#40c057", "#1a9b8e"],
+                  borderWidth: 2,
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Dataset RGB Channel Means",
+                  font: { size: 14, weight: "bold" },
+                },
+              },
+              scales: {
+                y: {
+                  min: 0,
+                  max: 255,
+                  title: { display: true, text: "Mean pixel value" },
+                },
+              },
+            },
+          });
+
+          const brightness = data.color_profiles.brightness_histogram;
+          createChart("global-brightness-hist", {
+            type: "bar",
+            data: {
+              labels: midpointLabels(brightness.bin_edges, 0),
+              datasets: [
+                {
+                  label: "Frequency",
+                  data: brightness.counts,
+                  backgroundColor: "#f5c842",
+                  borderColor: "#f59f00",
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: `Global Brightness Distribution (mean: ${Number(data.color_profiles.brightness_stats.mean).toFixed(1)})`,
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: false },
+              },
+              scales: {
+                x: { title: { display: true, text: "Brightness value" } },
+                y: { title: { display: true, text: "Count" } },
+              },
+            },
+          });
+        } else {
+          showCanvasError("rgb-chart", "RGB profile data is unavailable.");
+          showCanvasError(
+            "global-brightness-hist",
+            "Brightness distribution data is unavailable.",
+          );
+        }
+
+        const swatchesRoot = document.getElementById("swatches");
+        if (swatchesRoot) {
+          if (data.category_color_profiles?.categories) {
+            swatchesRoot.innerHTML = "";
+            data.category_color_profiles.categories.forEach((category) => {
+              const swatch = document.createElement("div");
+              swatch.className =
+                "px-3 py-2 rounded-lg text-xs font-semibold border border-white/20 shadow-sm";
+              swatch.style.background = category.hex;
+              swatch.style.color = chooseTextColor(category.hex);
+              swatch.title = `${category.name}\nR: ${category.R}, G: ${category.G}, B: ${category.B}`;
+              swatch.textContent = category.name;
+              swatchesRoot.appendChild(swatch);
+            });
+          } else {
+            swatchesRoot.innerHTML =
+              '<p class="text-sm text-rose-600">Category colour profiles are unavailable.</p>';
+          }
+        }
+
+        if (data.brightness_by_category?.data) {
+          createChart("brightness-chart", {
+            type: "bar",
+            data: {
+              labels: data.brightness_by_category.data.map(
+                (row) => row.supercategory,
+              ),
+              datasets: [
+                {
+                  label: "Brightness",
+                  data: data.brightness_by_category.data.map(
+                    (row) => row.brightness_mean,
+                  ),
+                  backgroundColor: "#f5c842",
+                },
+                {
+                  label: "Contrast",
+                  data: data.brightness_by_category.data.map(
+                    (row) => row.contrast_mean,
+                  ),
+                  backgroundColor: "#e07b39",
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Mean Brightness and Contrast per Supercategory",
+                  font: { size: 14, weight: "bold" },
+                },
+              },
+              scales: {
+                y: { title: { display: true, text: "Value" } },
+              },
+            },
+          });
+        } else {
+          showCanvasError(
+            "brightness-chart",
+            "Brightness by category data is unavailable.",
+          );
+        }
+
+        if (data.bbox_area_by_category?.data) {
+          const sortedBbox = [...data.bbox_area_by_category.data].sort(
+            (a, b) => b.median_area - a.median_area,
+          );
+          createChart("bbox-chart", {
+            type: "bar",
+            data: {
+              labels: sortedBbox.map((item) => item.category),
+              datasets: [
+                {
+                  label: "Median area (px2)",
+                  data: sortedBbox.map((item) => item.median_area),
+                  backgroundColor: "#6c9bd2",
+                },
+              ],
+            },
+            options: {
+              indexAxis: "y",
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Bounding Box Area Distribution",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: false },
+              },
+            },
+          });
+        } else {
+          showCanvasError(
+            "bbox-chart",
+            "Bounding box area data is unavailable.",
+          );
+        }
+
+        if (data.vocab_freq?.top_200_content_words) {
+          const topWords = data.vocab_freq.top_200_content_words.slice(0, 30);
+          createChart("vocab-bar", {
+            type: "bar",
+            data: {
+              labels: topWords.map((item) => item.word),
+              datasets: [
+                {
+                  label: "Frequency",
+                  data: topWords.map((item) => item.count),
+                  backgroundColor: "#5b8db8",
+                },
+              ],
+            },
+            options: {
+              indexAxis: "y",
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Top 30 Content Words",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: false },
+              },
+            },
+          });
+        } else {
+          showCanvasError("vocab-bar", "Vocabulary data is unavailable.");
+        }
+
+        if (data.pos_distribution?.tags) {
+          createChart("pos-donut", {
+            type: "doughnut",
+            data: {
+              labels: data.pos_distribution.tags.map((tag) => tag.tag),
+              datasets: [
+                {
+                  data: data.pos_distribution.tags.map((tag) => tag.count),
+                  backgroundColor: [
+                    "#FF6384",
+                    "#36A2EB",
+                    "#FFCE56",
+                    "#4BC0C0",
+                    "#9966FF",
+                    "#FF9F40",
+                    "#8DD3C7",
+                    "#C9CBCF",
+                    "#A1D99B",
+                    "#FDD0A2",
+                  ],
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: "POS Tag Distribution",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { position: "right" },
+              },
+            },
+          });
+        } else {
+          showCanvasError("pos-donut", "POS distribution data is unavailable.");
+        }
+
+        let ngramChart = null;
+        if (data.ngrams?.bigrams && data.ngrams?.trigrams) {
+          ngramChart = createChart("ngram-chart", {
+            type: "bar",
+            data: {
+              labels: data.ngrams.bigrams.map((item) => item.ngram),
+              datasets: [
+                {
+                  label: "Count",
+                  data: data.ngrams.bigrams.map((item) => item.count),
+                  backgroundColor: "#9b59b6",
+                },
+              ],
+            },
+            options: {
+              indexAxis: "y",
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Top 20 Bigrams",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: false },
+              },
+            },
+          });
+
+          const ngramTabs = Array.from(document.querySelectorAll(".ngram-tab"));
+          ngramTabs.forEach((tab) => {
+            tab.addEventListener("click", () => {
+              if (!ngramChart) return;
+              const key = tab.dataset.ngram;
+              const records =
+                key === "trigrams" ? data.ngrams.trigrams : data.ngrams.bigrams;
+              ngramChart.data.labels = records.map((item) => item.ngram);
+              ngramChart.data.datasets[0].data = records.map(
+                (item) => item.count,
+              );
+              ngramChart.options.plugins.title.text = `Top 20 ${key.charAt(0).toUpperCase() + key.slice(1)}`;
+              ngramChart.update();
+              setTabActive(ngramTabs, tab);
+            });
+          });
+        } else {
+          showCanvasError("ngram-chart", "N-gram data is unavailable.");
+        }
+
+        if (data.jaccard_similarity?.histogram) {
+          const jacHistogram = data.jaccard_similarity.histogram;
+          createChart("jaccard-hist", {
+            type: "bar",
+            data: {
+              labels: midpointLabels(jacHistogram.bin_edges, 3),
+              datasets: [
+                {
+                  label: "Frequency",
+                  data: jacHistogram.counts,
+                  backgroundColor: "#7ec8a0",
+                  borderWidth: 0,
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: `Jaccard Similarity Distribution (mean: ${Number(data.jaccard_similarity.stats.mean).toFixed(3)})`,
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: false },
+              },
+              scales: {
+                x: { title: { display: true, text: "Jaccard similarity" } },
+                y: { title: { display: true, text: "Count" } },
+              },
+            },
+          });
+        } else {
+          showCanvasError(
+            "jaccard-hist",
+            "Jaccard similarity data is unavailable.",
+          );
+        }
+
+        if (data.object_word_align?.items) {
+          createChart("align-chart", {
+            type: "bar",
+            data: {
+              labels: data.object_word_align.items.map((item) => item.category),
+              datasets: [
+                {
+                  label: "Images with object",
+                  data: data.object_word_align.items.map(
+                    (item) => item.image_count,
+                  ),
+                  backgroundColor: "#4f86c6",
+                  yAxisID: "y",
+                },
+                {
+                  label: "Caption mentions",
+                  data: data.object_word_align.items.map(
+                    (item) => item.caption_freq,
+                  ),
+                  backgroundColor: "#e07b39",
+                  yAxisID: "y1",
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Object-Caption Alignment",
+                  font: { size: 14, weight: "bold" },
+                },
+              },
+              scales: {
+                y: {
+                  position: "left",
+                  title: { display: true, text: "Image count" },
+                },
+                y1: {
+                  position: "right",
+                  title: { display: true, text: "Caption frequency" },
+                  grid: { drawOnChartArea: false },
+                },
+              },
+            },
+          });
+        } else {
+          showCanvasError(
+            "align-chart",
+            "Object-word alignment data is unavailable.",
+          );
+        }
+
+        if (data.bias?.gender) {
+          const ratioElement = document.getElementById("gender-ratio");
+          if (ratioElement && typeof data.bias.gender.ratio_m_f === "number") {
+            ratioElement.textContent = `Male-to-female word ratio: ${data.bias.gender.ratio_m_f.toFixed(1)}x`;
+          }
+
+          createChart("gender-chart", {
+            type: "bar",
+            data: {
+              labels: ["Male-gendered", "Female-gendered"],
+              datasets: [
+                {
+                  data: [
+                    data.bias.gender.male_count,
+                    data.bias.gender.female_count,
+                  ],
+                  backgroundColor: ["#5b8db8", "#e07b8a"],
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Gender Word Counts",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: false },
+              },
+            },
+          });
+
+          const topObjects = toArray(data.bias.object_frequency).slice(0, 30);
+          createChart("obj-freq-chart", {
+            type: "bar",
+            data: {
+              labels: topObjects.map((item) => item.category),
+              datasets: [
+                {
+                  label: "Instance count",
+                  data: topObjects.map((item) => item.count),
+                  backgroundColor: "#f0a500",
+                },
+              ],
+            },
+            options: {
+              indexAxis: "y",
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Top 30 Objects by Frequency",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: false },
+              },
+            },
+          });
+        } else {
+          const ratioElement = document.getElementById("gender-ratio");
+          if (ratioElement) {
+            ratioElement.textContent = "Gender statistics are unavailable.";
+          }
+          showCanvasError(
+            "gender-chart",
+            "Gender analysis data is unavailable.",
+          );
+          showCanvasError(
+            "obj-freq-chart",
+            "Object frequency data is unavailable.",
+          );
+        }
+
+        if (data.difficulty?.difficulty_histogram) {
+          const histogram = data.difficulty.difficulty_histogram;
+          createChart("diff-hist", {
+            type: "bar",
+            data: {
+              labels: midpointLabels(histogram.bin_edges, 2),
+              datasets: [
+                {
+                  label: "Count",
+                  data: histogram.counts,
+                  backgroundColor: "#c0392b",
+                  borderWidth: 0,
+                },
+              ],
+            },
+            options: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: "Caption Difficulty Distribution",
+                  font: { size: 14, weight: "bold" },
+                },
+                legend: { display: false },
+              },
+              scales: {
+                x: { title: { display: true, text: "Difficulty score" } },
+                y: { title: { display: true, text: "Count" } },
+              },
+            },
+          });
+        } else {
+          showCanvasError(
+            "diff-hist",
+            "Difficulty histogram data is unavailable.",
+          );
+        }
+
+        if (data.gallery_manifest) {
+          renderGallery(data.gallery_manifest);
+        } else {
+          document.getElementById("gallery-grid").innerHTML =
+            '<p class="text-sm text-rose-600">Gallery manifest is unavailable.</p>';
+        }
+
+        if (data.difficulty && data.gallery_manifest) {
+          const allImages = Object.values(
+            data.gallery_manifest.images_by_cat || {},
+          ).flat();
+          const imageMap = new Map(
+            allImages.map((item) => [item.image_id, item]),
+          );
+          renderDifficultyStrip(
+            "easiest-strip",
+            data.difficulty.easiest_images,
+            imageMap,
+          );
+          renderDifficultyStrip(
+            "hardest-strip",
+            data.difficulty.hardest_images,
+            imageMap,
+          );
+        }
+
+        if (data.lda_topics?.topics) {
+          renderLdaTopics(data.lda_topics);
+        } else {
+          document.getElementById("topics-grid").innerHTML =
+            '<p class="text-sm text-rose-600">LDA topic data is unavailable.</p>';
+        }
+      }
+
+      function initializeLazyPlots() {
+        const tsneDiv = document.getElementById("tsne-div");
+        observeOnce(tsneDiv, async () => {
+          if (typeof Plotly === "undefined") {
+            showPanelError("tsne-div", "Plotly is not available.");
+            return;
+          }
+
+          try {
+            const tsne = await loadJSON("tsne_clip");
+            const byCategory = {};
+
+            toArray(tsne.points).forEach((point) => {
+              const category = point.supercategory || "unknown";
+              if (!byCategory[category]) {
+                byCategory[category] = { x: [], y: [], text: [], thumbs: [] };
+              }
+              byCategory[category].x.push(point.x);
+              byCategory[category].y.push(point.y);
+              byCategory[category].text.push(`ID: ${point.image_id}`);
+              byCategory[category].thumbs.push(
+                resolveHoverThumbPath(point.thumb),
+              );
+            });
+
+            const traces = Object.entries(byCategory).map(
+              ([category, values]) => ({
+                type: "scatter",
+                mode: "markers",
+                name: category,
+                x: values.x,
+                y: values.y,
+                text: values.text,
+                customdata: values.thumbs,
+                marker: { size: 6, opacity: 0.75 },
+                hovertemplate:
+                  '<b>%{text}</b><br><img src="%{customdata}" width="64"><extra>%{fullData.name}</extra>',
+              }),
+            );
+
+            tsneDiv.innerHTML = "";
+            Plotly.newPlot(
+              tsneDiv,
+              traces,
+              {
+                title: "CLIP Image Embeddings - t-SNE",
+                xaxis: { showticklabels: false, zeroline: false },
+                yaxis: { showticklabels: false, zeroline: false },
+                hovermode: "closest",
+                margin: { t: 40 },
+              },
+              { responsive: true },
+            );
+          } catch (error) {
+            showPanelError(
+              "tsne-div",
+              `Could not load CLIP embeddings: ${error.message}`,
+            );
+          }
+        });
+
+        const textTsneDiv = document.getElementById("tsne-text-div");
+        observeOnce(textTsneDiv, async () => {
+          if (typeof Plotly === "undefined") {
+            showPanelError("tsne-text-div", "Plotly is not available.");
+            return;
+          }
+
+          try {
+            const textTsne = await loadJSON("tsne_text");
+            textTsneDiv.innerHTML = "";
+
+            Plotly.newPlot(
+              textTsneDiv,
+              [
+                {
+                  type: "scatter",
+                  mode: "markers",
+                  x: textTsne.points.map((point) => point.x),
+                  y: textTsne.points.map((point) => point.y),
+                  text: textTsne.points.map((point) => point.caption),
+                  marker: {
+                    size: 5,
+                    color: textTsne.points.map((point) => point.token_len),
+                    colorscale: "Viridis",
+                    showscale: true,
+                    colorbar: { title: "Token length" },
+                  },
+                  hovertemplate:
+                    "<i>%{text}</i><extra>%{marker.color} tokens</extra>",
+                },
+              ],
+              {
+                title: "Caption Embeddings - t-SNE (colored by token length)",
+                xaxis: { showticklabels: false, zeroline: false },
+                yaxis: { showticklabels: false, zeroline: false },
+                hovermode: "closest",
+                margin: { t: 40 },
+              },
+              { responsive: true },
+            );
+          } catch (error) {
+            showPanelError(
+              "tsne-text-div",
+              `Could not load text embeddings: ${error.message}`,
+            );
+          }
+        });
+
+        const cooccurDiv = document.getElementById("cooccur-div");
+        observeOnce(cooccurDiv, async () => {
+          if (typeof Plotly === "undefined") {
+            showPanelError("cooccur-div", "Plotly is not available.");
+            return;
+          }
+
+          try {
+            const cooccurrence = await loadJSON("cooccurrence");
+            cooccurDiv.innerHTML = "";
+
+            Plotly.newPlot(
+              cooccurDiv,
+              [
+                {
+                  type: "heatmap",
+                  z: cooccurrence.matrix,
+                  x: cooccurrence.categories,
+                  y: cooccurrence.categories,
+                  colorscale: "YlOrRd",
+                  hovertemplate:
+                    "<b>%{y}</b> + <b>%{x}</b><br>%{z} images<extra></extra>",
+                },
+              ],
+              {
+                title: "Category Co-occurrence Heatmap",
+                margin: { l: 140, b: 140, t: 60, r: 20 },
+              },
+              { responsive: true },
+            );
+          } catch (error) {
+            showPanelError(
+              "cooccur-div",
+              `Could not load co-occurrence matrix: ${error.message}`,
+            );
+          }
+        });
+      }
+
+      (async () => {
+        try {
+          await initializeDashboard();
+          initializeLazyPlots();
+        } catch (error) {
+          console.error("Error loading dashboard:", error);
+          const errorBanner = document.createElement("div");
+          errorBanner.className = "max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8";
+          errorBanner.innerHTML = `
+                    <div class="rounded-lg border border-rose-300 bg-rose-50 text-rose-700 p-4">
+                        <strong>Dashboard initialization error:</strong> ${escapeHTML(error.message)}
+                    </div>
+                `;
+          document.body.appendChild(errorBanner);
+        }
+      })();
+    </script>
+  </body>
 </html>
