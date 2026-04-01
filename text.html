@@ -1,61 +1,1357 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabular Data Analysis | ML HCMUT</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text EDA Report | Stanford SQuAD 1.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50">
-    <!-- Navbar (Same as index.html) -->
-    
-    <div class="max-w-5xl mx-auto px-8 py-12">
-        <header class="mb-12">
-            <h1 class="text-4xl font-bold mb-4">Domain: Tabular Data Analysis</h1>
-            <p class="text-lg text-slate-600">Handling outliers and scaling features for traditional classifiers.</p>
-        </header>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #111827;
+        --muted: #475569;
+        --line: #d9e2ec;
+        --paper: #ffffff;
+        --bg-a: #f8fafc;
+        --bg-b: #edf2ff;
+        --accent: #0f766e;
+        --accent-2: #f59e0b;
+        --accent-3: #2563eb;
+        --danger: #dc2626;
+      }
 
-        <!-- Dynamic Content Section -->
-        <div class="grid md:grid-cols-3 gap-8 mb-12">
-            <div class="col-span-2 space-y-8 text-slate-700 leading-relaxed">
-                
-                <!-- CONTENT BOX: TABULAR EXAMPLE -->
-                <section class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="text-2xl font-bold mb-4 text-slate-900">1. Exploratory Data Analysis (EDA)</h2>
-                    <p class="mb-4">We identified significant skewness in the feature distribution and 5% missing values in the "Income" column.</p>
-                    <div class="w-full h-64 bg-slate-100 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-300">
-                        <span class="text-slate-400 font-mono">[ Placeholder: Heatmap Correlation Matrix ]</span>
-                    </div>
-                </section>
+      body {
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
+          radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
+          linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
+        min-height: 100vh;
+      }
 
-                <section class="bg-white p-8 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="text-2xl font-bold mb-4 text-slate-900">2. Preprocessing & Models</h2>
-                    <ul class="list-disc ml-6 space-y-2">
-                        <li><strong>Scaling:</strong> RobustScaler for outlier-prone features.</li>
-                        <li><strong>Encoding:</strong> One-Hot Encoding for categorical data.</li>
-                        <li><strong>Models:</strong> Logistic Regression (L2 penalty), SVM (RBF kernel), and Random Forest.</li>
-                    </ul>
-                </section>
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Sora", sans-serif;
+        letter-spacing: -0.02em;
+      }
 
-            </div>
+      .panel {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
+        backdrop-filter: blur(10px);
+      }
 
-            <!-- Sidebar Info -->
-            <aside class="space-y-6">
-                <div class="bg-blue-900 text-white p-6 rounded-xl">
-                    <h4 class="font-bold mb-2 uppercase text-xs tracking-widest text-blue-300">Quick Stats</h4>
-                    <ul class="space-y-4">
-                        <li>
-                            <span class="block text-2xl font-bold">89.4%</span>
-                            <span class="text-sm opacity-70 italic font-light">Accuracy (RF)</span>
-                        </li>
-                        <li>
-                            <span class="block text-2xl font-bold">14</span>
-                            <span class="text-sm opacity-70 italic font-light">Input Features</span>
-                        </li>
-                    </ul>
-                </div>
-            </aside>
+      .metric-card {
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
+        padding: 1rem;
+      }
+
+      .metric-card strong {
+        font-size: 1.7rem;
+        display: block;
+        line-height: 1.1;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 0.72rem;
+        padding: 0.2rem 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        background: #ffffff;
+      }
+
+      .accordion-content {
+        display: none;
+        animation: rise 0.3s ease;
+      }
+
+      .accordion-item.open .accordion-content {
+        display: block;
+      }
+
+      .accordion-toggle .arrow {
+        transition: transform 0.2s ease;
+      }
+
+      .accordion-item.open .accordion-toggle .arrow {
+        transform: rotate(90deg);
+      }
+
+      .chart-wrap {
+        position: relative;
+        min-height: 320px;
+        height: 320px;
+      }
+
+      .notice {
+        border: 1px dashed #94a3b8;
+        border-radius: 12px;
+        background: #f8fafc;
+        color: #334155;
+        padding: 0.9rem;
+        font-size: 0.9rem;
+      }
+
+      .badge {
+        display: inline-flex;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        padding: 0.2rem 0.6rem;
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #334155;
+        background: #f8fafc;
+      }
+
+      .fade-in {
+        animation: rise 0.4s ease;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .chart-wrap {
+          min-height: 280px;
+          height: 280px;
+        }
+
+        .desktop-nav {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body class="leading-relaxed">
+    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-lg bg-teal-700 text-white flex items-center justify-center font-black">E</div>
+          <div>
+            <p class="font-extrabold tracking-tight text-lg">EDA Studio</p>
+            <p class="text-xs text-slate-500">Stanford Question Answering Dataset (SQuAD 1.1)</p>
+          </div>
         </div>
-    </div>
-</body>
+        <div class="desktop-nav flex items-center gap-5 text-xs uppercase tracking-wider font-bold text-slate-500">
+          <a href="index.html" class="hover:text-teal-700">Overview</a>
+          <a href="tabular.html" class="hover:text-teal-700">Tabular</a>
+          <a href="text.html" class="text-teal-700">Text</a>
+          <a href="image.html" class="hover:text-teal-700">Image</a>
+          <a href="multimodal.html" class="hover:text-teal-700">Multimodal</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-7">
+      <div class="panel p-6 sm:p-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div>
+            <p class="chip mb-3">Technical EDA Report</p>
+            <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">Domain: Text Data Analysis</h1>
+            <p class="text-slate-600 max-w-3xl">
+              Exploratory analysis of the Stanford Question Answering Dataset (SQuAD 1.1). All metrics and visualizations are generated at runtime from
+              <strong>plotly_data/eda_text_data.json</strong> and
+              <strong>plotly_data/eda_text_stats.txt</strong>.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="expandAllBtn" class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800">Expand All Sections</button>
+            <button id="collapseAllBtn" class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black">Collapse All Sections</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 space-y-6">
+      <section id="fatalMessage" class="hidden panel p-5 border border-red-300 bg-red-50 text-red-700 font-semibold"></section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 1</p>
+            <h2 class="text-xl font-extrabold">Analytical Methodology</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6">
+          <ul id="methodologyList" class="text-sm text-slate-700 list-disc ml-5 space-y-2"></ul>
+          <div id="methodologyNotice" class="notice mt-4 hidden"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 2</p>
+            <h2 class="text-xl font-extrabold">Dataset Overview and Schema</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 fade-in" id="overviewCards"></section>
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Train/Validation Partition</h3>
+              <div id="splitChart" class="chart-wrap"></div>
+            </div>
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Field-Level Missingness</h3>
+              <div id="missingOverviewChart" class="chart-wrap"></div>
+            </div>
+          </div>
+          <div class="overflow-auto panel border border-slate-200">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-4 py-3">Feature</th>
+                  <th class="px-4 py-3">Type</th>
+                  <th class="px-4 py-3">Description</th>
+                </tr>
+              </thead>
+              <tbody id="featureSummaryBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+          <div id="overviewNotice" class="notice hidden"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 3</p>
+            <h2 class="text-xl font-extrabold">Question Category Distribution</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Question Type Counts</h3>
+              <div id="questionTypeChart" class="chart-wrap"></div>
+            </div>
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Most Frequent Source Articles</h3>
+              <div id="topArticlesChart" class="chart-wrap"></div>
+            </div>
+          </div>
+          <div id="categoryHighlights" class="flex flex-wrap gap-2"></div>
+          <div id="categoryNotice" class="notice hidden"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 4</p>
+            <h2 class="text-xl font-extrabold">Text-Length Statistics</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Word Count Summary by Text Field</h3>
+              <div id="lengthSummaryChart" class="chart-wrap"></div>
+            </div>
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Histogram by Text Field</h3>
+              <div class="flex flex-wrap gap-2 mb-3" id="histogramSelector"></div>
+              <div id="lengthHistogramChart" class="chart-wrap"></div>
+            </div>
+          </div>
+          <div class="overflow-auto panel border border-slate-200">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-4 py-3">Text Field</th>
+                  <th class="px-4 py-3">Word Mean</th>
+                  <th class="px-4 py-3">Word Median</th>
+                  <th class="px-4 py-3">Word Std</th>
+                  <th class="px-4 py-3">Word Min</th>
+                  <th class="px-4 py-3">Word Max</th>
+                </tr>
+              </thead>
+              <tbody id="lengthTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+          <div id="lengthNotice" class="notice hidden"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 5</p>
+            <h2 class="text-xl font-extrabold">Lexical Frequency Analysis</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="lexicalCards"></div>
+          <div class="grid lg:grid-cols-3 gap-6">
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Top Question Terms</h3>
+              <div id="questionWordsChart" class="chart-wrap"></div>
+            </div>
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Top Context Terms</h3>
+              <div id="contextWordsChart" class="chart-wrap"></div>
+            </div>
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Top Answer Terms</h3>
+              <div id="answerWordsChart" class="chart-wrap"></div>
+            </div>
+          </div>
+          <div id="lexicalNote" class="notice hidden"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 6</p>
+            <h2 class="text-xl font-extrabold">N-gram Pattern Analysis</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Top Question Bigrams</h3>
+              <div id="bigramsChart" class="chart-wrap"></div>
+            </div>
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Top Question Trigrams</h3>
+              <div id="trigramsChart" class="chart-wrap"></div>
+            </div>
+          </div>
+          <div id="ngramNote" class="notice hidden"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 7</p>
+            <h2 class="text-xl font-extrabold">Category-Specific Linguistic Patterns</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Average Question and Answer Length by Category</h3>
+              <div id="categoryLengthChart" class="chart-wrap"></div>
+            </div>
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Average Answer Position Ratio by Category</h3>
+              <div id="answerPositionChart" class="chart-wrap"></div>
+            </div>
+          </div>
+          <div class="panel p-5 border border-slate-200">
+            <h3 class="font-bold mb-3">Top Keywords by Question Category</h3>
+            <div id="categoryKeywords" class="space-y-3"></div>
+          </div>
+          <div id="categorySpecificNotice" class="notice hidden"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 8</p>
+            <h2 class="text-xl font-extrabold">Sample Documents and Examples (Availability)</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-4">
+          <div id="sampleDocsNotice" class="notice"></div>
+          <div id="sampleDocsAlt" class="text-sm text-slate-700"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 9</p>
+            <h2 class="text-xl font-extrabold">Preprocessing Recommendations</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-4">
+          <ul id="preprocessingList" class="text-sm text-slate-700 list-disc ml-5 space-y-2"></ul>
+          <div id="preprocessingNotice" class="notice hidden"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 10</p>
+            <h2 class="text-xl font-extrabold">Exploratory Visual Diagnostics</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-5">
+          <p class="text-sm text-slate-600">
+            The following five diagnostic artifacts are integrated from the prior text-domain report and preserved as complementary visual evidence.
+          </p>
+          <div id="diagnosticPartsGrid" class="grid lg:grid-cols-2 gap-5"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 11</p>
+            <h2 class="text-xl font-extrabold">Final Summary</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6">
+          <div id="finalSummary" class="grid md:grid-cols-3 gap-4"></div>
+          <div id="finalSummaryNotice" class="notice mt-4 hidden"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-8 border-t border-slate-200 bg-white/75">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-xs uppercase tracking-[0.22em] text-slate-500 text-center">
+        HCMUT - Machine Learning Final Report - Text EDA Generated from Structured Metadata
+      </div>
+    </footer>
+
+    <script>
+      const JSON_PATH = "plotly_data/eda_text_data.json";
+      const TXT_PATH = "plotly_data/eda_text_stats.txt";
+
+      const BASE_LAYOUT = {
+        margin: { t: 34, r: 16, b: 52, l: 54 },
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        font: { family: "Space Grotesk, sans-serif", color: "#0f172a" },
+      };
+
+      const DIAGNOSTIC_PARTS = [
+        {
+          id: "length_distribution",
+          index: "1",
+          title: "Length Distribution",
+          note: "Distribution of token counts across context, question, and answer fields.",
+          img: "assets/text_01_length_distributions.png",
+        },
+        {
+          id: "question_types",
+          index: "2",
+          title: "Question Type Analysis",
+          note: "Relative frequency of interrogative forms used in question prompts.",
+          img: "assets/text_02_question_types.png",
+        },
+        {
+          id: "top_titles",
+          index: "3",
+          title: "Top Articles",
+          note: "Articles contributing the highest number of question-answer pairs.",
+          img: "assets/text_03_top_titles.png",
+        },
+        {
+          id: "word_cloud",
+          index: "4",
+          title: "Question Word Cloud",
+          note: "High-frequency lexical items in question text.",
+          img: "assets/text_04_wordcloud_questions.png",
+        },
+        {
+          id: "top_words_position",
+          index: "5",
+          title: "Top Words and Answer Position",
+          note: "Frequent terms and normalized answer-start position behavior.",
+          img: "assets/text_05_top_words_and_position.png",
+        },
+      ];
+
+      function formatNumber(value, decimals = 0) {
+        if (typeof value !== "number" || Number.isNaN(value)) {
+          return "N/A";
+        }
+        return value.toLocaleString("en-US", {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        });
+      }
+
+      function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = text;
+        }
+      }
+
+      function showNotice(id, message) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = message;
+          el.classList.remove("hidden");
+        }
+      }
+
+      function clearNotice(id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = "";
+          el.classList.add("hidden");
+        }
+      }
+
+      function makePlot(id, data, layout) {
+        const el = document.getElementById(id);
+        if (!el) {
+          return;
+        }
+        Plotly.react(id, data, Object.assign({}, BASE_LAYOUT, layout || {}), {
+          responsive: true,
+          displayModeBar: false,
+        });
+      }
+
+      function parseValue(raw) {
+        const value = (raw || "").trim();
+        if (!value) {
+          return "";
+        }
+        const numeric = Number(value.replace(/,/g, ""));
+        if (!Number.isNaN(numeric) && /^-?\d+(\.\d+)?$/.test(value.replace(/,/g, ""))) {
+          return numeric;
+        }
+        return value;
+      }
+
+      function parseReportText(text) {
+        const lines = (text || "").split(/\r?\n/);
+        const result = {
+          global: {},
+          sections: {},
+          order: [],
+        };
+
+        let currentSection = "global";
+
+        lines.forEach((line) => {
+          const trimmed = line.trim();
+          if (!trimmed || /^=+$/.test(trimmed)) {
+            return;
+          }
+
+          const numberedSection = trimmed.match(/^\d+\)\s+(.+)$/);
+          if (numberedSection) {
+            currentSection = numberedSection[1].trim();
+            if (!result.sections[currentSection]) {
+              result.sections[currentSection] = {};
+              result.order.push(currentSection);
+            }
+            return;
+          }
+
+          if (/^Final Summary$/i.test(trimmed)) {
+            currentSection = "Final Summary";
+            if (!result.sections[currentSection]) {
+              result.sections[currentSection] = {};
+              result.order.push(currentSection);
+            }
+            return;
+          }
+
+          const kv = trimmed.match(/^([^:]+):\s*(.*)$/);
+          if (kv) {
+            const key = kv[1].trim();
+            const value = parseValue(kv[2]);
+            if (currentSection === "global") {
+              result.global[key] = value;
+            } else {
+              result.sections[currentSection][key] = value;
+            }
+          }
+        });
+
+        return result;
+      }
+
+      function setupAccordion() {
+        document.querySelectorAll(".accordion-toggle").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            btn.closest(".accordion-item").classList.toggle("open");
+          });
+        });
+
+        document.getElementById("expandAllBtn").addEventListener("click", () => {
+          document.querySelectorAll(".accordion-item").forEach((item) => {
+            item.classList.add("open");
+          });
+        });
+
+        document.getElementById("collapseAllBtn").addEventListener("click", () => {
+          document.querySelectorAll(".accordion-item").forEach((item) => {
+            item.classList.remove("open");
+          });
+        });
+      }
+
+      function renderMethodology(reportTxt) {
+        const method = reportTxt.sections["Methodology"] || {};
+        const list = document.getElementById("methodologyList");
+        list.innerHTML = "";
+
+        const entries = [
+          ["Objective", method.objective],
+          ["Data Source", method.data_source],
+          ["Analysis Scope", method.analysis_scope],
+          ["Raw Text Note", method.note_on_raw_text],
+        ];
+
+        let added = 0;
+        entries.forEach(([label, value]) => {
+          if (!value) {
+            return;
+          }
+          const li = document.createElement("li");
+          li.textContent = label + ": " + value;
+          list.appendChild(li);
+          added += 1;
+        });
+
+        if (!added) {
+          showNotice(
+            "methodologyNotice",
+            "Methodology metadata is unavailable in the TXT source."
+          );
+        } else {
+          clearNotice("methodologyNotice");
+        }
+      }
+
+      function renderDatasetOverview(data, reportTxt) {
+        const overview = data.dataset_overview || {};
+        const cards = document.getElementById("overviewCards");
+        cards.innerHTML = "";
+
+        const cardSpecs = [
+          ["Total QA Pairs", overview.n_total, 0],
+          ["Training Samples", overview.n_train, 0],
+          ["Validation Samples", overview.n_val, 0],
+          ["Unique Articles", overview.n_unique_titles, 0],
+          ["Unique Contexts", overview.n_unique_contexts, 0],
+          ["Avg Questions per Article", overview.avg_questions_per_article, 1],
+          ["Avg Questions per Context", overview.avg_questions_per_context, 1],
+          ["Duplicate Questions", overview.duplicate_questions, 0],
+        ];
+
+        cardSpecs.forEach(([label, value, decimals]) => {
+          const card = document.createElement("div");
+          card.className = "metric-card";
+          card.innerHTML =
+            "<span class='text-xs uppercase tracking-wide text-slate-500 font-bold'>" +
+            label +
+            "</span><strong>" +
+            formatNumber(value, decimals) +
+            "</strong>";
+          cards.appendChild(card);
+        });
+
+        const splitValues = [overview.n_train, overview.n_val];
+        if (splitValues.every((v) => typeof v === "number")) {
+          makePlot(
+            "splitChart",
+            [
+              {
+                type: "pie",
+                labels: ["Train", "Validation"],
+                values: splitValues,
+                hole: 0.56,
+                marker: { colors: ["#0f766e", "#f59e0b"] },
+                textinfo: "label+percent",
+              },
+            ],
+            {
+              margin: { t: 8, r: 10, b: 10, l: 10 },
+              legend: { orientation: "h", y: -0.1 },
+            }
+          );
+        }
+
+        const missing = overview.missing_values || {};
+        const missingLabels = Object.keys(missing);
+        const missingValues = missingLabels.map((k) => missing[k]);
+        if (
+          missingLabels.length > 0 &&
+          missingValues.every((v) => typeof v === "number")
+        ) {
+          makePlot(
+            "missingOverviewChart",
+            [
+              {
+                type: "bar",
+                x: missingLabels,
+                y: missingValues,
+                marker: { color: "#2563eb" },
+              },
+            ],
+            {
+              xaxis: { title: "Field" },
+              yaxis: { title: "Missing Count" },
+            }
+          );
+        }
+
+        const body = document.getElementById("featureSummaryBody");
+        body.innerHTML = "";
+        const featureDescriptions = overview.feature_descriptions || [];
+        featureDescriptions.forEach((item) => {
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td class='px-4 py-3 font-semibold'>" +
+            (item.name || "N/A") +
+            "</td><td class='px-4 py-3'>" +
+            (item.type || "N/A") +
+            "</td><td class='px-4 py-3 text-slate-600'>" +
+            (item.description || "N/A") +
+            "</td>";
+          body.appendChild(row);
+        });
+
+        if (!featureDescriptions.length) {
+          showNotice(
+            "overviewNotice",
+            "Feature schema entries are unavailable in the metadata payload."
+          );
+        } else {
+          clearNotice("overviewNotice");
+        }
+
+        const txtOverview = reportTxt.sections["Dataset Overview"] || {};
+        if (typeof overview.n_total !== "number" && txtOverview.total_qa_pairs) {
+          showNotice(
+            "overviewNotice",
+            "JSON overview is incomplete. TXT fallback is available, but visualization fidelity may be reduced."
+          );
+        }
+      }
+
+      function renderCategoryDistribution(data, reportTxt) {
+        const dist = data.category_distribution || {};
+        const questionTypes = dist.question_types || [];
+        const labels = questionTypes.map((item) => item.category || "Unknown");
+        const counts = questionTypes.map((item) => item.count || 0);
+
+        if (labels.length > 0) {
+          makePlot(
+            "questionTypeChart",
+            [
+              {
+                type: "bar",
+                x: labels,
+                y: counts,
+                marker: { color: "#0f766e" },
+              },
+            ],
+            { yaxis: { title: "Count" }, xaxis: { automargin: true } }
+          );
+        }
+
+        const topArticles = dist.top_articles || [];
+        if (topArticles.length > 0) {
+          makePlot(
+            "topArticlesChart",
+            [
+              {
+                type: "bar",
+                orientation: "h",
+                y: topArticles
+                  .slice(0, 12)
+                  .map((item) => item.title || "Unknown")
+                  .reverse(),
+                x: topArticles
+                  .slice(0, 12)
+                  .map((item) => item.count || 0)
+                  .reverse(),
+                marker: { color: "#2563eb" },
+              },
+            ],
+            {
+              xaxis: { title: "Questions" },
+              yaxis: { automargin: true },
+              margin: { t: 20, r: 12, b: 50, l: 190 },
+            }
+          );
+        }
+
+        const highlight = document.getElementById("categoryHighlights");
+        highlight.innerHTML = "";
+        const txtSection = reportTxt.sections["Category Distribution"] || {};
+        const dominant = txtSection.dominant_type || "N/A";
+        const rarest = txtSection.rarest_type || "N/A";
+        const imbalance = dist.question_type_imbalance_ratio || txtSection.imbalance_ratio_max_to_min;
+
+        [
+          "Dominant Type: " + dominant,
+          "Rarest Type: " + rarest,
+          "Imbalance Ratio: " + (typeof imbalance === "number" ? formatNumber(imbalance, 2) + "x" : String(imbalance || "N/A")),
+          "Type Categories: " + formatNumber((labels || []).length, 0),
+        ].forEach((text) => {
+          const span = document.createElement("span");
+          span.className = "badge";
+          span.textContent = text;
+          highlight.appendChild(span);
+        });
+
+        if (!questionTypes.length) {
+          showNotice(
+            "categoryNotice",
+            "Question-type distribution metadata is unavailable."
+          );
+        } else {
+          clearNotice("categoryNotice");
+        }
+      }
+
+      function renderTextLengthAnalysis(data, reportTxt) {
+        const length = data.text_length || {};
+        const fields = ["context", "question", "answer"];
+
+        const meanVals = [];
+        const medianVals = [];
+        const minVals = [];
+        const maxVals = [];
+
+        const body = document.getElementById("lengthTableBody");
+        body.innerHTML = "";
+
+        fields.forEach((field) => {
+          const stats = (length[field] && length[field].word_count) || {};
+          meanVals.push(stats.mean ?? null);
+          medianVals.push(stats.median ?? null);
+          minVals.push(stats.min ?? null);
+          maxVals.push(stats.max ?? null);
+
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td class='px-4 py-3 font-semibold capitalize'>" +
+            field +
+            "</td><td class='px-4 py-3'>" +
+            formatNumber(stats.mean, 1) +
+            "</td><td class='px-4 py-3'>" +
+            formatNumber(stats.median, 1) +
+            "</td><td class='px-4 py-3'>" +
+            formatNumber(stats.std, 1) +
+            "</td><td class='px-4 py-3'>" +
+            formatNumber(stats.min, 0) +
+            "</td><td class='px-4 py-3'>" +
+            formatNumber(stats.max, 0) +
+            "</td>";
+          body.appendChild(row);
+        });
+
+        if (meanVals.some((v) => typeof v === "number")) {
+          makePlot(
+            "lengthSummaryChart",
+            [
+              {
+                type: "bar",
+                name: "Mean",
+                x: fields,
+                y: meanVals,
+                marker: { color: "#0f766e" },
+              },
+              {
+                type: "bar",
+                name: "Median",
+                x: fields,
+                y: medianVals,
+                marker: { color: "#f59e0b" },
+              },
+              {
+                type: "bar",
+                name: "Min",
+                x: fields,
+                y: minVals,
+                marker: { color: "#93c5fd" },
+              },
+              {
+                type: "bar",
+                name: "Max",
+                x: fields,
+                y: maxVals,
+                marker: { color: "#1d4ed8" },
+              },
+            ],
+            {
+              barmode: "group",
+              yaxis: { title: "Word Count" },
+            }
+          );
+        }
+
+        const selector = document.getElementById("histogramSelector");
+        selector.innerHTML = "";
+
+        function drawHistogram(field) {
+          const hist = (length[field] && length[field].word_count) || {};
+          const counts = hist.histogram_values || [];
+          const edges = hist.histogram_edges || [];
+          if (!counts.length || edges.length < 2) {
+            showNotice(
+              "lengthNotice",
+              "Histogram bin data is unavailable for one or more text fields."
+            );
+            return;
+          }
+
+          clearNotice("lengthNotice");
+          const centers = edges.slice(0, -1).map((edge, i) =>
+            Number(((edge + edges[i + 1]) / 2).toFixed(3))
+          );
+
+          makePlot(
+            "lengthHistogramChart",
+            [
+              {
+                type: "bar",
+                x: centers,
+                y: counts,
+                marker: { color: "#2563eb" },
+              },
+            ],
+            {
+              title: field.charAt(0).toUpperCase() + field.slice(1) + " Word Histogram",
+              xaxis: { title: "Word Bin Center" },
+              yaxis: { title: "Count" },
+            }
+          );
+        }
+
+        fields.forEach((field, index) => {
+          const btn = document.createElement("button");
+          btn.className =
+            "px-3 py-1.5 rounded-full border border-slate-300 text-xs font-bold uppercase tracking-wider text-slate-700 hover:bg-slate-100";
+          btn.textContent = field;
+          btn.addEventListener("click", () => drawHistogram(field));
+          selector.appendChild(btn);
+          if (index === 0) {
+            drawHistogram(field);
+          }
+        });
+
+        const txtLength = reportTxt.sections["Text Length Analysis"] || {};
+        if (!txtLength.length_takeaway) {
+          showNotice(
+            "lengthNotice",
+            "Length-analysis interpretation text is unavailable in the TXT source."
+          );
+        }
+      }
+
+      function getTopWords(wordGroup, limit) {
+        const items = (wordGroup && wordGroup.top_30) || [];
+        return items.slice(0, limit);
+      }
+
+      function renderLexicalAnalysis(data, reportTxt) {
+        const lexical = data.word_frequency || {};
+        const cards = document.getElementById("lexicalCards");
+        cards.innerHTML = "";
+
+        const cardItems = [
+          ["Question Vocabulary", lexical.question && lexical.question.vocab_size, 0],
+          ["Context Vocabulary", lexical.context && lexical.context.vocab_size, 0],
+          ["Answer Vocabulary", lexical.answer && lexical.answer.vocab_size, 0],
+          ["Question Stopword Ratio", lexical.question && lexical.question.stopword_ratio_pct, 1],
+        ];
+
+        cardItems.forEach(([label, value, decimals]) => {
+          const card = document.createElement("div");
+          card.className = "metric-card";
+          const suffix = label.includes("Ratio") ? "%" : "";
+          card.innerHTML =
+            "<span class='text-xs uppercase tracking-wide text-slate-500 font-bold'>" +
+            label +
+            "</span><strong>" +
+            formatNumber(value, decimals) +
+            suffix +
+            "</strong>";
+          cards.appendChild(card);
+        });
+
+        function drawWordChart(containerId, title, group, color) {
+          const topWords = getTopWords(group, 12);
+          if (!topWords.length) {
+            return false;
+          }
+          makePlot(
+            containerId,
+            [
+              {
+                type: "bar",
+                orientation: "h",
+                y: topWords
+                  .map((item) => item.word || "N/A")
+                  .reverse(),
+                x: topWords
+                  .map((item) => item.count || 0)
+                  .reverse(),
+                marker: { color: color },
+              },
+            ],
+            {
+              title: title,
+              xaxis: { title: "Count" },
+              yaxis: { automargin: true },
+              margin: { t: 28, r: 10, b: 40, l: 110 },
+            }
+          );
+          return true;
+        }
+
+        const qOk = drawWordChart("questionWordsChart", "Question Terms", lexical.question, "#0f766e");
+        const cOk = drawWordChart("contextWordsChart", "Context Terms", lexical.context, "#2563eb");
+        const aOk = drawWordChart("answerWordsChart", "Answer Terms", lexical.answer, "#f59e0b");
+
+        const txtLexical = reportTxt.sections["Lexical / Word Frequency (Top Terms)"] || {};
+        if (!qOk || !cOk || !aOk) {
+          showNotice(
+            "lexicalNote",
+            "One or more top-term frequency lists are unavailable in metadata."
+          );
+        } else if (txtLexical.wordcloud_note) {
+          showNotice("lexicalNote", txtLexical.wordcloud_note);
+        } else {
+          clearNotice("lexicalNote");
+        }
+      }
+
+      function renderNgramAnalysis(data, reportTxt) {
+        const ngrams = data.ngram_analysis || {};
+        const bigrams = ngrams.question_bigrams || [];
+        const trigrams = ngrams.question_trigrams || [];
+
+        if (bigrams.length) {
+          makePlot(
+            "bigramsChart",
+            [
+              {
+                type: "bar",
+                orientation: "h",
+                y: bigrams
+                  .slice(0, 12)
+                  .map((item) => item.ngram || "N/A")
+                  .reverse(),
+                x: bigrams
+                  .slice(0, 12)
+                  .map((item) => item.count || 0)
+                  .reverse(),
+                marker: { color: "#0f766e" },
+              },
+            ],
+            {
+              xaxis: { title: "Count" },
+              yaxis: { automargin: true },
+              margin: { t: 20, r: 12, b: 40, l: 170 },
+            }
+          );
+        }
+
+        if (trigrams.length) {
+          makePlot(
+            "trigramsChart",
+            [
+              {
+                type: "bar",
+                orientation: "h",
+                y: trigrams
+                  .slice(0, 12)
+                  .map((item) => item.ngram || "N/A")
+                  .reverse(),
+                x: trigrams
+                  .slice(0, 12)
+                  .map((item) => item.count || 0)
+                  .reverse(),
+                marker: { color: "#2563eb" },
+              },
+            ],
+            {
+              xaxis: { title: "Count" },
+              yaxis: { automargin: true },
+              margin: { t: 20, r: 12, b: 40, l: 190 },
+            }
+          );
+        }
+
+        const txtNgram = reportTxt.sections["N-gram Analysis"] || {};
+        if (!bigrams.length || !trigrams.length) {
+          showNotice(
+            "ngramNote",
+            "N-gram entries are incomplete in the metadata payload."
+          );
+        } else if (txtNgram.ngram_takeaway) {
+          showNotice("ngramNote", txtNgram.ngram_takeaway);
+        } else {
+          clearNotice("ngramNote");
+        }
+      }
+
+      function renderCategorySpecific(data, reportTxt) {
+        const cat = data.category_specific || {};
+        const lengthByCategory = cat.length_by_category || [];
+        const answerPos = cat.answer_position_by_category || {};
+
+        if (lengthByCategory.length) {
+          makePlot(
+            "categoryLengthChart",
+            [
+              {
+                type: "bar",
+                name: "Avg Question Words",
+                x: lengthByCategory.map((item) => item.category || "N/A"),
+                y: lengthByCategory.map((item) => item.avg_question_words || 0),
+                marker: { color: "#0f766e" },
+              },
+              {
+                type: "bar",
+                name: "Avg Answer Words",
+                x: lengthByCategory.map((item) => item.category || "N/A"),
+                y: lengthByCategory.map((item) => item.avg_answer_words || 0),
+                marker: { color: "#f59e0b" },
+              },
+            ],
+            {
+              barmode: "group",
+              yaxis: { title: "Average Words" },
+            }
+          );
+        }
+
+        const posKeys = Object.keys(answerPos);
+        if (posKeys.length) {
+          makePlot(
+            "answerPositionChart",
+            [
+              {
+                type: "bar",
+                x: posKeys,
+                y: posKeys.map((key) => answerPos[key]),
+                marker: { color: "#2563eb" },
+              },
+            ],
+            {
+              yaxis: { title: "Position Ratio (0 to 1)", range: [0, 1] },
+            }
+          );
+        }
+
+        const keywordWrap = document.getElementById("categoryKeywords");
+        keywordWrap.innerHTML = "";
+        const wordsByCategory = cat.words_per_category || {};
+        Object.keys(wordsByCategory).forEach((label) => {
+          const row = document.createElement("div");
+          const words = wordsByCategory[label]
+            .slice(0, 10)
+            .map((item) => item.word || "N/A")
+            .join(", ");
+          row.innerHTML =
+            "<p class='font-semibold text-slate-800 mb-1'>" +
+            label +
+            "</p><p class='text-sm text-slate-600'>" +
+            words +
+            "</p>";
+          keywordWrap.appendChild(row);
+        });
+
+        const txtCategory = reportTxt.sections["Category-Specific Analysis"] || {};
+        if (!lengthByCategory.length || !posKeys.length) {
+          showNotice(
+            "categorySpecificNotice",
+            "Category-specific metrics are incomplete in the metadata payload."
+          );
+        } else if (txtCategory.category_takeaway) {
+          showNotice("categorySpecificNotice", txtCategory.category_takeaway);
+        } else {
+          clearNotice("categorySpecificNotice");
+        }
+      }
+
+      function renderSampleDocuments(reportTxt) {
+        const section = reportTxt.sections["Sample Documents / Examples"] || {};
+        const status = section.sample_docs_status;
+        const reason = section.reason;
+        const alternative = section.alternative;
+
+        const message = status
+          ? "Status: " + status + (reason ? ". " + reason : "")
+          : "Sample-level records are unavailable in the provided metadata files.";
+        setText("sampleDocsNotice", message);
+        setText(
+          "sampleDocsAlt",
+          alternative || "Alternative: extract representative examples from original dataset rows by question type."
+        );
+      }
+
+      function renderDiagnosticParts() {
+        const root = document.getElementById("diagnosticPartsGrid");
+        if (!root) {
+          return;
+        }
+        root.innerHTML = DIAGNOSTIC_PARTS.map(
+          (part) =>
+            "<article class='panel p-4 border border-slate-200'>" +
+            "<div class='flex items-start gap-3 mb-3'>" +
+            "<span class='h-7 w-7 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center'>" +
+            part.index +
+            "</span>" +
+            "<div><h3 class='font-bold text-slate-900'>" +
+            part.title +
+            "</h3><p class='text-sm text-slate-600'>" +
+            part.note +
+            "</p></div></div>" +
+            "<img src='" +
+            part.img +
+            "' alt='" +
+            part.title +
+            "' class='w-full rounded-lg border border-slate-200 shadow-sm' />" +
+            "</article>"
+        ).join("");
+      }
+
+      function renderPreprocessing(data, reportTxt) {
+        const list = document.getElementById("preprocessingList");
+        list.innerHTML = "";
+
+        const fromJson = (data.insights && data.insights.preprocessing_suggestions) || [];
+        const txtSection = reportTxt.sections["Preprocessing Suggestions"] || {};
+
+        let items = [];
+        if (fromJson.length) {
+          items = fromJson.slice();
+        } else {
+          items = Object.keys(txtSection)
+            .filter((k) => k !== "")
+            .map((k) => k.replace(/_/g, " ") + ": " + txtSection[k]);
+        }
+
+        if (!items.length) {
+          showNotice(
+            "preprocessingNotice",
+            "Preprocessing recommendations are unavailable in the provided metadata."
+          );
+          return;
+        }
+
+        clearNotice("preprocessingNotice");
+        items.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          list.appendChild(li);
+        });
+      }
+
+      function renderFinalSummary(reportTxt) {
+        const container = document.getElementById("finalSummary");
+        container.innerHTML = "";
+
+        const summary = reportTxt.sections["Final Summary"] || {};
+        const rows = [
+          ["Overall Quality", summary.overall_quality],
+          ["Main Risk", summary.main_risk],
+          ["Modeling Implication", summary.modeling_implication],
+        ];
+
+        let count = 0;
+        rows.forEach(([label, value]) => {
+          if (!value) {
+            return;
+          }
+          const card = document.createElement("div");
+          card.className = "metric-card";
+          card.innerHTML =
+            "<span class='text-xs uppercase tracking-wide text-slate-500 font-bold'>" +
+            label +
+            "</span><p class='mt-2 text-sm text-slate-700'>" +
+            value +
+            "</p>";
+          container.appendChild(card);
+          count += 1;
+        });
+
+        if (!count) {
+          showNotice(
+            "finalSummaryNotice",
+            "Final summary fields are unavailable in the TXT metadata."
+          );
+        } else {
+          clearNotice("finalSummaryNotice");
+        }
+      }
+
+      function showFatal(message) {
+        const panel = document.getElementById("fatalMessage");
+        panel.classList.remove("hidden");
+        panel.textContent = "Metadata loading failed: " + message;
+      }
+
+      async function loadAndRender() {
+        try {
+          const [jsonRes, txtRes] = await Promise.all([fetch(JSON_PATH), fetch(TXT_PATH)]);
+          if (!jsonRes.ok || !txtRes.ok) {
+            throw new Error("HTTP " + jsonRes.status + " / " + txtRes.status);
+          }
+
+          const data = await jsonRes.json();
+          const txtRaw = await txtRes.text();
+          const reportTxt = parseReportText(txtRaw);
+
+          renderMethodology(reportTxt);
+          renderDatasetOverview(data, reportTxt);
+          renderCategoryDistribution(data, reportTxt);
+          renderTextLengthAnalysis(data, reportTxt);
+          renderLexicalAnalysis(data, reportTxt);
+          renderNgramAnalysis(data, reportTxt);
+          renderCategorySpecific(data, reportTxt);
+          renderSampleDocuments(reportTxt);
+          renderPreprocessing(data, reportTxt);
+          renderDiagnosticParts();
+          renderFinalSummary(reportTxt);
+        } catch (error) {
+          showFatal(error.message);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        setupAccordion();
+        loadAndRender();
+      });
+    </script>
+  </body>
 </html>

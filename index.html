@@ -1,161 +1,280 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ML Project | HCMUT CO3017</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-slate-50 text-slate-900 font-sans">
-
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-slate-50 text-slate-900 font-sans">
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white border-b border-slate-200 py-4 px-8 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center text-white font-bold">B</div>
-            <span class="font-bold tracking-tight text-xl uppercase text-blue-900">HCMUT ML Team</span>
-        </div>
-        <div class="hidden md:flex gap-8 font-medium text-slate-600">
-            <a href="index.html" class="text-blue-600 border-b-2 border-blue-600">Home</a>
-            <a href="tabular.html" class="hover:text-blue-600 transition">Tabular</a>
-            <a href="text.html" class="hover:text-blue-600 transition">Text</a>
-            <a href="image.html" class="hover:text-blue-600 transition">Image</a>
-            <a href="multimodal.html" class="hover:text-blue-600 transition">Multimodal</a>
-        </div>
+    <nav
+      class="sticky top-0 z-50 bg-white border-b border-slate-200 py-4 px-8 flex justify-between items-center"
+    >
+      <div class="flex items-center gap-2">
+        <div
+          class="w-8 h-8 bg-blue-700 rounded-lg flex items-center justify-center text-white font-bold"
+          >B</div
+        >
+        <span class="font-bold tracking-tight text-xl uppercase text-blue-900"
+          >HCMUT ML Team</span
+        >
+      </div>
+      <div class="hidden md:flex gap-8 font-medium text-slate-600">
+        <a href="index.html" class="text-blue-600 border-b-2 border-blue-600"
+          >Home</a
+        >
+        <a href="tabular.html" class="hover:text-blue-600 transition"
+          >Tabular</a
+        >
+        <a href="text.html" class="hover:text-blue-600 transition">Text</a>
+        <a href="image.html" class="hover:text-blue-600 transition">Image</a>
+        <a href="multimodal.html" class="hover:text-blue-600 transition"
+          >Multimodal</a
+        >
+      </div>
     </nav>
 
     <!-- Header Section -->
     <header class="bg-white border-b border-slate-200">
-        <div class="max-w-6xl mx-auto px-8 py-16 text-center">
-            <h2 class="text-blue-600 font-semibold uppercase tracking-widest mb-4">Course: Machine Learning (CO3017) | Semester I, 2025-2026</h2>
-            <h1 class="text-5xl font-extrabold text-slate-900 mb-6">Traditional Pipeline Analysis across Four Data Domains</h1>
-            <p class="text-xl text-slate-600 mb-8 max-w-3xl mx-auto italic">Instructor: <span class="text-slate-900 font-bold">TS. Lê Thành Sách</span></p>
-            
-            <div class="flex justify-center gap-4">
-                <a href="#" class="bg-slate-900 text-white px-6 py-3 rounded-md font-medium flex items-center gap-2 hover:bg-slate-800 transition">
-                    <i class="fab fa-github"></i> GitHub Repo
-                </a>
-                <a href="#" class="bg-blue-600 text-white px-6 py-3 rounded-md font-medium flex items-center gap-2 hover:bg-blue-700 transition">
-                    <i class="fas fa-file-pdf"></i> Download PDF Report
-                </a>
-                <a href="#" class="border border-slate-300 px-6 py-3 rounded-md font-medium flex items-center gap-2 hover:bg-slate-50 transition">
-                    <i class="fas fa-code"></i> View Colab
-                </a>
-            </div>
+      <div class="max-w-6xl mx-auto px-8 py-16 text-center">
+        <h2 class="text-blue-600 font-semibold uppercase tracking-widest mb-4"
+          >Course: Machine Learning (CO3017) | Semester I, 2025-2026</h2
+        >
+        <h1 class="text-5xl font-extrabold text-slate-900 mb-6"
+          >Traditional Pipeline Analysis across Four Data Domains</h1
+        >
+        <p class="text-xl text-slate-600 mb-8 max-w-3xl mx-auto italic"
+          >Instructor:
+          <span class="text-slate-900 font-bold">TS. Lê Thành Sách</span></p
+        >
+
+        <div class="flex justify-center gap-4">
+          <a
+            href="#"
+            class="bg-slate-900 text-white px-6 py-3 rounded-md font-medium flex items-center gap-2 hover:bg-slate-800 transition"
+          >
+            <i class="fab fa-github"></i> GitHub Repo
+          </a>
+          <a
+            href="#"
+            class="bg-blue-600 text-white px-6 py-3 rounded-md font-medium flex items-center gap-2 hover:bg-blue-700 transition"
+          >
+            <i class="fas fa-file-pdf"></i> Download PDF Report
+          </a>
+          <a
+            href="#"
+            class="border border-slate-300 px-6 py-3 rounded-md font-medium flex items-center gap-2 hover:bg-slate-50 transition"
+          >
+            <i class="fas fa-code"></i> View Colab
+          </a>
         </div>
+      </div>
     </header>
 
     <!-- Project Summary & Repo Structure -->
     <main class="max-w-6xl mx-auto px-8 py-16">
-        <div class="grid md:grid-cols-2 gap-12">
-            <!-- Summary -->
-            <section>
-                <h3 class="text-2xl font-bold mb-4 border-l-4 border-blue-600 pl-4">Project Summary</h3>
-                <p class="text-slate-600 leading-relaxed mb-6">
-                    This project implements a comprehensive Traditional Machine Learning Pipeline. We investigate four distinct data types, focusing on feature engineering and classical classification models rather than end-to-end deep learning architectures.
-                </p>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="p-4 bg-white border border-slate-200 rounded-lg">
-                        <a href="tabular.html">
-                            <span class="block font-bold text-blue-700 text-lg">Tabular</span>
-                            <span class="text-sm text-slate-500 italic">Statistical Features</span>
-                        </a>
-                    </div>
-                    <div class="p-4 bg-white border border-slate-200 rounded-lg">
-                        <a href="text.html">
-                            <span class="block font-bold text-blue-700 text-lg">Text</span>
-                            <span class="text-sm text-slate-500 italic">BoW vs. Embeddings</span>
-                        </a>
-                    </div>
-                    <div class="p-4 bg-white border border-slate-200 rounded-lg">
-                        <a href="image.html">
-                            <span class="block font-bold text-blue-700 text-lg">Image</span>
-                            <span class="text-sm text-slate-500 italic">Pretrained Features</span>
-                        </a>
-                    </div>
-                    <div class="p-4 bg-white border border-slate-200 rounded-lg">
-                        <a href="multimodal.html">
-                            <span class="block font-bold text-blue-700 text-lg">Multimodal</span>
-                            <span class="text-sm text-slate-500 italic">Feature Fusion</span>
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Repo Structure -->
-            <section>
-                <h3 class="text-2xl font-bold mb-4 border-l-4 border-blue-600 pl-4">Repository Structure</h3>
-                <div class="bg-slate-900 rounded-lg p-6 text-blue-400 font-mono text-sm">
-                    <div class="mb-2"><i class="fas fa-folder-open mr-2 text-yellow-500"></i> project_root/</div>
-                    <div class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition">
-                        <i class="fas fa-folder mr-2 text-yellow-500"></i> <span class="font-bold">notebooks/</span> <span class="text-slate-500"># Detailed experiments</span>
-                    </div>
-                    <div class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition">
-                        <i class="fas fa-folder mr-2 text-yellow-500"></i> <span class="font-bold">modules/</span> <span class="text-slate-500"># Custom preprocessing scripts</span>
-                    </div>
-                    <div class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition">
-                        <i class="fas fa-folder mr-2 text-yellow-500"></i> <span class="font-bold">reports/</span> <span class="text-slate-500"># Documentation & Figures</span>
-                    </div>
-                    <div class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition">
-                        <i class="fas fa-folder mr-2 text-yellow-500"></i> <span class="font-bold">features/</span> <span class="text-slate-500"># Extracted .npy / .h5 files</span>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- Task Allocation Table -->
-        <section class="mt-20">
-            <h3 class="text-2xl font-bold mb-6 text-center italic">Team Members & Task Allocation</h3>
-            <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm">
-                <table class="w-full text-left bg-white">
-                    <thead class="bg-slate-50 border-b border-slate-200">
-                        <tr>
-                            <th class="px-6 py-4 font-bold text-slate-700 uppercase text-xs">Full Name</th>
-                            <th class="px-6 py-4 font-bold text-slate-700 uppercase text-xs">Student ID</th>
-                            <th class="px-6 py-4 font-bold text-slate-700 uppercase text-xs">Primary Responsibility</th>
-                            <th class="px-6 py-4 font-bold text-slate-700 uppercase text-xs">Contribution %</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        <tr>
-                            <td class="px-6 py-4 font-medium">Nguyen Van A</td>
-                            <td class="px-6 py-4 font-mono">211xxxx</td>
-                            <td class="px-6 py-4 text-slate-600 text-sm">Tabular Data & Preprocessing Pipeline</td>
-                            <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">20%</span></td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 font-medium">Tran Thi B</td>
-                            <td class="px-6 py-4 font-mono">211xxxx</td>
-                            <td class="px-6 py-4 text-slate-600 text-sm">NLP Pipeline (TF-IDF vs Embeddings)</td>
-                            <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">20%</span></td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 font-medium">Le Van C</td>
-                            <td class="px-6 py-4 font-mono">211xxxx</td>
-                            <td class="px-6 py-4 text-slate-600 text-sm">Image Feature Extraction (CNN Bottleneck)</td>
-                            <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">20%</span></td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 font-medium">Pham Duy D</td>
-                            <td class="px-6 py-4 font-mono">211xxxx</td>
-                            <td class="px-6 py-4 text-slate-600 text-sm">Multimodal Integration & Site Dev</td>
-                            <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">20%</span></td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 font-medium">Hoang Minh E</td>
-                            <td class="px-6 py-4 font-mono">211xxxx</td>
-                            <td class="px-6 py-4 text-slate-600 text-sm">Model Evaluation & Hyperparameter Tuning</td>
-                            <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">20%</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+      <div class="grid md:grid-cols-2 gap-12">
+        <!-- Summary -->
+        <section>
+          <h3 class="text-2xl font-bold mb-4 border-l-4 border-blue-600 pl-4"
+            >Project Summary</h3
+          >
+          <p class="text-slate-600 leading-relaxed mb-6">
+            This project implements a comprehensive Traditional Machine Learning
+            Pipeline. We investigate four distinct data types, focusing on
+            feature engineering and classical classification models rather than
+            end-to-end deep learning architectures.
+          </p>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 bg-white border border-slate-200 rounded-lg">
+              <a href="tabular.html">
+                <span class="block font-bold text-blue-700 text-lg"
+                  >Tabular</span
+                >
+                <span class="text-sm text-slate-500 italic"
+                  >Statistical Features</span
+                >
+              </a>
             </div>
+            <div class="p-4 bg-white border border-slate-200 rounded-lg">
+              <a href="text.html">
+                <span class="block font-bold text-blue-700 text-lg">Text</span>
+                <span class="text-sm text-slate-500 italic"
+                  >BoW vs. Embeddings</span
+                >
+              </a>
+            </div>
+            <div class="p-4 bg-white border border-slate-200 rounded-lg">
+              <a href="image.html">
+                <span class="block font-bold text-blue-700 text-lg">Image</span>
+                <span class="text-sm text-slate-500 italic"
+                  >Pretrained Features</span
+                >
+              </a>
+            </div>
+            <div class="p-4 bg-white border border-slate-200 rounded-lg">
+              <a href="multimodal.html">
+                <span class="block font-bold text-blue-700 text-lg"
+                  >Multimodal</span
+                >
+                <span class="text-sm text-slate-500 italic"
+                  >Feature Fusion</span
+                >
+              </a>
+            </div>
+          </div>
         </section>
+
+        <!-- Repo Structure -->
+        <section>
+          <h3 class="text-2xl font-bold mb-4 border-l-4 border-blue-600 pl-4"
+            >Repository Structure</h3
+          >
+          <div
+            class="bg-slate-900 rounded-lg p-6 text-blue-400 font-mono text-sm"
+          >
+            <div class="mb-2"
+              ><i class="fas fa-folder-open mr-2 text-yellow-500"></i>
+              project_root/</div
+            >
+            <div
+              class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
+            >
+              <i class="fas fa-folder mr-2 text-yellow-500"></i>
+              <span class="font-bold">notebooks/</span>
+              <span class="text-slate-500"># Detailed experiments</span>
+            </div>
+            <div
+              class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
+            >
+              <i class="fas fa-folder mr-2 text-yellow-500"></i>
+              <span class="font-bold">modules/</span>
+              <span class="text-slate-500"># Custom preprocessing scripts</span>
+            </div>
+            <div
+              class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
+            >
+              <i class="fas fa-folder mr-2 text-yellow-500"></i>
+              <span class="font-bold">reports/</span>
+              <span class="text-slate-500"># Documentation & Figures</span>
+            </div>
+            <div
+              class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
+            >
+              <i class="fas fa-folder mr-2 text-yellow-500"></i>
+              <span class="font-bold">features/</span>
+              <span class="text-slate-500"># Extracted .npy / .h5 files</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Task Allocation Table -->
+      <section class="mt-20">
+        <h3 class="text-2xl font-bold mb-6 text-center italic"
+          >Team Members & Task Allocation</h3
+        >
+        <div
+          class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm"
+        >
+          <table class="w-full text-left bg-white">
+            <thead class="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th class="px-6 py-4 font-bold text-slate-700 uppercase text-xs"
+                  >Full Name</th
+                >
+                <th class="px-6 py-4 font-bold text-slate-700 uppercase text-xs"
+                  >Student ID</th
+                >
+                <th class="px-6 py-4 font-bold text-slate-700 uppercase text-xs"
+                  >Primary Responsibility</th
+                >
+                <th class="px-6 py-4 font-bold text-slate-700 uppercase text-xs"
+                  >Contribution %</th
+                >
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <td class="px-6 py-4 font-medium">Nguyen Van A</td>
+                <td class="px-6 py-4 font-mono">211xxxx</td>
+                <td class="px-6 py-4 text-slate-600 text-sm"
+                  >Tabular Data & Preprocessing Pipeline</td
+                >
+                <td class="px-6 py-4"
+                  ><span
+                    class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold"
+                    >20%</span
+                  ></td
+                >
+              </tr>
+              <tr>
+                <td class="px-6 py-4 font-medium">Tran Thi B</td>
+                <td class="px-6 py-4 font-mono">211xxxx</td>
+                <td class="px-6 py-4 text-slate-600 text-sm"
+                  >NLP Pipeline (TF-IDF vs Embeddings)</td
+                >
+                <td class="px-6 py-4"
+                  ><span
+                    class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold"
+                    >20%</span
+                  ></td
+                >
+              </tr>
+              <tr>
+                <td class="px-6 py-4 font-medium">Le Van C</td>
+                <td class="px-6 py-4 font-mono">211xxxx</td>
+                <td class="px-6 py-4 text-slate-600 text-sm"
+                  >Image Feature Extraction (CNN Bottleneck)</td
+                >
+                <td class="px-6 py-4"
+                  ><span
+                    class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold"
+                    >20%</span
+                  ></td
+                >
+              </tr>
+              <tr>
+                <td class="px-6 py-4 font-medium">Pham Duy D</td>
+                <td class="px-6 py-4 font-mono">211xxxx</td>
+                <td class="px-6 py-4 text-slate-600 text-sm"
+                  >Multimodal Integration & Site Dev</td
+                >
+                <td class="px-6 py-4"
+                  ><span
+                    class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold"
+                    >20%</span
+                  ></td
+                >
+              </tr>
+              <tr>
+                <td class="px-6 py-4 font-medium">Hoang Minh E</td>
+                <td class="px-6 py-4 font-mono">211xxxx</td>
+                <td class="px-6 py-4 text-slate-600 text-sm"
+                  >Model Evaluation & Hyperparameter Tuning</td
+                >
+                <td class="px-6 py-4"
+                  ><span
+                    class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold"
+                    >20%</span
+                  ></td
+                >
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
-    <footer class="bg-slate-100 py-12 text-center text-slate-500 border-t border-slate-200">
-        <p>© 2026 HCMUT Machine Learning Team. Built with Tailwind CSS.</p>
+    <footer
+      class="bg-slate-100 py-12 text-center text-slate-500 border-t border-slate-200"
+    >
+      <p>© 2026 HCMUT Machine Learning Team. Built with Tailwind CSS.</p>
     </footer>
-
-</body>
+  </body>
 </html>
