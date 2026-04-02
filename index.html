@@ -9,52 +9,58 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --ink: #111827;
-            --muted: #475569;
-            --line: #d9e2ec;
-            --paper: #ffffff;
-            --bg-a: #f8fafc;
-            --bg-b: #edf2ff;
-            --accent: #0f766e;
-            --accent-2: #f59e0b;
-            --accent-3: #2563eb;
-            --danger: #dc2626;
-        }
+      :root {
+        --ink: #111827;
+        --muted: #475569;
+        --line: #d9e2ec;
+        --paper: #ffffff;
+        --bg-a: #f8fafc;
+        --bg-b: #edf2ff;
+        --accent: #0f766e;
+        --accent-2: #f59e0b;
+        --accent-3: #2563eb;
+        --danger: #dc2626;
+      }
 
-        body {
-            font-family: "Space Grotesk", sans-serif;
-            color: var(--ink);
-            background:
-                radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
-                radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
-                linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
-            min-height: 100vh;
-        }
+      body {
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
+          radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
+          linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
+        min-height: 100vh;
+      }
 
-        h1, h2, h3, h4 {
-            font-family: "Sora", sans-serif;
-            letter-spacing: -0.02em;
-        }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Sora", sans-serif;
+        letter-spacing: -0.02em;
+      }
 
-        .panel {
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
-            backdrop-filter: blur(10px);
-        }
+      .panel {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
+        backdrop-filter: blur(10px);
+      }
 
-        .metric-card {
-            border-radius: 16px;
-            border: 1px solid var(--line);
-            background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
-            padding: 1rem;
-        }
+      .metric-card {
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
+        padding: 1rem;
+      }
     </style>
   </head>
   <body class="text-slate-900">
@@ -62,21 +68,25 @@
     <nav
       class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200"
     >
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div
+        class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"
+      >
         <div class="flex items-center gap-3">
           <div
             class="w-9 h-9 bg-teal-700 rounded-lg flex items-center justify-center text-white font-bold"
             >H</div
           >
           <div>
-            <p class="font-extrabold tracking-tight text-lg">HCMUT EDA Studio</p>
-            <p class="text-xs text-slate-500">Traditional ML Pipeline Analysis</p>
+            <p class="font-extrabold tracking-tight text-lg"
+              >HCMUT EDA Studio</p
+            >
+            <p class="text-xs text-slate-500"
+              >Traditional ML Pipeline Analysis</p
+            >
           </div>
         </div>
         <div class="hidden lg:flex gap-6 font-medium text-slate-600">
-          <a href="index.html" class="text-teal-700 font-bold"
-            >Home</a
-          >
+          <a href="index.html" class="text-teal-700 font-bold">Home</a>
           <a href="tabular.html" class="hover:text-teal-700 transition"
             >Tabular</a
           >
@@ -85,6 +95,7 @@
           <a href="multimodal.html" class="hover:text-teal-700 transition"
             >Multimodal</a
           >
+        </div>
       </div>
     </nav>
 
@@ -92,14 +103,14 @@
     <header class="panel mx-4 sm:mx-6 lg:mx-8 mt-8 mb-8">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <h2 class="text-teal-600 font-semibold uppercase tracking-widest mb-4"
-          >Course: Machine Learning (CO3017) | Semester I, 2025-2026</h2
+          >Course: P4AIDS (CO3135) | Semester II, 2025-2026</h2
         >
         <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-6"
           >Traditional Pipeline Analysis across Four Data Domains</h1
         >
         <p class="text-xl text-slate-600 mb-8 max-w-3xl mx-auto italic"
           >Instructor:
-          <span class="text-slate-900 font-bold">TS. Lê Thành Sách</span></p
+          <span class="text-slate-900 font-bold">Dr. Thanh-Sach LE</span></p
         >
 
         <div class="flex justify-center gap-4 flex-wrap">
@@ -126,102 +137,106 @@
     </header>
 
     <!-- Project Summary & Repo Structure -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 space-y-6"
-      <div class="grid lg:grid-cols-2 gap-12">
-        <!-- Summary -->
-        <section class="panel p-6">
-          <h3 class="text-2xl font-bold mb-4 border-l-4 border-teal-600 pl-4"
-            >Project Summary</h3
-          >
-          <p class="text-slate-600 leading-relaxed mb-6">
-            This project implements a comprehensive Traditional Machine Learning
-            Pipeline. We investigate four distinct data types, focusing on
-            feature engineering and classical classification models rather than
-            end-to-end deep learning architectures.
-          </p>
-          <div class="grid grid-cols-2 gap-4">
-            <div class="metric-card hover:shadow-md transition">
-              <a href="tabular.html">
-                <span class="block font-bold text-teal-700 text-lg"
-                  >Tabular</span
-                >
-                <span class="text-sm text-slate-500 italic"
-                  >Statistical Features</span
-                >
-              </a>
-            </div>
-            <div class="metric-card hover:shadow-md transition">
-              <a href="text.html">
-                <span class="block font-bold text-teal-700 text-lg">Text</span>
-                <span class="text-sm text-slate-500 italic"
-                  >BoW vs. Embeddings</span
-                >
-              </a>
-            </div>
-            <div class="metric-card hover:shadow-md transition">
-              <a href="image.html">
-                <span class="block font-bold text-teal-700 text-lg">Image</span>
-                <span class="text-sm text-slate-500 italic"
-                  >Pretrained Features</span
-                >
-              </a>
-            </div>
-            <div class="metric-card hover:shadow-md transition">
-              <a href="multimodal.html">
-                <span class="block font-bold text-teal-700 text-lg"
-                  >Multimodal</span
-                >
-                <span class="text-sm text-slate-500 italic"
-                  >Feature Fusion</span
-                >
-              </a>
-            </div>
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 space-y-6">
+      <!-- Summary -->
+      <section class="panel p-6">
+        <h3 class="text-2xl font-bold mb-4 border-l-4 border-teal-600 pl-4"
+          >Project Summary</h3
+        >
+        <p class="text-slate-600 leading-relaxed mb-6">
+          This project implements a comprehensive Traditional Machine Learning
+          Pipeline. We investigate four distinct data types, focusing on feature
+          engineering and classical classification models rather than end-to-end
+          deep learning architectures.
+        </p>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="metric-card hover:shadow-md transition">
+            <a href="tabular.html">
+              <span class="block font-bold text-teal-700 text-lg">Tabular</span>
+              <span class="text-sm text-slate-500 italic"
+                >Statistical Features</span
+              >
+            </a>
           </div>
-        </section>
+          <div class="metric-card hover:shadow-md transition">
+            <a href="text.html">
+              <span class="block font-bold text-teal-700 text-lg">Text</span>
+              <span class="text-sm text-slate-500 italic"
+                >BoW vs. Embeddings</span
+              >
+            </a>
+          </div>
+          <div class="metric-card hover:shadow-md transition">
+            <a href="image.html">
+              <span class="block font-bold text-teal-700 text-lg">Image</span>
+              <span class="text-sm text-slate-500 italic"
+                >Pretrained Features</span
+              >
+            </a>
+          </div>
+          <div class="metric-card hover:shadow-md transition">
+            <a href="multimodal.html">
+              <span class="block font-bold text-teal-700 text-lg"
+                >Multimodal</span
+              >
+              <span class="text-sm text-slate-500 italic">Feature Fusion</span>
+            </a>
+          </div>
+        </div>
+      </section>
 
-        <!-- Repo Structure -->
-        <section class="panel p-6">
-          <h3 class="text-2xl font-bold mb-4 border-l-4 border-teal-600 pl-4"
-            >Repository Structure</h3
+      <!-- Repo Structure -->
+      <section class="panel p-6">
+        <h3 class="text-2xl font-bold mb-4 border-l-4 border-teal-600 pl-4"
+          >Repository Structure</h3
+        >
+        <div
+          class="bg-slate-900 rounded-lg p-6 text-blue-400 font-mono text-sm"
+        >
+          <div class="mb-2"
+            ><i class="fas fa-folder-open mr-2 text-yellow-500"></i>
+            project_root/</div
           >
           <div
-            class="bg-slate-900 rounded-lg p-6 text-blue-400 font-mono text-sm"
+            class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
           >
-            <div class="mb-2"
-              ><i class="fas fa-folder-open mr-2 text-yellow-500"></i>
-              project_root/</div
-            >
-            <div
-              class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
-            >
-              <i class="fas fa-folder mr-2 text-yellow-500"></i>
-              <span class="font-bold">notebooks/</span>
-              <span class="text-slate-500"># Detailed experiments</span>
-            </div>
-            <div
-              class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
-            >
-              <i class="fas fa-folder mr-2 text-yellow-500"></i>
-              <span class="font-bold">modules/</span>
-              <span class="text-slate-500"># Custom preprocessing scripts</span>
-            </div>
-            <div
-              class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
-            >
-              <i class="fas fa-folder mr-2 text-yellow-500"></i>
-              <span class="font-bold">reports/</span>
-              <span class="text-slate-500"># Documentation & Figures</span>
-            </div>
+            <i class="fas fa-folder mr-2 text-yellow-500"></i>
+            <span class="font-bold">notebooks/</span>
+            <span class="text-slate-500"># Detailed experiments</span>
           </div>
-        </section>
-      </div>
+          <div
+            class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
+          >
+            <i class="fas fa-folder mr-2 text-yellow-500"></i>
+            <span class="font-bold">plots_data/</span>
+            <span class="text-slate-500"># Generated Plots & Data</span>
+          </div>
+          <div
+            class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
+          >
+            <i class="fas fa-folder mr-2 text-yellow-500"></i>
+            <span class="font-bold">reports/</span>
+            <span class="text-slate-500"># Documentation & Figures</span>
+          </div>
+          <div
+            class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
+          >
+            <i class="fas fa-folder mr-2 text-yellow-500"></i>
+            <span class="font-bold">sample_images/</span>
+            <span class="text-slate-500"># Sample Images for Testing</span>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <footer
-      class="bg-white border-t border-slate-200 py-6 mt-16"
-    >
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-slate-500">
-        <p>© 2026 HCMUT Machine Learning Team | Built with Traditional ML Pipeline | Generated with Chart.js</p>
+    <footer class="bg-white border-t border-slate-200 py-6 mt-16">
+      <div
+        class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-slate-500"
+      >
+        <p
+          >© 2026 HCMUT P4AIDS Team | Built with Traditional ML Pipeline |
+          Generated with Chart.js</p
+        >
       </div>
     </footer>
   </body>

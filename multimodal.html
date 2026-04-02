@@ -1,186 +1,203 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Multimodal EDA Studio | Flickr8k</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --ink: #111827;
-            --muted: #475569;
-            --line: #d9e2ec;
-            --paper: #ffffff;
-            --bg-a: #f8fafc;
-            --bg-b: #edf2ff;
-            --accent: #0f766e;
-            --accent-2: #f59e0b;
-            --accent-3: #2563eb;
-            --danger: #dc2626;
-        }
+      :root {
+        --ink: #111827;
+        --muted: #475569;
+        --line: #d9e2ec;
+        --paper: #ffffff;
+        --bg-a: #f8fafc;
+        --bg-b: #edf2ff;
+        --accent: #0f766e;
+        --accent-2: #f59e0b;
+        --accent-3: #2563eb;
+        --danger: #dc2626;
+      }
 
-        body {
-            font-family: "Space Grotesk", sans-serif;
-            color: var(--ink);
-            background:
-                radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
-                radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
-                linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
-            min-height: 100vh;
-        }
+      body {
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
+          radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
+          linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
+        min-height: 100vh;
+      }
 
-        h1, h2, h3, h4 {
-            font-family: "Sora", sans-serif;
-            letter-spacing: -0.02em;
-        }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Sora", sans-serif;
+        letter-spacing: -0.02em;
+      }
 
-        .panel {
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
-            backdrop-filter: blur(10px);
-        }
+      .panel {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
+        backdrop-filter: blur(10px);
+      }
 
-        .metric-card {
-            border-radius: 16px;
-            border: 1px solid var(--line);
-            background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
-            padding: 1rem;
-        }
+      .metric-card {
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
+        padding: 1rem;
+      }
 
-        .metric-card strong {
-            font-size: 1.7rem;
-            display: block;
-            line-height: 1.1;
-        }
+      .metric-card strong {
+        font-size: 1.7rem;
+        display: block;
+        line-height: 1.1;
+      }
 
-        .accordion-content {
-            display: none;
-            animation: rise 0.3s ease;
-        }
+      .accordion-content {
+        display: none;
+        animation: rise 0.3s ease;
+      }
 
-        .accordion-item.open .accordion-content {
-            display: block;
-        }
+      .accordion-item.open .accordion-content {
+        display: block;
+      }
 
-        .accordion-toggle .arrow {
-            transition: transform 0.2s ease;
-        }
+      .accordion-toggle .arrow {
+        transition: transform 0.2s ease;
+      }
 
-        .accordion-item.open .accordion-toggle .arrow {
-            transform: rotate(90deg);
-        }
+      .accordion-item.open .accordion-toggle .arrow {
+        transform: rotate(90deg);
+      }
 
+      .chart-box {
+        position: relative;
+        height: 22rem;
+        width: 100%;
+      }
+
+      .chart-box canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .plot-box {
+        position: relative;
+        height: 34rem;
+        width: 100%;
+      }
+
+      .loading-state {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #64748b;
+        font-style: italic;
+        padding: 1rem;
+      }
+
+      .limitation-note {
+        background: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 0.75rem;
+        margin-top: 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+        color: #92400e;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 0.72rem;
+        padding: 0.2rem 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        background: #ffffff;
+        color: var(--muted);
+      }
+
+      .chart-wrap {
+        position: relative;
+        min-height: 320px;
+        height: 320px;
+      }
+
+      .chart-wrap canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .fade-in {
+        animation: rise 0.4s ease;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
         .chart-box {
-            position: relative;
-            height: 22rem;
-            width: 100%;
-        }
-
-        .chart-box canvas {
-            width: 100% !important;
-            height: 100% !important;
+          height: 20rem;
         }
 
         .plot-box {
-            position: relative;
-            height: 34rem;
-            width: 100%;
+          height: 30rem;
         }
+      }
 
-        .loading-state {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: #64748b;
-            font-style: italic;
-            padding: 1rem;
-        }
-
-        .limitation-note {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 0.75rem;
-            margin-top: 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            color: #92400e;
-        }
-
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            font-size: 0.72rem;
-            padding: 0.2rem 0.6rem;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-            background: #ffffff;
-            color: var(--muted);
-        }
-
-        .chart-wrap {
-            position: relative;
-            min-height: 320px;
-            height: 320px;
-        }
-
-        .chart-wrap canvas {
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        .fade-in {
-            animation: rise 0.4s ease;
-        }
-
-        @keyframes rise {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .chart-box {
-                height: 20rem;
-            }
-
-            .plot-box {
-                height: 30rem;
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+      html {
+        scroll-behavior: smooth;
+      }
     </style>
-</head>
+  </head>
   <body class="bg-slate-50 text-slate-900">
-    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+    <nav
+      class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4"
+      >
         <div class="flex items-center gap-3">
-          <div class="h-9 w-9 rounded-lg bg-teal-700 text-white flex items-center justify-center font-black">E</div>
+          <div
+            class="h-9 w-9 rounded-lg bg-teal-700 text-white flex items-center justify-center font-black"
+            >E</div
+          >
           <div>
             <p class="font-extrabold tracking-tight text-lg">EDA Studio</p>
-            <p class="text-xs text-slate-500">Flickr8k Image-Caption Analysis</p>
+            <p class="text-xs text-slate-500"
+              >Flickr8k Image-Caption Analysis</p
+            >
           </div>
         </div>
-        <div class="desktop-nav flex items-center gap-5 text-xs uppercase tracking-wider font-bold text-slate-500">
+        <div
+          class="desktop-nav flex items-center gap-5 text-xs uppercase tracking-wider font-bold text-slate-500"
+        >
           <a href="index.html" class="hover:text-teal-700">Summary</a>
           <a href="tabular.html" class="hover:text-teal-700">Tabular</a>
           <a href="text.html" class="hover:text-teal-700">Text</a>
@@ -192,30 +209,45 @@
 
     <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-7">
       <div class="panel p-6 sm:p-8">
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div
+          class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
+        >
           <div>
             <p class="chip mb-3">Multimodal Data Science</p>
-            <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">Cross-Modal Analysis: Image-Caption Correlation</h1>
+            <h1 class="text-3xl sm:text-4xl font-extrabold mb-2"
+              >Cross-Modal Analysis: Image-Caption Correlation</h1
+            >
             <p class="text-slate-600 max-w-3xl">
-              Comprehensive multimodal analysis of the Flickr8k image-caption dataset. Visual-linguistic correlations and cross-domain statistical dependencies computed from preprocessed data in
+              Comprehensive multimodal analysis of the Flickr8k image-caption
+              dataset. Visual-linguistic correlations and cross-domain
+              statistical dependencies computed from preprocessed data in
               <strong>plots_data/eda_multimodal_data.json</strong>.
             </p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button id="expandAllBtn" class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800">Expand Analysis</button>
-            <button id="collapseAllBtn" class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black">Collapse Sections</button>
+            <button
+              id="expandAllBtn"
+              class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800"
+              >Expand Analysis</button
+            >
+            <button
+              id="collapseAllBtn"
+              class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black"
+              >Collapse Sections</button
+            >
           </div>
         </div>
       </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 space-y-6">
-      
       <div class="panel p-8 mb-8">
         <h3 class="text-lg font-bold text-slate-900 mb-4">Dataset Overview</h3>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="metric-card">
-            <span class="text-xs uppercase tracking-wide text-slate-500 font-semibold">
+            <span
+              class="text-xs uppercase tracking-wide text-slate-500 font-semibold"
+            >
               Total Samples
             </span>
             <strong class="text-slate-900 mt-1" id="stat-total-pairs">
@@ -223,7 +255,9 @@
             </strong>
           </div>
           <div class="metric-card">
-            <span class="text-xs uppercase tracking-wide text-slate-500 font-semibold">
+            <span
+              class="text-xs uppercase tracking-wide text-slate-500 font-semibold"
+            >
               Unique Images
             </span>
             <strong class="text-slate-900 mt-1" id="stat-unique-images">
@@ -231,7 +265,9 @@
             </strong>
           </div>
           <div class="metric-card">
-            <span class="text-xs uppercase tracking-wide text-slate-500 font-semibold">
+            <span
+              class="text-xs uppercase tracking-wide text-slate-500 font-semibold"
+            >
               Vocabulary Size
             </span>
             <strong class="text-slate-900 mt-1" id="stat-vocab-size">
@@ -239,7 +275,9 @@
             </strong>
           </div>
           <div class="metric-card">
-            <span class="text-xs uppercase tracking-wide text-slate-500 font-semibold">
+            <span
+              class="text-xs uppercase tracking-wide text-slate-500 font-semibold"
+            >
               Modalities
             </span>
             <strong class="text-slate-900 mt-1" id="stat-modalities">
@@ -251,9 +289,14 @@
 
       <!-- Section 1: Analysis Methodology -->
       <section class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 1</p>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 1</p
+            >
             <h2 class="text-xl font-extrabold">Analysis Methodology</h2>
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
@@ -270,23 +313,36 @@
               </ul>
             </div>
             <div>
-              <h3 class="font-semibold text-slate-900 mb-2">Analysis Focus Areas</h3>
+              <h3 class="font-semibold text-slate-900 mb-2"
+                >Analysis Focus Areas</h3
+              >
               <div class="grid md:grid-cols-2 gap-4 text-sm">
                 <div class="bg-slate-50 p-3 rounded">
                   <p class="font-medium text-slate-700">Missing Modalities</p>
-                  <p class="text-slate-600">Image-missing, text-missing, complete pairs, corrupted media</p>
+                  <p class="text-slate-600"
+                    >Image-missing, text-missing, complete pairs, corrupted
+                    media</p
+                  >
                 </div>
                 <div class="bg-slate-50 p-3 rounded">
                   <p class="font-medium text-slate-700">Visual Features</p>
-                  <p class="text-slate-600">Resolution, aspect ratio, RGB means, brightness, file size</p>
+                  <p class="text-slate-600"
+                    >Resolution, aspect ratio, RGB means, brightness, file
+                    size</p
+                  >
                 </div>
                 <div class="bg-slate-50 p-3 rounded">
                   <p class="font-medium text-slate-700">Textual Features</p>
-                  <p class="text-slate-600">Word/char length, n-grams, stopword ratio</p>
+                  <p class="text-slate-600"
+                    >Word/char length, n-grams, stopword ratio</p
+                  >
                 </div>
                 <div class="bg-slate-50 p-3 rounded">
                   <p class="font-medium text-slate-700">Cross-Modal</p>
-                  <p class="text-slate-600">Caption similarity, text-length vs image-size correlation</p>
+                  <p class="text-slate-600"
+                    >Caption similarity, text-length vs image-size
+                    correlation</p
+                  >
                 </div>
               </div>
             </div>
@@ -295,10 +351,19 @@
       </section>
 
       <!-- Section 2: Dataset Summary -->
-      <section id="overview" class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+      <section
+        id="overview"
+        class="accordion-item open panel overflow-hidden"
+        data-section
+      >
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 2</p>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 2</p
+            >
             <h2 class="text-xl font-extrabold">Dataset Summary</h2>
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
@@ -309,8 +374,13 @@
           </p>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Statistical Metrics</h3>
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4" id="overview-stats">
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Statistical Metrics</h3
+            >
+            <div
+              class="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+              id="overview-stats"
+            >
               <div class="loading-state">Loading statistics...</div>
             </div>
           </div>
@@ -325,11 +395,22 @@
       </section>
 
       <!-- Section 3: Data Quality Validation & Missing Modalities -->
-      <section id="quality" class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+      <section
+        id="quality"
+        class="accordion-item open panel overflow-hidden"
+        data-section
+      >
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 3</p>
-            <h2 class="text-xl font-extrabold">Data Quality Validation & Missing Modalities</h2>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 3</p
+            >
+            <h2 class="text-xl font-extrabold"
+              >Data Quality Validation & Missing Modalities</h2
+            >
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
         </button>
@@ -339,21 +420,38 @@
           </p>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Completeness Metrics</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Completeness Metrics</h3
+            >
             <div class="grid md:grid-cols-2 gap-4" id="quality-metrics">
               <div class="loading-state">Loading quality metrics...</div>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Data Quality Validation Issues</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Data Quality Validation Issues</h3
+            >
             <div class="grid md:grid-cols-2 gap-4" id="quality-issues">
               <div class="loading-state">Loading quality issues...</div>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Missing Modalities Distribution</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Top Duplicate Captions (Cross-Image)</h3
+            >
+            <div class="panel p-4 border border-slate-200">
+              <div id="top-duplicates-table">
+                <div class="loading-state">Loading top duplicates...</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Missing Modalities Distribution</h3
+            >
             <div class="chart-box">
               <canvas id="missing-modalities-chart"></canvas>
             </div>
@@ -362,11 +460,22 @@
       </section>
 
       <!-- Section 4: Visual Modality Analysis -->
-      <section id="visual" class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+      <section
+        id="visual"
+        class="accordion-item open panel overflow-hidden"
+        data-section
+      >
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 4</p>
-            <h2 class="text-xl font-extrabold">Visual Modality Analysis (Image)</h2>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 4</p
+            >
+            <h2 class="text-xl font-extrabold"
+              >Visual Modality Analysis (Image)</h2
+            >
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
         </button>
@@ -376,50 +485,75 @@
           </p>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Image Dimension Statistics</h3>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4" id="dimension-stats">
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Image Dimension Statistics</h3
+            >
+            <div
+              class="grid md:grid-cols-2 lg:grid-cols-4 gap-4"
+              id="dimension-stats"
+            >
               <div class="loading-state">Loading dimension stats...</div>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Width vs Height Scatter</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Width vs Height Scatter</h3
+            >
             <div class="chart-box">
               <canvas id="width-height-scatter"></canvas>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Aspect Ratio Distribution</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Aspect Ratio Distribution</h3
+            >
             <div class="chart-box">
               <canvas id="aspect-ratio-hist"></canvas>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">RGB Channel Means & Brightness</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >RGB Channel Means & Brightness</h3
+            >
             <div class="chart-box">
               <canvas id="rgb-brightness-chart"></canvas>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">File Size Distribution</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >File Size Distribution</h3
+            >
             <div class="chart-box">
               <canvas id="file-size-hist"></canvas>
             </div>
             <div class="limitation-note">
-              <strong>Note:</strong> Explicit contrast statistics are not provided in the dataset artifacts. Video/audio metrics (duration, FPS, sample rate) are not applicable as this dataset contains only static images.
+              <strong>Note:</strong> Explicit contrast statistics are not
+              provided in the dataset artifacts. Video/audio metrics (duration,
+              FPS, sample rate) are not applicable as this dataset contains only
+              static images.
             </div>
           </div>
         </div>
       </section>
 
       <!-- Section 5: Textual Modality Analysis -->
-      <section id="textual" class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+      <section
+        id="textual"
+        class="accordion-item open panel overflow-hidden"
+        data-section
+      >
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 5</p>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 5</p
+            >
             <h2 class="text-xl font-extrabold">Textual Modality Analysis</h2>
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
@@ -430,21 +564,30 @@
           </p>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Text Statistics</h3>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4" id="text-stats">
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Text Statistics</h3
+            >
+            <div
+              class="grid md:grid-cols-2 lg:grid-cols-4 gap-4"
+              id="text-stats"
+            >
               <div class="loading-state">Loading text statistics...</div>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Word Count Distribution</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Word Count Distribution</h3
+            >
             <div class="chart-box">
               <canvas id="word-count-hist"></canvas>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Top 10 Unigrams</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Top 10 Unigrams</h3
+            >
             <div class="chart-box">
               <canvas id="top-unigrams-chart"></canvas>
             </div>
@@ -458,14 +601,18 @@
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Top 5 Trigrams</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Top 5 Trigrams</h3
+            >
             <div class="chart-box">
               <canvas id="top-trigrams-chart"></canvas>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Part-of-Speech Tag Distribution</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Part-of-Speech Tag Distribution</h3
+            >
             <div class="chart-box">
               <canvas id="pos-tag-chart"></canvas>
             </div>
@@ -474,10 +621,19 @@
       </section>
 
       <!-- Section 6: Cross-Modal Analysis -->
-      <section id="crossmodal" class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+      <section
+        id="crossmodal"
+        class="accordion-item open panel overflow-hidden"
+        data-section
+      >
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 6</p>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 6</p
+            >
             <h2 class="text-xl font-extrabold">Cross-Modal Analysis</h2>
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
@@ -488,36 +644,53 @@
           </p>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Caption Similarity Metrics</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Caption Similarity Metrics</h3
+            >
             <div class="grid md:grid-cols-2 gap-4" id="similarity-stats">
               <div class="loading-state">Loading similarity stats...</div>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Caption Similarity Distribution (Jaccard)</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Caption Similarity Distribution (Jaccard)</h3
+            >
             <div class="chart-box">
               <canvas id="similarity-hist"></canvas>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Caption Length vs Image File Size</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Caption Length vs Image File Size</h3
+            >
             <div class="chart-box">
               <canvas id="length-size-scatter"></canvas>
             </div>
             <div class="limitation-note">
-              <strong>Note:</strong> Bounding box annotations are not available in this dataset. Average bounding boxes per image metric cannot be computed.
+              <strong>Note:</strong> Bounding box annotations are not available
+              in this dataset. Average bounding boxes per image metric cannot be
+              computed.
             </div>
           </div>
         </div>
       </section>
 
       <!-- Section 7: Target/Label Distribution -->
-      <section id="target" class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+      <section
+        id="target"
+        class="accordion-item open panel overflow-hidden"
+        data-section
+      >
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 7</p>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 7</p
+            >
             <h2 class="text-xl font-extrabold">Target/Label Distribution</h2>
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
@@ -528,21 +701,27 @@
           </p>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">First-Word Pattern Distribution (Top 10)</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >First-Word Pattern Distribution (Top 10)</h3
+            >
             <div class="chart-box">
               <canvas id="first-word-chart"></canvas>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Subject Frequency (Top 10)</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Subject Frequency (Top 10)</h3
+            >
             <div class="chart-box">
               <canvas id="subject-freq-chart"></canvas>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Imbalance Analysis</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Imbalance Analysis</h3
+            >
             <div class="grid md:grid-cols-2 gap-4" id="imbalance-stats">
               <div class="loading-state">Loading imbalance stats...</div>
             </div>
@@ -551,10 +730,19 @@
       </section>
 
       <!-- Section 7b: Gender Bias Analysis -->
-      <section id="bias" class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+      <section
+        id="bias"
+        class="accordion-item open panel overflow-hidden"
+        data-section
+      >
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 8</p>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 8</p
+            >
             <h2 class="text-xl font-extrabold">Gender Bias Analysis</h2>
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
@@ -565,21 +753,27 @@
           </p>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Gender Bias Metrics</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Gender Bias Metrics</h3
+            >
             <div class="grid md:grid-cols-3 gap-4" id="gender-bias-stats">
               <div class="loading-state">Loading bias metrics...</div>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Male vs Female Word Frequency</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Male vs Female Word Frequency</h3
+            >
             <div class="chart-box">
               <canvas id="gender-bias-chart"></canvas>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Top Gendered Words</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Top Gendered Words</h3
+            >
             <div class="grid md:grid-cols-2 gap-6" id="gendered-words-grid">
               <div class="loading-state">Loading gendered words...</div>
             </div>
@@ -588,10 +782,19 @@
       </section>
 
       <!-- Section 8: Sample Multimodal Pairs -->
-      <section id="samples" class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+      <section
+        id="samples"
+        class="accordion-item open panel overflow-hidden"
+        data-section
+      >
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 9</p>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 9</p
+            >
             <h2 class="text-xl font-extrabold">Sample Multimodal Pairs</h2>
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
@@ -610,11 +813,22 @@
       </section>
 
       <!-- Section 9: Key Insights & Preprocessing Suggestions -->
-      <section id="insights" class="accordion-item open panel overflow-hidden" data-section>
-        <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
+      <section
+        id="insights"
+        class="accordion-item open panel overflow-hidden"
+        data-section
+      >
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
           <div>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 10</p>
-            <h2 class="text-xl font-extrabold">Key Insights & Preprocessing Suggestions</h2>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 10</p
+            >
+            <h2 class="text-xl font-extrabold"
+              >Key Insights & Preprocessing Suggestions</h2
+            >
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
         </button>
@@ -631,21 +845,27 @@
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Visual Preprocessing Recommendations</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Visual Preprocessing Recommendations</h3
+            >
             <div id="visual-preprocessing" class="space-y-4">
               <div class="loading-state">Loading recommendations...</div>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Text Preprocessing Recommendations</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Text Preprocessing Recommendations</h3
+            >
             <div id="text-preprocessing" class="space-y-4">
               <div class="loading-state">Loading recommendations...</div>
             </div>
           </div>
 
           <div>
-            <h3 class="text-lg font-bold text-slate-900 mb-4">Cross-Modal Preprocessing Recommendations</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Cross-Modal Preprocessing Recommendations</h3
+            >
             <div id="crossmodal-preprocessing" class="space-y-4">
               <div class="loading-state">Loading recommendations...</div>
             </div>
@@ -655,8 +875,12 @@
     </main>
 
     <footer class="bg-white border-t border-slate-200 py-6 mt-16">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-slate-500">
-        <p>Multimodal EDA Report • Flickr8k Dataset • Generated with Chart.js</p>
+      <div
+        class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-slate-500"
+      >
+        <p
+          >Multimodal EDA Report • Flickr8k Dataset • Generated with Chart.js</p
+        >
       </div>
     </footer>
 
@@ -677,13 +901,13 @@
           console.error(`Canvas not found: ${canvasId}`);
           return null;
         }
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         chartRegistry[canvasId] = new Chart(ctx, config);
         return chartRegistry[canvasId];
       }
 
       async function loadJSON() {
-        const response = await fetch('plots_data/eda_multimodal_data.json');
+        const response = await fetch("plots_data/eda_multimodal_data.json");
         if (!response.ok) {
           throw new Error(`Failed to load JSON: ${response.statusText}`);
         }
@@ -691,14 +915,14 @@
       }
 
       function formatNumber(num) {
-        if (num === null || num === undefined) return 'N/A';
-        if (typeof num === 'number') {
-          return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
+        if (num === null || num === undefined) return "N/A";
+        if (typeof num === "number") {
+          return num.toLocaleString("en-US", { maximumFractionDigits: 2 });
         }
         return num;
       }
 
-      function createStatCard(label, value, unit = '') {
+      function createStatCard(label, value, unit = "") {
         return `
           <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
             <p class="text-xs uppercase tracking-wide text-slate-500 font-semibold mb-1">${label}</p>
@@ -723,10 +947,15 @@
           const data = await loadJSON();
 
           // Header stats
-          document.getElementById('stat-total-pairs').textContent = formatNumber(data.dataset_overview.n_total_pairs);
-          document.getElementById('stat-unique-images').textContent = formatNumber(data.dataset_overview.n_unique_images);
-          document.getElementById('stat-vocab-size').textContent = formatNumber(data.textual_modality.vocab_size);
-          document.getElementById('stat-modalities').textContent = data.dataset_overview.n_modalities;
+          document.getElementById("stat-total-pairs").textContent =
+            formatNumber(data.dataset_overview.n_total_pairs);
+          document.getElementById("stat-unique-images").textContent =
+            formatNumber(data.dataset_overview.n_unique_images);
+          document.getElementById("stat-vocab-size").textContent = formatNumber(
+            data.textual_modality.vocab_size,
+          );
+          document.getElementById("stat-modalities").textContent =
+            data.dataset_overview.n_modalities;
 
           // Section 2: Dataset Summary
           renderSummaryStats(data);
@@ -735,6 +964,7 @@
           // Section 3: Data Quality Validation
           renderQualityMetrics(data);
           renderQualityIssues(data);
+          renderTopDuplicates(data);
           renderMissingModalitiesChart(data);
 
           // Section 4: Visual Modality
@@ -773,11 +1003,10 @@
           // Section 9: Insights
           renderInsights(data);
           renderPreprocessingRecommendations(data);
-
         } catch (error) {
-          console.error('Dashboard initialization error:', error);
-          const errorBanner = document.createElement('div');
-          errorBanner.className = 'max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8';
+          console.error("Dashboard initialization error:", error);
+          const errorBanner = document.createElement("div");
+          errorBanner.className = "max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8";
           errorBanner.innerHTML = `
             <div class="rounded-lg border border-rose-300 bg-rose-50 text-rose-700 p-4">
               <strong>Dashboard initialization error:</strong> ${error.message}
@@ -790,75 +1019,93 @@
       function renderSummaryStats(data) {
         const overview = data.dataset_overview;
         const html = `
-          ${createStatCard('Total Paired Samples', overview.n_total_pairs)}
-          ${createStatCard('Unique Images', overview.n_unique_images)}
-          ${createStatCard('Image Files on Disk', overview.n_image_files)}
-          ${createStatCard('Number of Modalities', overview.n_modalities)}
-          ${createStatCard('Captions Per Image (Min)', overview.captions_per_image.min)}
-          ${createStatCard('Captions Per Image (Max)', overview.captions_per_image.max)}
-          ${createStatCard('Captions Per Image (Mean)', overview.captions_per_image.mean)}
-          ${createStatCard('Avg Image File Size', overview.avg_file_size_kb, ' KB')}
-          ${createStatCard('Estimated Total Storage', Math.round(overview.avg_file_size_kb * overview.n_image_files / 1024), ' MB')}
+          ${createStatCard("Total Paired Samples", overview.n_total_pairs)}
+          ${createStatCard("Unique Images", overview.n_unique_images)}
+          ${createStatCard("Image Files on Disk", overview.n_image_files)}
+          ${createStatCard("Number of Modalities", overview.n_modalities)}
+          ${createStatCard("Captions Per Image (Min)", overview.captions_per_image.min)}
+          ${createStatCard("Captions Per Image (Max)", overview.captions_per_image.max)}
+          ${createStatCard("Captions Per Image (Mean)", overview.captions_per_image.mean)}
+          ${createStatCard("Avg Image File Size", overview.avg_file_size_kb, " KB")}
+          ${createStatCard("Estimated Total Storage", Math.round((overview.avg_file_size_kb * overview.n_image_files) / 1024), " MB")}
         `;
-        document.getElementById('overview-stats').innerHTML = html;
+        document.getElementById("overview-stats").innerHTML = html;
       }
 
       function renderSchemaTable(data) {
         const features = data.dataset_overview.feature_descriptions || [];
         const missing = data.dataset_overview.missing_values || {};
-        
-        let html = '<table class="min-w-full text-sm"><thead class="bg-slate-100"><tr>';
+
+        let html =
+          '<table class="min-w-full text-sm"><thead class="bg-slate-100"><tr>';
         html += '<th class="px-4 py-2 text-left font-semibold">Column</th>';
         html += '<th class="px-4 py-2 text-left font-semibold">Type</th>';
-        html += '<th class="px-4 py-2 text-left font-semibold">Description</th>';
-        html += '<th class="px-4 py-2 text-left font-semibold">Missing Data Assessment</th>';
-        html += '</tr></thead><tbody>';
-        
-        features.forEach(feature => {
+        html +=
+          '<th class="px-4 py-2 text-left font-semibold">Description</th>';
+        html +=
+          '<th class="px-4 py-2 text-left font-semibold">Missing Data Assessment</th>';
+        html += "</tr></thead><tbody>";
+
+        features.forEach((feature) => {
           html += '<tr class="border-t border-slate-200">';
           html += `<td class="px-4 py-2 font-mono text-blue-600">${feature.name}</td>`;
           html += `<td class="px-4 py-2">${feature.type}</td>`;
           html += `<td class="px-4 py-2">${feature.description}</td>`;
           html += `<td class="px-4 py-2">${missing[feature.name] || 0}</td>`;
-          html += '</tr>';
+          html += "</tr>";
         });
-        
-        html += '</tbody></table>';
-        document.getElementById('schema-table').innerHTML = html;
+
+        html += "</tbody></table>";
+        document.getElementById("schema-table").innerHTML = html;
       }
 
       function renderQualityMetrics(data) {
         const quality = data.data_quality;
         const html = `
-          ${createStatCard('Complete Pairs (Image + Text)', quality.complete_pairs)}
-          ${createStatCard('Complete Pairs Percentage', quality.complete_pairs_pct, '%')}
-          ${createStatCard('Text-Only (Missing Image)', quality.text_only_missing_image)}
-          ${createStatCard('Image-Only (Missing Caption)', quality.image_only_missing_caption)}
-          ${createStatCard('Corrupted Images Sampled', quality.corrupted_images_sampled)}
-          ${createStatCard('Sample Size for Check', quality.corrupted_images_sample_size)}
-          ${createStatCard('Corrupted Percentage', quality.corrupted_pct, '%')}
+          ${createStatCard("Complete Pairs (Image + Text)", quality.complete_pairs)}
+          ${createStatCard("Complete Pairs Percentage", quality.complete_pairs_pct, "%")}
+          ${createStatCard("Text-Only (Missing Image)", quality.text_only_missing_image)}
+          ${createStatCard("Image-Only (Missing Caption)", quality.image_only_missing_caption)}
+          ${createStatCard("Corrupted Images Sampled", quality.corrupted_images_sampled)}
+          ${createStatCard("Sample Size for Check", quality.corrupted_images_sample_size)}
+          ${createStatCard("Corrupted Percentage", quality.corrupted_pct, "%")}
         `;
-        document.getElementById('quality-metrics').innerHTML = html;
+        document.getElementById("quality-metrics").innerHTML = html;
       }
 
       function renderQualityIssues(data) {
         const dup = data.data_quality?.duplicate_captions;
         const outlier = data.data_quality?.outlier_captions;
-        
-        let html = '';
-        
+
+        let html = "";
+
         if (dup) {
+          // Enhanced duplicate section with multiple metrics
           html += `
             <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500">
-              <div class="font-semibold text-sm text-amber-900 mb-1">Duplicate Captions (Cross-Image)</div>
-              <div class="text-3xl font-bold text-amber-900">${dup.cross_image_duplicate_rows || 0}</div>
-              <div class="text-xs text-amber-700 mt-1">${dup.cross_image_duplicate_pct?.toFixed(2) || 0}% of total captions</div>
+              <div class="font-semibold text-sm text-amber-900 mb-3">📋 Duplicate Captions Analysis</div>
+              <div class="space-y-3">
+                <div>
+                  <div class="text-xs text-amber-700 mb-1">Unique Captions</div>
+                  <div class="text-2xl font-bold text-amber-900">${formatNumber(dup.total_unique_captions || 0)}</div>
+                </div>
+                <div class="border-t border-amber-200 pt-2">
+                  <div class="text-xs text-amber-700 mb-1">Exact Duplicates (Same Image)</div>
+                  <div class="text-xl font-bold text-amber-900">${formatNumber(dup.exact_duplicate_rows || 0)} <span class="text-sm font-normal">(${dup.exact_duplicate_pct?.toFixed(2) || 0}%)</span></div>
+                </div>
+                <div class="border-t border-amber-200 pt-2">
+                  <div class="text-xs text-amber-700 mb-1">Cross-Image Duplicates</div>
+                  <div class="text-xl font-bold text-amber-900">${formatNumber(dup.cross_image_duplicate_rows || 0)} <span class="text-sm font-normal">(${dup.cross_image_duplicate_pct?.toFixed(2) || 0}%)</span></div>
+                  <div class="text-xs text-amber-600 mt-1">${formatNumber(dup.cross_image_duplicate_captions || 0)} unique captions appearing across multiple images</div>
+                </div>
+              </div>
             </div>
           `;
         } else {
-          html += '<div class="text-slate-600 p-4">Duplicate data not available</div>';
+          html +=
+            '<div class="text-slate-600 p-4">Duplicate data not available</div>';
         }
-        
+
         if (outlier) {
           html += `
             <div class="bg-rose-50 p-4 rounded-lg border-l-4 border-rose-500">
@@ -868,36 +1115,96 @@
             </div>
           `;
         } else {
-          html += '<div class="text-slate-600 p-4">Outlier data not available</div>';
+          html +=
+            '<div class="text-slate-600 p-4">Outlier data not available</div>';
         }
-        
-        document.getElementById('quality-issues').innerHTML = html;
+
+        document.getElementById("quality-issues").innerHTML = html;
+      }
+
+      function renderTopDuplicates(data) {
+        const dup = data.data_quality?.duplicate_captions;
+        const topDuplicates = dup?.top_duplicates || [];
+
+        if (topDuplicates.length === 0) {
+          document.getElementById("top-duplicates-table").innerHTML =
+            '<div class="text-slate-600 p-4">No duplicate data available</div>';
+          return;
+        }
+
+        let html = `
+          <div class="overflow-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 border-b-2 border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-4 py-3">#</th>
+                  <th class="px-4 py-3">Caption</th>
+                  <th class="px-4 py-3 text-center">Images</th>
+                  <th class="px-4 py-3 text-center">Occurrences</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+        `;
+
+        topDuplicates.forEach((item, idx) => {
+          const rowClass = idx % 2 === 0 ? "bg-white" : "bg-slate-50/50";
+          html += `
+            <tr class="${rowClass}">
+              <td class="px-4 py-3 text-slate-500 font-semibold">${idx + 1}</td>
+              <td class="px-4 py-3 text-slate-700">"${item.caption}"</td>
+              <td class="px-4 py-3 text-center">
+                <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-amber-900 bg-amber-100 rounded-full">
+                  ${item.n_different_images}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-blue-900 bg-blue-100 rounded-full">
+                  ${item.total_occurrences}
+                </span>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += `
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3 text-xs text-slate-600 p-2 bg-slate-50 rounded">
+            <strong>Note:</strong> These captions appear across multiple different images, indicating potential dataset patterns or annotation conventions. 
+            "Images" shows how many different images use this caption, while "Occurrences" shows total times it appears.
+          </div>
+        `;
+
+        document.getElementById("top-duplicates-table").innerHTML = html;
       }
 
       function renderMissingModalitiesChart(data) {
         const quality = data.data_quality;
-        createChart('missing-modalities-chart', {
-          type: 'doughnut',
+        createChart("missing-modalities-chart", {
+          type: "doughnut",
           data: {
-            labels: ['Complete Pairs', 'Text-Only', 'Image-Only', 'Corrupted'],
-            datasets: [{
-              data: [
-                quality.complete_pairs,
-                quality.text_only_missing_image,
-                quality.image_only_missing_caption,
-                quality.corrupted_images_sampled
-              ],
-              backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#6b7280']
-            }]
+            labels: ["Complete Pairs", "Text-Only", "Image-Only", "Corrupted"],
+            datasets: [
+              {
+                data: [
+                  quality.complete_pairs,
+                  quality.text_only_missing_image,
+                  quality.image_only_missing_caption,
+                  quality.corrupted_images_sampled,
+                ],
+                backgroundColor: ["#10b981", "#f59e0b", "#ef4444", "#6b7280"],
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { position: 'bottom' },
-              title: { display: false }
-            }
-          }
+              legend: { position: "bottom" },
+              title: { display: false },
+            },
+          },
         });
       }
 
@@ -905,364 +1212,427 @@
         const dims = data.visual_modality.dimensions;
         const fileSize = data.visual_modality.file_size_kb;
         const html = `
-          ${createStatCard('Sample Size', data.visual_modality.sample_size)}
-          ${createStatCard('Width Mean', dims.width.mean, ' px')}
-          ${createStatCard('Width Min', dims.width.min, ' px')}
-          ${createStatCard('Width Max', dims.width.max, ' px')}
-          ${createStatCard('Height Mean', dims.height.mean, ' px')}
-          ${createStatCard('Height Min', dims.height.min, ' px')}
-          ${createStatCard('Height Max', dims.height.max, ' px')}
-          ${createStatCard('Aspect Ratio Mean', dims.aspect_ratio.mean)}
-          ${createStatCard('Aspect Ratio Min', dims.aspect_ratio.min)}
-          ${createStatCard('Aspect Ratio Max', dims.aspect_ratio.max)}
-          ${createStatCard('File Size Mean', fileSize.mean, ' KB')}
-          ${createStatCard('File Size Min', fileSize.min, ' KB')}
+          ${createStatCard("Sample Size", data.visual_modality.sample_size)}
+          ${createStatCard("Width Mean", dims.width.mean, " px")}
+          ${createStatCard("Width Min", dims.width.min, " px")}
+          ${createStatCard("Width Max", dims.width.max, " px")}
+          ${createStatCard("Height Mean", dims.height.mean, " px")}
+          ${createStatCard("Height Min", dims.height.min, " px")}
+          ${createStatCard("Height Max", dims.height.max, " px")}
+          ${createStatCard("Aspect Ratio Mean", dims.aspect_ratio.mean)}
+          ${createStatCard("Aspect Ratio Min", dims.aspect_ratio.min)}
+          ${createStatCard("Aspect Ratio Max", dims.aspect_ratio.max)}
+          ${createStatCard("File Size Mean", fileSize.mean, " KB")}
+          ${createStatCard("File Size Min", fileSize.min, " KB")}
         `;
-        document.getElementById('dimension-stats').innerHTML = html;
+        document.getElementById("dimension-stats").innerHTML = html;
       }
 
       function renderWidthHeightScatter(data) {
         const scatter = data.visual_modality.width_height_scatter;
         if (!scatter || !scatter.widths || !scatter.heights) {
-          showError('width-height-scatter', 'Scatter data not available');
+          showError("width-height-scatter", "Scatter data not available");
           return;
         }
 
         const scatterData = scatter.widths.map((w, i) => ({
           x: w,
-          y: scatter.heights[i]
+          y: scatter.heights[i],
         }));
 
-        createChart('width-height-scatter', {
-          type: 'scatter',
+        createChart("width-height-scatter", {
+          type: "scatter",
           data: {
-            datasets: [{
-              label: 'Image Dimensions',
-              data: scatterData,
-              backgroundColor: 'rgba(59, 130, 246, 0.5)',
-              borderColor: 'rgba(59, 130, 246, 1)',
-              pointRadius: 3
-            }]
+            datasets: [
+              {
+                label: "Image Dimensions",
+                data: scatterData,
+                backgroundColor: "rgba(59, 130, 246, 0.5)",
+                borderColor: "rgba(59, 130, 246, 1)",
+                pointRadius: 3,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
-              title: { display: false }
+              title: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'Width (px)' } },
-              y: { title: { display: true, text: 'Height (px)' } }
-            }
-          }
+              x: { title: { display: true, text: "Width (px)" } },
+              y: { title: { display: true, text: "Height (px)" } },
+            },
+          },
         });
       }
 
       function renderAspectRatioHist(data) {
         const ar = data.visual_modality.dimensions.aspect_ratio;
         if (!ar || !ar.histogram_values) {
-          const canvas = document.getElementById('aspect-ratio-hist');
+          const canvas = document.getElementById("aspect-ratio-hist");
           if (canvas && canvas.parentElement) {
             canvas.parentElement.innerHTML = `
               <div class="limitation-note">
                 <strong>Note:</strong> Aspect ratio histogram data is not available. 
-                Statistics available: Mean=${ar?.mean || 'N/A'}, Min=${ar?.min || 'N/A'}, Max=${ar?.max || 'N/A'}
+                Statistics available: Mean=${ar?.mean || "N/A"}, Min=${ar?.min || "N/A"}, Max=${ar?.max || "N/A"}
               </div>
             `;
           }
           return;
         }
 
-        const labels = ar.histogram_edges.slice(0, -1).map((edge, i) => 
-          `${edge.toFixed(2)}-${ar.histogram_edges[i + 1].toFixed(2)}`
-        );
+        const labels = ar.histogram_edges
+          .slice(0, -1)
+          .map(
+            (edge, i) =>
+              `${edge.toFixed(2)}-${ar.histogram_edges[i + 1].toFixed(2)}`,
+          );
 
-        createChart('aspect-ratio-hist', {
-          type: 'bar',
+        createChart("aspect-ratio-hist", {
+          type: "bar",
           data: {
             labels: labels,
-            datasets: [{
-              label: 'Frequency',
-              data: ar.histogram_values,
-              backgroundColor: 'rgba(139, 92, 246, 0.6)',
-              borderColor: 'rgba(139, 92, 246, 1)',
-              borderWidth: 1
-            }]
+            datasets: [
+              {
+                label: "Frequency",
+                data: ar.histogram_values,
+                backgroundColor: "rgba(139, 92, 246, 0.6)",
+                borderColor: "rgba(139, 92, 246, 1)",
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'Aspect Ratio Range' }, ticks: { maxRotation: 45, minRotation: 45 } },
-              y: { title: { display: true, text: 'Count' } }
-            }
-          }
+              x: {
+                title: { display: true, text: "Aspect Ratio Range" },
+                ticks: { maxRotation: 45, minRotation: 45 },
+              },
+              y: { title: { display: true, text: "Count" } },
+            },
+          },
         });
       }
 
       function renderRGBBrightnessChart(data) {
         const color = data.visual_modality.color_channels;
-        createChart('rgb-brightness-chart', {
-          type: 'bar',
+        createChart("rgb-brightness-chart", {
+          type: "bar",
           data: {
-            labels: ['Red', 'Green', 'Blue', 'Brightness'],
-            datasets: [{
-              label: 'Mean Value',
-              data: [color.red_mean, color.green_mean, color.blue_mean, color.brightness_mean],
-              backgroundColor: ['rgba(239, 68, 68, 0.6)', 'rgba(34, 197, 94, 0.6)', 'rgba(59, 130, 246, 0.6)', 'rgba(251, 191, 36, 0.6)'],
-              borderColor: ['rgba(239, 68, 68, 1)', 'rgba(34, 197, 94, 1)', 'rgba(59, 130, 246, 1)', 'rgba(251, 191, 36, 1)'],
-              borderWidth: 1
-            }]
+            labels: ["Red", "Green", "Blue", "Brightness"],
+            datasets: [
+              {
+                label: "Mean Value",
+                data: [
+                  color.red_mean,
+                  color.green_mean,
+                  color.blue_mean,
+                  color.brightness_mean,
+                ],
+                backgroundColor: [
+                  "rgba(239, 68, 68, 0.6)",
+                  "rgba(34, 197, 94, 0.6)",
+                  "rgba(59, 130, 246, 0.6)",
+                  "rgba(251, 191, 36, 0.6)",
+                ],
+                borderColor: [
+                  "rgba(239, 68, 68, 1)",
+                  "rgba(34, 197, 94, 1)",
+                  "rgba(59, 130, 246, 1)",
+                  "rgba(251, 191, 36, 1)",
+                ],
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              y: { title: { display: true, text: 'Mean Value (0-255)' }, beginAtZero: true, max: 255 }
-            }
-          }
+              y: {
+                title: { display: true, text: "Mean Value (0-255)" },
+                beginAtZero: true,
+                max: 255,
+              },
+            },
+          },
         });
       }
 
       function renderFileSizeHist(data) {
         const fs = data.visual_modality.file_size_kb;
         if (!fs || !fs.histogram_values) {
-          const canvas = document.getElementById('file-size-hist');
+          const canvas = document.getElementById("file-size-hist");
           if (canvas && canvas.parentElement) {
             canvas.parentElement.innerHTML = `
               <div class="limitation-note">
                 <strong>Note:</strong> File size histogram data is not available. 
-                Statistics available: Mean=${fs?.mean || 'N/A'} KB, Min=${fs?.min || 'N/A'} KB, Max=${fs?.max || 'N/A'} KB
+                Statistics available: Mean=${fs?.mean || "N/A"} KB, Min=${fs?.min || "N/A"} KB, Max=${fs?.max || "N/A"} KB
               </div>
             `;
           }
           return;
         }
 
-        const labels = fs.histogram_edges.slice(0, -1).map((edge, i) => 
-          `${Math.round(edge)}-${Math.round(fs.histogram_edges[i + 1])}`
-        );
+        const labels = fs.histogram_edges
+          .slice(0, -1)
+          .map(
+            (edge, i) =>
+              `${Math.round(edge)}-${Math.round(fs.histogram_edges[i + 1])}`,
+          );
 
-        createChart('file-size-hist', {
-          type: 'bar',
+        createChart("file-size-hist", {
+          type: "bar",
           data: {
             labels: labels,
-            datasets: [{
-              label: 'Frequency',
-              data: fs.histogram_values,
-              backgroundColor: 'rgba(16, 185, 129, 0.6)',
-              borderColor: 'rgba(16, 185, 129, 1)',
-              borderWidth: 1
-            }]
+            datasets: [
+              {
+                label: "Frequency",
+                data: fs.histogram_values,
+                backgroundColor: "rgba(16, 185, 129, 0.6)",
+                borderColor: "rgba(16, 185, 129, 1)",
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'File Size Range (KB)' }, ticks: { maxRotation: 45, minRotation: 45 } },
-              y: { title: { display: true, text: 'Count' } }
-            }
-          }
+              x: {
+                title: { display: true, text: "File Size Range (KB)" },
+                ticks: { maxRotation: 45, minRotation: 45 },
+              },
+              y: { title: { display: true, text: "Count" } },
+            },
+          },
         });
       }
 
       function renderTextStats(data) {
         const text = data.textual_modality;
         const html = `
-          ${createStatCard('Word Count Mean', text.word_count.mean)}
-          ${createStatCard('Word Count Median', text.word_count.median)}
-          ${createStatCard('Word Count Min', text.word_count.min)}
-          ${createStatCard('Word Count Max', text.word_count.max)}
-          ${createStatCard('Char Count Mean', text.char_count.mean)}
-          ${createStatCard('Char Count Median', text.char_count.median)}
-          ${createStatCard('Vocabulary Size (excl. stopwords)', text.vocab_size)}
-          ${createStatCard('Stopword Ratio', text.stopword_ratio_pct, '%')}
+          ${createStatCard("Word Count Mean", text.word_count.mean)}
+          ${createStatCard("Word Count Median", text.word_count.median)}
+          ${createStatCard("Word Count Min", text.word_count.min)}
+          ${createStatCard("Word Count Max", text.word_count.max)}
+          ${createStatCard("Char Count Mean", text.char_count.mean)}
+          ${createStatCard("Char Count Median", text.char_count.median)}
+          ${createStatCard("Vocabulary Size (excl. stopwords)", text.vocab_size)}
+          ${createStatCard("Stopword Ratio", text.stopword_ratio_pct, "%")}
         `;
-        document.getElementById('text-stats').innerHTML = html;
+        document.getElementById("text-stats").innerHTML = html;
       }
 
       function renderWordCountHist(data) {
         const wc = data.textual_modality.word_count;
         if (!wc || !wc.histogram_values) {
-          showError('word-count-hist', 'Histogram data not available');
+          showError("word-count-hist", "Histogram data not available");
           return;
         }
 
-        const labels = wc.histogram_edges.slice(0, -1).map((edge, i) => 
-          `${Math.round(edge)}-${Math.round(wc.histogram_edges[i + 1])}`
-        );
+        const labels = wc.histogram_edges
+          .slice(0, -1)
+          .map(
+            (edge, i) =>
+              `${Math.round(edge)}-${Math.round(wc.histogram_edges[i + 1])}`,
+          );
 
-        createChart('word-count-hist', {
-          type: 'bar',
+        createChart("word-count-hist", {
+          type: "bar",
           data: {
             labels: labels,
-            datasets: [{
-              label: 'Frequency',
-              data: wc.histogram_values,
-              backgroundColor: 'rgba(59, 130, 246, 0.6)',
-              borderColor: 'rgba(59, 130, 246, 1)',
-              borderWidth: 1
-            }]
+            datasets: [
+              {
+                label: "Frequency",
+                data: wc.histogram_values,
+                backgroundColor: "rgba(59, 130, 246, 0.6)",
+                borderColor: "rgba(59, 130, 246, 1)",
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'Word Count Range' }, ticks: { maxRotation: 45, minRotation: 45 } },
-              y: { title: { display: true, text: 'Count' } }
-            }
-          }
+              x: {
+                title: { display: true, text: "Word Count Range" },
+                ticks: { maxRotation: 45, minRotation: 45 },
+              },
+              y: { title: { display: true, text: "Count" } },
+            },
+          },
         });
       }
 
       function renderTopUnigrams(data) {
         const words = data.textual_modality?.top_30_words;
         if (!words || !Array.isArray(words) || words.length === 0) {
-          showError('top-unigrams-chart', 'Top words data not available');
+          showError("top-unigrams-chart", "Top words data not available");
           return;
         }
-        
+
         const unigrams = words.slice(0, 10);
-        createChart('top-unigrams-chart', {
-          type: 'bar',
+        createChart("top-unigrams-chart", {
+          type: "bar",
           data: {
-            labels: unigrams.map(w => w.word),
-            datasets: [{
-              label: 'Frequency',
-              data: unigrams.map(w => w.count),
-              backgroundColor: 'rgba(16, 185, 129, 0.6)',
-              borderColor: 'rgba(16, 185, 129, 1)',
-              borderWidth: 1
-            }]
+            labels: unigrams.map((w) => w.word),
+            datasets: [
+              {
+                label: "Frequency",
+                data: unigrams.map((w) => w.count),
+                backgroundColor: "rgba(16, 185, 129, 0.6)",
+                borderColor: "rgba(16, 185, 129, 1)",
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
-            indexAxis: 'y',
+            indexAxis: "y",
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'Frequency' } }
-            }
-          }
+              x: { title: { display: true, text: "Frequency" } },
+            },
+          },
         });
       }
 
       function renderTopBigrams(data) {
         const bigramData = data.textual_modality?.bigrams;
-        if (!bigramData || !Array.isArray(bigramData) || bigramData.length === 0) {
-          showError('top-bigrams-chart', 'Bigrams data not available');
+        if (
+          !bigramData ||
+          !Array.isArray(bigramData) ||
+          bigramData.length === 0
+        ) {
+          showError("top-bigrams-chart", "Bigrams data not available");
           return;
         }
-        
+
         const bigrams = bigramData.slice(0, 5);
-        createChart('top-bigrams-chart', {
-          type: 'bar',
+        createChart("top-bigrams-chart", {
+          type: "bar",
           data: {
-            labels: bigrams.map(b => b.bigram),
-            datasets: [{
-              label: 'Frequency',
-              data: bigrams.map(b => b.count),
-              backgroundColor: 'rgba(251, 146, 60, 0.6)',
-              borderColor: 'rgba(251, 146, 60, 1)',
-              borderWidth: 1
-            }]
+            labels: bigrams.map((b) => b.bigram),
+            datasets: [
+              {
+                label: "Frequency",
+                data: bigrams.map((b) => b.count),
+                backgroundColor: "rgba(251, 146, 60, 0.6)",
+                borderColor: "rgba(251, 146, 60, 1)",
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
-            indexAxis: 'y',
+            indexAxis: "y",
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'Frequency' } }
-            }
-          }
+              x: { title: { display: true, text: "Frequency" } },
+            },
+          },
         });
       }
 
       function renderTopTrigrams(data) {
         const trigramData = data.textual_modality?.trigrams;
-        if (!trigramData || !Array.isArray(trigramData) || trigramData.length === 0) {
-          showError('top-trigrams-chart', 'Trigrams data not available');
+        if (
+          !trigramData ||
+          !Array.isArray(trigramData) ||
+          trigramData.length === 0
+        ) {
+          showError("top-trigrams-chart", "Trigrams data not available");
           return;
         }
-        
+
         const trigrams = trigramData.slice(0, 5);
-        createChart('top-trigrams-chart', {
-          type: 'bar',
+        createChart("top-trigrams-chart", {
+          type: "bar",
           data: {
-            labels: trigrams.map(t => t.trigram),
-            datasets: [{
-              label: 'Frequency',
-              data: trigrams.map(t => t.count),
-              backgroundColor: 'rgba(139, 92, 246, 0.6)',
-              borderColor: 'rgba(139, 92, 246, 1)',
-              borderWidth: 1
-            }]
+            labels: trigrams.map((t) => t.trigram),
+            datasets: [
+              {
+                label: "Frequency",
+                data: trigrams.map((t) => t.count),
+                backgroundColor: "rgba(139, 92, 246, 0.6)",
+                borderColor: "rgba(139, 92, 246, 1)",
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
-            indexAxis: 'y',
+            indexAxis: "y",
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'Frequency' } }
-            }
-          }
+              x: { title: { display: true, text: "Frequency" } },
+            },
+          },
         });
       }
 
       function renderPOSTagChart(data) {
         const posData = data.textual_modality?.pos_distribution;
         if (!posData || !Array.isArray(posData) || posData.length === 0) {
-          showError('pos-tag-chart', 'POS tag distribution data not available');
+          showError("pos-tag-chart", "POS tag distribution data not available");
           return;
         }
-        
-        createChart('pos-tag-chart', {
-          type: 'doughnut',
+
+        createChart("pos-tag-chart", {
+          type: "doughnut",
           data: {
-            labels: posData.map(p => p.tag),
-            datasets: [{
-              data: posData.map(p => p.percentage),
-              backgroundColor: [
-                'rgba(59, 130, 246, 0.8)',
-                'rgba(16, 185, 129, 0.8)',
-                'rgba(251, 146, 60, 0.8)',
-                'rgba(139, 92, 246, 0.8)',
-                'rgba(236, 72, 153, 0.8)',
-                'rgba(234, 179, 8, 0.8)',
-                'rgba(239, 68, 68, 0.8)',
-                'rgba(107, 114, 128, 0.8)'
-              ],
-              borderColor: '#fff',
-              borderWidth: 2
-            }]
+            labels: posData.map((p) => p.tag),
+            datasets: [
+              {
+                data: posData.map((p) => p.percentage),
+                backgroundColor: [
+                  "rgba(59, 130, 246, 0.8)",
+                  "rgba(16, 185, 129, 0.8)",
+                  "rgba(251, 146, 60, 0.8)",
+                  "rgba(139, 92, 246, 0.8)",
+                  "rgba(236, 72, 153, 0.8)",
+                  "rgba(234, 179, 8, 0.8)",
+                  "rgba(239, 68, 68, 0.8)",
+                  "rgba(107, 114, 128, 0.8)",
+                ],
+                borderColor: "#fff",
+                borderWidth: 2,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { 
-                position: 'right',
+              legend: {
+                position: "right",
                 labels: {
                   generateLabels: (chart) => {
                     const data = chart.data;
@@ -1270,10 +1640,10 @@
                       text: `${label}: ${data.datasets[0].data[i].toFixed(1)}%`,
                       fillStyle: data.datasets[0].backgroundColor[i],
                       hidden: false,
-                      index: i
+                      index: i,
                     }));
-                  }
-                }
+                  },
+                },
               },
               title: { display: false },
               tooltip: {
@@ -1281,11 +1651,11 @@
                   label: (context) => {
                     const posItem = posData[context.dataIndex];
                     return `${posItem.tag}: ${posItem.count.toLocaleString()} (${posItem.percentage.toFixed(1)}%)`;
-                  }
-                }
-              }
-            }
-          }
+                  },
+                },
+              },
+            },
+          },
         });
       }
 
@@ -1293,110 +1663,130 @@
         const sim = data.cross_modal_analysis.caption_similarity.jaccard;
         const corr = data.cross_modal_analysis.correlations;
         const html = `
-          ${createStatCard('Caption Similarity Mean (Jaccard)', sim.mean)}
-          ${createStatCard('Caption Similarity Std', sim.std)}
-          ${createStatCard('Caption Length vs Similarity (r)', corr.caption_length_vs_similarity.r)}
-          ${createStatCard('Caption Length vs Image Size (r)', corr.caption_length_vs_filesize.r)}
+          ${createStatCard("Caption Similarity Mean (Jaccard)", sim.mean)}
+          ${createStatCard("Caption Similarity Std", sim.std)}
+          ${createStatCard("Caption Length vs Similarity (r)", corr.caption_length_vs_similarity.r)}
+          ${createStatCard("Caption Length vs Image Size (r)", corr.caption_length_vs_filesize.r)}
         `;
-        document.getElementById('similarity-stats').innerHTML = html;
-        
-        const container = document.getElementById('similarity-stats');
-        container.innerHTML += '<div class="md:col-span-2 text-sm text-slate-600 bg-blue-50 p-3 rounded border border-blue-200"><strong>Interpretation:</strong> Weak/near-zero linear relationships indicate independence between caption length and both similarity and image file size.</div>';
+        document.getElementById("similarity-stats").innerHTML = html;
+
+        const container = document.getElementById("similarity-stats");
+        container.innerHTML +=
+          '<div class="md:col-span-2 text-sm text-slate-600 bg-blue-50 p-3 rounded border border-blue-200"><strong>Interpretation:</strong> Weak/near-zero linear relationships indicate independence between caption length and both similarity and image file size.</div>';
       }
 
       function renderSimilarityHist(data) {
         const sim = data.cross_modal_analysis.caption_similarity.jaccard;
         if (!sim || !sim.histogram_values) {
-          showError('similarity-hist', 'Histogram data not available');
+          showError("similarity-hist", "Histogram data not available");
           return;
         }
 
-        const labels = sim.histogram_edges.slice(0, -1).map((edge, i) => 
-          `${edge.toFixed(2)}-${sim.histogram_edges[i + 1].toFixed(2)}`
-        );
+        const labels = sim.histogram_edges
+          .slice(0, -1)
+          .map(
+            (edge, i) =>
+              `${edge.toFixed(2)}-${sim.histogram_edges[i + 1].toFixed(2)}`,
+          );
 
-        createChart('similarity-hist', {
-          type: 'bar',
+        createChart("similarity-hist", {
+          type: "bar",
           data: {
             labels: labels,
-            datasets: [{
-              label: 'Frequency',
-              data: sim.histogram_values,
-              backgroundColor: 'rgba(236, 72, 153, 0.6)',
-              borderColor: 'rgba(236, 72, 153, 1)',
-              borderWidth: 1
-            }]
+            datasets: [
+              {
+                label: "Frequency",
+                data: sim.histogram_values,
+                backgroundColor: "rgba(236, 72, 153, 0.6)",
+                borderColor: "rgba(236, 72, 153, 1)",
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'Jaccard Similarity Range' }, ticks: { maxRotation: 45, minRotation: 45 } },
-              y: { title: { display: true, text: 'Count' } }
-            }
-          }
+              x: {
+                title: { display: true, text: "Jaccard Similarity Range" },
+                ticks: { maxRotation: 45, minRotation: 45 },
+              },
+              y: { title: { display: true, text: "Count" } },
+            },
+          },
         });
       }
 
       function renderLengthSizeScatter(data) {
         const scatter = data.cross_modal_analysis.length_size_scatter;
         if (!scatter || !scatter.caption_lengths || !scatter.file_sizes) {
-          showError('length-size-scatter', 'Scatter data not available');
+          showError("length-size-scatter", "Scatter data not available");
           return;
         }
 
         const scatterData = scatter.caption_lengths.map((len, i) => ({
           x: len,
-          y: scatter.file_sizes[i]
+          y: scatter.file_sizes[i],
         }));
 
-        createChart('length-size-scatter', {
-          type: 'scatter',
+        createChart("length-size-scatter", {
+          type: "scatter",
           data: {
-            datasets: [{
-              label: 'Caption Length vs File Size',
-              data: scatterData,
-              backgroundColor: 'rgba(59, 130, 246, 0.4)',
-              borderColor: 'rgba(59, 130, 246, 1)',
-              pointRadius: 2
-            }]
+            datasets: [
+              {
+                label: "Caption Length vs File Size",
+                data: scatterData,
+                backgroundColor: "rgba(59, 130, 246, 0.4)",
+                borderColor: "rgba(59, 130, 246, 1)",
+                pointRadius: 2,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'Caption Length (words)' } },
-              y: { title: { display: true, text: 'Image File Size (KB)' } }
-            }
-          }
+              x: { title: { display: true, text: "Caption Length (words)" } },
+              y: { title: { display: true, text: "Image File Size (KB)" } },
+            },
+          },
         });
       }
 
       function renderFirstWordChart(data) {
         const firstWordData = data.target_distribution?.first_word_pattern;
-        if (!firstWordData || !Array.isArray(firstWordData) || firstWordData.length === 0) {
-          showError('first-word-chart', 'First-word pattern data not available');
+        if (
+          !firstWordData ||
+          !Array.isArray(firstWordData) ||
+          firstWordData.length === 0
+        ) {
+          showError(
+            "first-word-chart",
+            "First-word pattern data not available",
+          );
           return;
         }
-        
+
         const firstWord = firstWordData.slice(0, 10);
-        createChart('first-word-chart', {
-          type: 'bar',
+        createChart("first-word-chart", {
+          type: "bar",
           data: {
-            labels: firstWord.map(fw => `"${fw.word}"`),
-            datasets: [{
-              label: 'Count',
-              data: firstWord.map(fw => fw.count),
-              backgroundColor: 'rgba(59, 130, 246, 0.6)',
-              borderColor: 'rgba(59, 130, 246, 1)',
-              borderWidth: 1
-            }]
+            labels: firstWord.map((fw) => `"${fw.word}"`),
+            datasets: [
+              {
+                label: "Count",
+                data: firstWord.map((fw) => fw.count),
+                backgroundColor: "rgba(59, 130, 246, 0.6)",
+                borderColor: "rgba(59, 130, 246, 1)",
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
             responsive: true,
@@ -1408,167 +1798,194 @@
                   label: (context) => {
                     const item = firstWord[context.dataIndex];
                     return `Count: ${item.count} (${item.percentage.toFixed(1)}%)`;
-                  }
-                }
-              }
+                  },
+                },
+              },
             },
             scales: {
-              x: { title: { display: true, text: 'First Word' } },
-              y: { title: { display: true, text: 'Frequency' } }
-            }
-          }
+              x: { title: { display: true, text: "First Word" } },
+              y: { title: { display: true, text: "Frequency" } },
+            },
+          },
         });
       }
 
       function renderSubjectFreqChart(data) {
         const subjectData = data.target_distribution?.subject_frequency;
-        if (!subjectData || !Array.isArray(subjectData) || subjectData.length === 0) {
-          showError('subject-freq-chart', 'Subject frequency data not available');
+        if (
+          !subjectData ||
+          !Array.isArray(subjectData) ||
+          subjectData.length === 0
+        ) {
+          showError(
+            "subject-freq-chart",
+            "Subject frequency data not available",
+          );
           return;
         }
-        
+
         const subjects = subjectData.slice(0, 10);
-        createChart('subject-freq-chart', {
-          type: 'bar',
+        createChart("subject-freq-chart", {
+          type: "bar",
           data: {
-            labels: subjects.map(s => s.subject),
-            datasets: [{
-              label: 'Frequency',
-              data: subjects.map(s => s.count),
-              backgroundColor: 'rgba(16, 185, 129, 0.6)',
-              borderColor: 'rgba(16, 185, 129, 1)',
-              borderWidth: 1
-            }]
+            labels: subjects.map((s) => s.subject),
+            datasets: [
+              {
+                label: "Frequency",
+                data: subjects.map((s) => s.count),
+                backgroundColor: "rgba(16, 185, 129, 0.6)",
+                borderColor: "rgba(16, 185, 129, 1)",
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
-            indexAxis: 'y',
+            indexAxis: "y",
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: { display: false },
             },
             scales: {
-              x: { title: { display: true, text: 'Frequency' } }
-            }
-          }
+              x: { title: { display: true, text: "Frequency" } },
+            },
+          },
         });
       }
 
       function renderImbalanceStats(data) {
         const ratio = data.target_distribution?.subject_imbalance_ratio;
         const subjects = data.target_distribution?.subject_frequency;
-        
+
         if (!subjects || !Array.isArray(subjects) || subjects.length === 0) {
-          document.getElementById('imbalance-stats').innerHTML = '<div class="text-slate-600">Imbalance statistics not available.</div>';
+          document.getElementById("imbalance-stats").innerHTML =
+            '<div class="text-slate-600">Imbalance statistics not available.</div>';
           return;
         }
-        
+
         const maxSubject = subjects[0];
         const minSubject = subjects[subjects.length - 1];
-        
+
         const html = `
-          ${createStatCard('Imbalance Ratio', ratio || 'N/A', ratio ? 'x' : '')}
-          ${createStatCard('Most Frequent Subject', `${maxSubject.subject} (${maxSubject.count})`)}
-          ${createStatCard('Least Frequent Subject', `${minSubject.subject} (${minSubject.count})`)}
+          ${createStatCard("Imbalance Ratio", ratio || "N/A", ratio ? "x" : "")}
+          ${createStatCard("Most Frequent Subject", `${maxSubject.subject} (${maxSubject.count})`)}
+          ${createStatCard("Least Frequent Subject", `${minSubject.subject} (${minSubject.count})`)}
         `;
-        document.getElementById('imbalance-stats').innerHTML = html;
+        document.getElementById("imbalance-stats").innerHTML = html;
       }
 
       function renderGenderBiasStats(data) {
         const bias = data.bias_analysis?.gender_bias;
-        
+
         if (!bias) {
-          document.getElementById('gender-bias-stats').innerHTML = '<div class="text-slate-600">Gender bias data not available.</div>';
+          document.getElementById("gender-bias-stats").innerHTML =
+            '<div class="text-slate-600">Gender bias data not available.</div>';
           return;
         }
-        
+
         const html = `
-          ${createStatCard('Male-Gendered Words', bias.male_words_total)}
-          ${createStatCard('Female-Gendered Words', bias.female_words_total)}
-          ${createStatCard('Gender Bias Ratio', bias.bias_ratio, 'x')}
+          ${createStatCard("Male-Gendered Words", bias.male_words_total)}
+          ${createStatCard("Female-Gendered Words", bias.female_words_total)}
+          ${createStatCard("Gender Bias Ratio", bias.bias_ratio, "x")}
         `;
-        document.getElementById('gender-bias-stats').innerHTML = html;
-        
-        const note = '<div class="md:col-span-3 text-sm text-slate-600 bg-blue-50 p-3 rounded border border-blue-200"><strong>Interpretation:</strong> A bias ratio of ' + bias.bias_ratio.toFixed(2) + 'x indicates that male-gendered words appear ' + bias.bias_ratio.toFixed(2) + ' times more frequently than female-gendered words in the captions.</div>';
-        document.getElementById('gender-bias-stats').innerHTML += note;
+        document.getElementById("gender-bias-stats").innerHTML = html;
+
+        const note =
+          '<div class="md:col-span-3 text-sm text-slate-600 bg-blue-50 p-3 rounded border border-blue-200"><strong>Interpretation:</strong> A bias ratio of ' +
+          bias.bias_ratio.toFixed(2) +
+          "x indicates that male-gendered words appear " +
+          bias.bias_ratio.toFixed(2) +
+          " times more frequently than female-gendered words in the captions.</div>";
+        document.getElementById("gender-bias-stats").innerHTML += note;
       }
 
       function renderGenderBiasChart(data) {
         const bias = data.bias_analysis?.gender_bias;
-        
+
         if (!bias) {
-          showError('gender-bias-chart', 'Gender bias data not available');
+          showError("gender-bias-chart", "Gender bias data not available");
           return;
         }
-        
-        createChart('gender-bias-chart', {
-          type: 'bar',
+
+        createChart("gender-bias-chart", {
+          type: "bar",
           data: {
-            labels: ['Male-Gendered Words', 'Female-Gendered Words'],
-            datasets: [{
-              label: 'Total Mentions',
-              data: [bias.male_words_total, bias.female_words_total],
-              backgroundColor: ['rgba(59, 130, 246, 0.6)', 'rgba(236, 72, 153, 0.6)'],
-              borderColor: ['rgba(59, 130, 246, 1)', 'rgba(236, 72, 153, 1)'],
-              borderWidth: 1
-            }]
+            labels: ["Male-Gendered Words", "Female-Gendered Words"],
+            datasets: [
+              {
+                label: "Total Mentions",
+                data: [bias.male_words_total, bias.female_words_total],
+                backgroundColor: [
+                  "rgba(59, 130, 246, 0.6)",
+                  "rgba(236, 72, 153, 0.6)",
+                ],
+                borderColor: ["rgba(59, 130, 246, 1)", "rgba(236, 72, 153, 1)"],
+                borderWidth: 1,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
-              title: { display: false }
+              title: { display: false },
             },
             scales: {
-              y: { 
-                title: { display: true, text: 'Total Mentions' },
-                beginAtZero: true
-              }
-            }
-          }
+              y: {
+                title: { display: true, text: "Total Mentions" },
+                beginAtZero: true,
+              },
+            },
+          },
         });
       }
 
       function renderGenderedWordsGrid(data) {
         const bias = data.bias_analysis?.gender_bias;
-        
+
         if (!bias) {
-          document.getElementById('gendered-words-grid').innerHTML = '<div class="text-slate-600">Gendered words data not available.</div>';
+          document.getElementById("gendered-words-grid").innerHTML =
+            '<div class="text-slate-600">Gendered words data not available.</div>';
           return;
         }
-        
+
         const maleWords = bias.male_word_freq.slice(0, 10);
         const femaleWords = bias.female_word_freq.slice(0, 10);
-        
-        let html = '<div><h4 class="font-semibold text-slate-900 mb-3">Top 10 Male-Gendered Words</h4><ul class="space-y-2">';
-        maleWords.forEach(w => {
+
+        let html =
+          '<div><h4 class="font-semibold text-slate-900 mb-3">Top 10 Male-Gendered Words</h4><ul class="space-y-2">';
+        maleWords.forEach((w) => {
           html += `<li class="flex justify-between items-center text-sm"><span class="font-mono text-blue-600">${w.word}</span><span class="text-slate-600">${w.count.toLocaleString()}</span></li>`;
         });
-        html += '</ul></div>';
-        
-        html += '<div><h4 class="font-semibold text-slate-900 mb-3">Top 10 Female-Gendered Words</h4><ul class="space-y-2">';
-        femaleWords.forEach(w => {
+        html += "</ul></div>";
+
+        html +=
+          '<div><h4 class="font-semibold text-slate-900 mb-3">Top 10 Female-Gendered Words</h4><ul class="space-y-2">';
+        femaleWords.forEach((w) => {
           html += `<li class="flex justify-between items-center text-sm"><span class="font-mono text-pink-600">${w.word}</span><span class="text-slate-600">${w.count.toLocaleString()}</span></li>`;
         });
-        html += '</ul></div>';
-        
-        document.getElementById('gendered-words-grid').innerHTML = html;
+        html += "</ul></div>";
+
+        document.getElementById("gendered-words-grid").innerHTML = html;
       }
 
       function renderSamplePairs(data) {
         const samples = data.sample_pairs.slice(0, 6); // Show 6 samples
         if (!samples || !Array.isArray(samples)) {
-          document.getElementById('sample-pairs-grid').innerHTML = '<div class="text-slate-600">Sample pairs data not available.</div>';
+          document.getElementById("sample-pairs-grid").innerHTML =
+            '<div class="text-slate-600">Sample pairs data not available.</div>';
           return;
         }
-        
+
         let html = '<div class="grid md:grid-cols-2 gap-6">';
-        
+
         samples.forEach((pair, index) => {
-          const allCaptions = Array.isArray(pair.captions) ? pair.captions : [pair.caption || 'No caption available'];
+          const allCaptions = Array.isArray(pair.captions)
+            ? pair.captions
+            : [pair.caption || "No caption available"];
           const imagePath = `sample_images/${pair.image}`;
-          
+
           html += `
             <div class="bg-slate-50 rounded-lg border border-slate-200 overflow-hidden">
               <!-- Image Section -->
@@ -1602,25 +2019,34 @@
                 <div class="space-y-2">
                   <h5 class="text-sm font-medium text-slate-600">Captions (showing ${Math.min(3, allCaptions.length)} of ${allCaptions.length})</h5>
                   <div class="space-y-1">
-                    ${allCaptions.slice(0, 3).map((caption, i) => `
+                    ${allCaptions
+                      .slice(0, 3)
+                      .map(
+                        (caption, i) => `
                       <div class="text-sm text-slate-700 p-2 bg-white border border-slate-200 rounded">
                         <span class="text-xs text-slate-500 font-medium">Caption ${i + 1}:</span> ${caption}
                       </div>
-                    `).join('')}
-                    ${allCaptions.length > 3 ? `
+                    `,
+                      )
+                      .join("")}
+                    ${
+                      allCaptions.length > 3
+                        ? `
                       <div class="text-xs text-slate-500 italic text-center pt-1">
-                        ... and ${allCaptions.length - 3} more caption${allCaptions.length > 4 ? 's' : ''}
+                        ... and ${allCaptions.length - 3} more caption${allCaptions.length > 4 ? "s" : ""}
                       </div>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                   </div>
                 </div>
               </div>
             </div>
           `;
         });
-        
-        html += '</div>';
-        
+
+        html += "</div>";
+
         // Add informational note
         html += `
           <div class="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -1638,26 +2064,27 @@
             </div>
           </div>
         `;
-        
-        document.getElementById('sample-pairs-grid').innerHTML = html;
+
+        document.getElementById("sample-pairs-grid").innerHTML = html;
       }
 
       function renderInsights(data) {
         const insights = data.insights?.dataset_characteristics;
-        
+
         if (!insights || !Array.isArray(insights) || insights.length === 0) {
-          document.getElementById('key-insights').innerHTML = '<div class="text-slate-600">Key insights data not available.</div>';
+          document.getElementById("key-insights").innerHTML =
+            '<div class="text-slate-600">Key insights data not available.</div>';
           return;
         }
-        
+
         let html = '<ul class="space-y-2 text-sm text-slate-700">';
-        
-        insights.forEach(insight => {
+
+        insights.forEach((insight) => {
           html += `<li class="flex items-start gap-2"><span class="text-blue-600 font-bold">•</span><span>${insight}</span></li>`;
         });
-        
-        html += '</ul>';
-        document.getElementById('key-insights').innerHTML = html;
+
+        html += "</ul>";
+        document.getElementById("key-insights").innerHTML = html;
       }
 
       function renderPreprocessingRecommendations(data) {
@@ -1667,58 +2094,62 @@
         // Unimodal preprocessing is a flat list - need to separate IMAGE and TEXT
         let visualRecs = [];
         let textRecs = [];
-        
+
         if (Array.isArray(unimodal)) {
-          unimodal.forEach(rec => {
-            if (rec.startsWith('IMAGE:')) {
-              visualRecs.push(rec.replace('IMAGE: ', ''));
-            } else if (rec.startsWith('TEXT:')) {
-              textRecs.push(rec.replace('TEXT: ', ''));
+          unimodal.forEach((rec) => {
+            if (rec.startsWith("IMAGE:")) {
+              visualRecs.push(rec.replace("IMAGE: ", ""));
+            } else if (rec.startsWith("TEXT:")) {
+              textRecs.push(rec.replace("TEXT: ", ""));
             }
           });
         }
 
         let visualHtml = '<ul class="space-y-2 text-sm text-slate-700">';
         if (visualRecs.length > 0) {
-          visualRecs.forEach(rec => {
+          visualRecs.forEach((rec) => {
             visualHtml += `<li class="flex items-start gap-2"><span class="text-green-600 font-bold">✓</span><span>${rec}</span></li>`;
           });
         } else {
-          visualHtml += '<li class="text-slate-500">No visual preprocessing recommendations available.</li>';
+          visualHtml +=
+            '<li class="text-slate-500">No visual preprocessing recommendations available.</li>';
         }
-        visualHtml += '</ul>';
-        document.getElementById('visual-preprocessing').innerHTML = visualHtml;
+        visualHtml += "</ul>";
+        document.getElementById("visual-preprocessing").innerHTML = visualHtml;
 
         let textHtml = '<ul class="space-y-2 text-sm text-slate-700">';
         if (textRecs.length > 0) {
-          textRecs.forEach(rec => {
+          textRecs.forEach((rec) => {
             textHtml += `<li class="flex items-start gap-2"><span class="text-green-600 font-bold">✓</span><span>${rec}</span></li>`;
           });
         } else {
-          textHtml += '<li class="text-slate-500">No text preprocessing recommendations available.</li>';
+          textHtml +=
+            '<li class="text-slate-500">No text preprocessing recommendations available.</li>';
         }
-        textHtml += '</ul>';
-        document.getElementById('text-preprocessing').innerHTML = textHtml;
+        textHtml += "</ul>";
+        document.getElementById("text-preprocessing").innerHTML = textHtml;
 
         let crossmodalHtml = '<ul class="space-y-2 text-sm text-slate-700">';
         if (Array.isArray(crossmodal) && crossmodal.length > 0) {
-          crossmodal.forEach(rec => {
+          crossmodal.forEach((rec) => {
             crossmodalHtml += `<li class="flex items-start gap-2"><span class="text-blue-600 font-bold">⚡</span><span>${rec}</span></li>`;
           });
         } else {
-          crossmodalHtml += '<li class="text-slate-500">No cross-modal preprocessing recommendations available.</li>';
+          crossmodalHtml +=
+            '<li class="text-slate-500">No cross-modal preprocessing recommendations available.</li>';
         }
-        crossmodalHtml += '</ul>';
-        document.getElementById('crossmodal-preprocessing').innerHTML = crossmodalHtml;
+        crossmodalHtml += "</ul>";
+        document.getElementById("crossmodal-preprocessing").innerHTML =
+          crossmodalHtml;
       }
 
       (async () => {
         try {
           await initializeDashboard();
         } catch (error) {
-          console.error('Error loading dashboard:', error);
-          const errorBanner = document.createElement('div');
-          errorBanner.className = 'max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8';
+          console.error("Error loading dashboard:", error);
+          const errorBanner = document.createElement("div");
+          errorBanner.className = "max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8";
           errorBanner.innerHTML = `
             <div class="rounded-lg border border-rose-300 bg-rose-50 text-rose-700 p-4">
               <strong>Dashboard initialization error:</strong> ${error.message}
@@ -1728,25 +2159,32 @@
         }
 
         // Accordion functionality
-        document.querySelectorAll(".accordion-toggle").forEach(function(btn) {
-          btn.addEventListener("click", function() {
+        document.querySelectorAll(".accordion-toggle").forEach(function (btn) {
+          btn.addEventListener("click", function () {
             btn.closest(".accordion-item").classList.toggle("open");
           });
         });
 
         // Expand/collapse all functionality
-        document.getElementById("expandAllBtn").addEventListener("click", function() {
-          document.querySelectorAll(".accordion-item").forEach(function(item) {
-            item.classList.add("open");
+        document
+          .getElementById("expandAllBtn")
+          .addEventListener("click", function () {
+            document
+              .querySelectorAll(".accordion-item")
+              .forEach(function (item) {
+                item.classList.add("open");
+              });
           });
-        });
 
-        document.getElementById("collapseAllBtn").addEventListener("click", function() {
-          document.querySelectorAll(".accordion-item").forEach(function(item) {
-            item.classList.remove("open");
+        document
+          .getElementById("collapseAllBtn")
+          .addEventListener("click", function () {
+            document
+              .querySelectorAll(".accordion-item")
+              .forEach(function (item) {
+                item.classList.remove("open");
+              });
           });
-        });
-
       })();
     </script>
   </body>

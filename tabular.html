@@ -1,1380 +1,1913 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tabular EDA Studio | Advertisement Click</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --ink: #111827;
-            --muted: #475569;
-            --line: #d9e2ec;
-            --paper: #ffffff;
-            --bg-a: #f8fafc;
-            --bg-b: #edf2ff;
-            --accent: #0f766e;
-            --accent-2: #f59e0b;
-            --accent-3: #2563eb;
-            --danger: #dc2626;
-        }
+      :root {
+        --ink: #111827;
+        --muted: #475569;
+        --line: #d9e2ec;
+        --paper: #ffffff;
+        --bg-a: #f8fafc;
+        --bg-b: #edf2ff;
+        --accent: #0f766e;
+        --accent-2: #f59e0b;
+        --accent-3: #2563eb;
+        --danger: #dc2626;
+      }
 
-        body {
-            font-family: "Space Grotesk", sans-serif;
-            color: var(--ink);
-            background:
-                radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
-                radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
-                linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
-            min-height: 100vh;
-        }
+      body {
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
+          radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
+          linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
+        min-height: 100vh;
+      }
 
-        h1, h2, h3, h4 {
-            font-family: "Sora", sans-serif;
-            letter-spacing: -0.02em;
-        }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Sora", sans-serif;
+        letter-spacing: -0.02em;
+      }
 
-        .panel {
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
-            backdrop-filter: blur(10px);
-        }
+      .panel {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
+        backdrop-filter: blur(10px);
+      }
 
-        .metric-card {
-            border-radius: 16px;
-            border: 1px solid var(--line);
-            background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
-            padding: 1rem;
-        }
+      .metric-card {
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
+        padding: 1rem;
+      }
 
-        .metric-card strong {
-            font-size: 1.7rem;
-            display: block;
-            line-height: 1.1;
-        }
+      .metric-card strong {
+        font-size: 1.7rem;
+        display: block;
+        line-height: 1.1;
+      }
 
-        .accordion-content {
-            display: none;
-            animation: rise 0.3s ease;
-        }
+      .accordion-content {
+        display: none;
+        animation: rise 0.3s ease;
+      }
 
-        .accordion-item.open .accordion-content {
-            display: block;
-        }
+      .accordion-item.open .accordion-content {
+        display: block;
+      }
 
-        .accordion-toggle .arrow {
-            transition: transform 0.2s ease;
-        }
+      .accordion-toggle .arrow {
+        transition: transform 0.2s ease;
+      }
 
-        .accordion-item.open .accordion-toggle .arrow {
-            transform: rotate(90deg);
-        }
+      .accordion-item.open .accordion-toggle .arrow {
+        transform: rotate(90deg);
+      }
 
-        .tutorial-card {
-            border: 1px dashed #c4d4ee;
-            border-radius: 14px;
-            background: #f8fbff;
-            padding: 0.9rem;
-        }
+      .tutorial-card {
+        border: 1px dashed #c4d4ee;
+        border-radius: 14px;
+        background: #f8fbff;
+        padding: 0.9rem;
+      }
 
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            border: 1px solid var(--line);
-            border-radius: 999px;
-            font-size: 0.72rem;
-            padding: 0.2rem 0.6rem;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-            text-transform: uppercase;
-            background: #ffffff;
-        }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 0.72rem;
+        padding: 0.2rem 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        background: #ffffff;
+      }
 
+      .chart-wrap {
+        position: relative;
+        min-height: 320px;
+        height: 320px;
+      }
+
+      .chart-wrap canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      pre {
+        max-height: 300px;
+        overflow: auto;
+        background: #0b1222;
+        color: #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        font-size: 0.84rem;
+        line-height: 1.5;
+        border: 1px solid #24324f;
+      }
+
+      .tab-btn.active {
+        background: #0f172a;
+        color: #ffffff;
+        border-color: #0f172a;
+      }
+
+      .fade-in {
+        animation: rise 0.4s ease;
+      }
+
+      .notice {
+        border: 1px dashed #94a3b8;
+        border-radius: 12px;
+        background: #f8fafc;
+        color: #334155;
+        padding: 0.9rem;
+        font-size: 0.9rem;
+      }
+
+      .severity-low {
+        color: #0f766e;
+        font-weight: 700;
+      }
+
+      .severity-medium {
+        color: #b45309;
+        font-weight: 700;
+      }
+
+      .severity-high {
+        color: #b91c1c;
+        font-weight: 700;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
         .chart-wrap {
-            position: relative;
-            min-height: 320px;
-            height: 320px;
+          min-height: 280px;
+          height: 280px;
         }
 
-        .chart-wrap canvas {
-            width: 100% !important;
-            height: 100% !important;
+        .desktop-nav {
+          display: none;
         }
-
-        pre {
-            max-height: 300px;
-            overflow: auto;
-            background: #0b1222;
-            color: #e2e8f0;
-            border-radius: 12px;
-            padding: 1rem;
-            font-size: 0.84rem;
-            line-height: 1.5;
-            border: 1px solid #24324f;
-        }
-
-        .tab-btn.active {
-            background: #0f172a;
-            color: #ffffff;
-            border-color: #0f172a;
-        }
-
-        .fade-in {
-            animation: rise 0.4s ease;
-        }
-
-        .notice {
-            border: 1px dashed #94a3b8;
-            border-radius: 12px;
-            background: #f8fafc;
-            color: #334155;
-            padding: 0.9rem;
-            font-size: 0.9rem;
-        }
-
-        .severity-low {
-            color: #0f766e;
-            font-weight: 700;
-        }
-
-        .severity-medium {
-            color: #b45309;
-            font-weight: 700;
-        }
-
-        .severity-high {
-            color: #b91c1c;
-            font-weight: 700;
-        }
-
-        @keyframes rise {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .chart-wrap {
-                min-height: 280px;
-                height: 280px;
-            }
-
-            .desktop-nav {
-                display: none;
-            }
-        }
+      }
     </style>
-</head>
-<body class="leading-relaxed">
-    <nav class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="h-9 w-9 rounded-lg bg-teal-700 text-white flex items-center justify-center font-black">E</div>
-                <div>
-                    <p class="font-extrabold tracking-tight text-lg">EDA Studio</p>
-                    <p class="text-xs text-slate-500">Advertisement Click - Tabular Domain</p>
-                </div>
-            </div>
-            <div class="desktop-nav flex items-center gap-5 text-xs uppercase tracking-wider font-bold text-slate-500">
-                <a href="index.html" class="hover:text-teal-700">Summary</a>
-                <a href="tabular.html" class="text-teal-700">Tabular</a>
-                <a href="text.html" class="hover:text-teal-700">Text</a>
-                <a href="image.html" class="hover:text-teal-700">Image</a>
-                <a href="multimodal.html" class="hover:text-teal-700">Multimodal</a>
-            </div>
+  </head>
+  <body class="leading-relaxed">
+    <nav
+      class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            class="h-9 w-9 rounded-lg bg-teal-700 text-white flex items-center justify-center font-black"
+            >E</div
+          >
+          <div>
+            <p class="font-extrabold tracking-tight text-lg">EDA Studio</p>
+            <p class="text-xs text-slate-500"
+              >Advertisement Click - Tabular Domain</p
+            >
+          </div>
         </div>
+        <div
+          class="desktop-nav flex items-center gap-5 text-xs uppercase tracking-wider font-bold text-slate-500"
+        >
+          <a href="index.html" class="hover:text-teal-700">Summary</a>
+          <a href="tabular.html" class="text-teal-700">Tabular</a>
+          <a href="text.html" class="hover:text-teal-700">Text</a>
+          <a href="image.html" class="hover:text-teal-700">Image</a>
+          <a href="multimodal.html" class="hover:text-teal-700">Multimodal</a>
+        </div>
+      </div>
     </nav>
 
     <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-7">
-        <div class="panel p-6 sm:p-8">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                <div>
-                    <p class="chip mb-3">Hands-on Data Profiling</p>
-                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">Structured Data Analytics: Behavioral Pattern Recognition</h1>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <button id="expandAllBtn" class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800">Expand Analysis</button>
-                    <button id="collapseAllBtn" class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black">Collapse Sections</button>
-                    <button id="toggleTutorialBtn" class="px-4 py-2 rounded-full bg-amber-500 text-white text-sm font-bold hover:bg-amber-600">Toggle Instructions</button>
-                </div>
-            </div>
+      <div class="panel p-6 sm:p-8">
+        <div
+          class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
+        >
+          <div>
+            <p class="chip mb-3">Hands-on Data Profiling</p>
+            <h1 class="text-3xl sm:text-4xl font-extrabold mb-2"
+              >Structured Data Analytics: Behavioral Pattern Recognition</h1
+            >
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              id="expandAllBtn"
+              class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800"
+              >Expand Analysis</button
+            >
+            <button
+              id="collapseAllBtn"
+              class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black"
+              >Collapse Sections</button
+            >
+          </div>
         </div>
+      </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 space-y-6">
-        <section id="fatalMessage" class="hidden panel p-5 border border-red-300 bg-red-50 text-red-700 font-semibold"></section>
+      <section
+        id="fatalMessage"
+        class="hidden panel p-5 border border-red-300 bg-red-50 text-red-700 font-semibold"
+      ></section>
 
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 1</p>
-                    <h2 class="text-xl font-extrabold">Analysis Methodology</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6">
-                <ul id="methodologyList" class="text-sm text-slate-700 list-disc ml-5 space-y-2"></ul>
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 1</p
+            >
+            <h2 class="text-xl font-extrabold">Analysis Methodology</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6">
+          <ul
+            id="methodologyList"
+            class="text-sm text-slate-700 list-disc ml-5 space-y-2"
+          ></ul>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 2</p
+            >
+            <h2 class="text-xl font-extrabold">Dataset Summary</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 fade-in">
+            <div class="metric-card">
+              <span
+                class="text-xs uppercase tracking-wide text-slate-500 font-bold"
+                >Samples</span
+              >
+              <strong id="metricRows">-</strong>
+              <p class="text-sm text-slate-500">Total dataset rows</p>
             </div>
-        </section>
-
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 2</p>
-                    <h2 class="text-xl font-extrabold">Dataset Summary</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 fade-in">
-                    <div class="metric-card">
-                        <span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Samples</span>
-                        <strong id="metricRows">-</strong>
-                        <p class="text-sm text-slate-500">Total dataset rows</p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Features</span>
-                        <strong id="metricFeatures">-</strong>
-                        <p id="metricFeatureMix" class="text-sm text-slate-500">-</p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Missing Cells</span>
-                        <strong id="metricMissing">-</strong>
-                        <p id="metricMissingCols" class="text-sm text-slate-500">-</p>
-                    </div>
-                    <div class="metric-card">
-                        <span class="text-xs uppercase tracking-wide text-slate-500 font-bold">Target Ratio</span>
-                        <strong id="metricTargetRatio">-</strong>
-                        <p id="metricTargetNote" class="text-sm text-slate-500">-</p>
-                    </div>
-                </section>
-
-                <div class="grid lg:grid-cols-2 gap-6">
-                    <div class="panel p-5 border border-slate-200">
-                        <h3 class="font-bold mb-3">Target Variable Analysis (Summary)</h3>
-                        <div id="targetSummaryChart" class="chart-wrap"></div>
-                    </div>
-                    <div class="panel p-5 border border-slate-200">
-                        <h3 class="font-bold mb-3">Quick Data Notes</h3>
-                        <ul id="overviewNotes" class="text-sm text-slate-700 list-disc ml-5 space-y-1"></ul>
-                    </div>
-                </div>
-
-                <div class="overflow-auto panel border border-slate-200">
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
-                            <tr>
-                                <th class="px-4 py-3">Feature</th>
-                                <th class="px-4 py-3">Type</th>
-                                <th class="px-4 py-3">Dtype</th>
-                                <th class="px-4 py-3">Unique</th>
-                                <th class="px-4 py-3">Sample Values</th>
-                            </tr>
-                        </thead>
-                        <tbody id="featureTableBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
+            <div class="metric-card">
+              <span
+                class="text-xs uppercase tracking-wide text-slate-500 font-bold"
+                >Features</span
+              >
+              <strong id="metricFeatures">-</strong>
+              <p id="metricFeatureMix" class="text-sm text-slate-500">-</p>
             </div>
-        </section>
-
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 3</p>
-                    <h2 class="text-xl font-extrabold">Missing Data Assessment Analysis</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <div class="grid lg:grid-cols-2 gap-6">
-                    <div class="panel p-5 border border-slate-200">
-                        <div id="missingChart" class="chart-wrap"></div>
-                    </div>
-                    <div class="panel p-5 border border-slate-200 tutorial-block">
-                        <h3 class="font-bold mb-2">Severity Guide</h3>
-                        <ul id="missingTips" class="text-sm text-slate-700 list-disc ml-5 space-y-2"></ul>
-                    </div>
-                </div>
-
-                <div class="overflow-auto panel border border-slate-200">
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
-                            <tr>
-                                <th class="px-4 py-3">Column</th>
-                                <th class="px-4 py-3">Missing Count</th>
-                                <th class="px-4 py-3">Missing %</th>
-                                <th class="px-4 py-3">Severity</th>
-                            </tr>
-                        </thead>
-                        <tbody id="missingTableBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
+            <div class="metric-card">
+              <span
+                class="text-xs uppercase tracking-wide text-slate-500 font-bold"
+                >Missing Cells</span
+              >
+              <strong id="metricMissing">-</strong>
+              <p id="metricMissingCols" class="text-sm text-slate-500">-</p>
             </div>
-        </section>
-
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 4</p>
-                    <h2 class="text-xl font-extrabold">Numerical Features Distribution</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <div class="flex flex-wrap gap-3 items-center">
-                    <label for="numFeatureSelect" class="text-sm font-bold text-slate-700">Choose Numerical Feature</label>
-                    <select id="numFeatureSelect" class="border border-slate-300 rounded-lg px-3 py-2 text-sm"></select>
-                    <span id="numFeatureStats" class="text-sm text-slate-600"></span>
-                </div>
-                <div class="grid lg:grid-cols-2 gap-6">
-                    <div class="panel p-5 border border-slate-200"><div id="numHistPlot" class="chart-wrap"></div></div>
-                    <div class="panel p-5 border border-slate-200"><div id="numSummaryPlot" class="chart-wrap"></div></div>
-                </div>
-                <div class="notice">KDE requires row-level raw values. Current metadata supports histogram visualization only.</div>
-                <div class="overflow-auto panel border border-slate-200">
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
-                            <tr>
-                                <th class="px-4 py-3">Feature</th>
-                                <th class="px-4 py-3">Mean</th>
-                                <th class="px-4 py-3">Median</th>
-                                <th class="px-4 py-3">Std</th>
-                                <th class="px-4 py-3">Min</th>
-                                <th class="px-4 py-3">Max</th>
-                            </tr>
-                        </thead>
-                        <tbody id="numericalTableBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
+            <div class="metric-card">
+              <span
+                class="text-xs uppercase tracking-wide text-slate-500 font-bold"
+                >Target Ratio</span
+              >
+              <strong id="metricTargetRatio">-</strong>
+              <p id="metricTargetNote" class="text-sm text-slate-500">-</p>
             </div>
-        </section>
+          </section>
 
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 5</p>
-                    <h2 class="text-xl font-extrabold">Categorical Features Distribution</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <div class="panel p-5 border border-slate-200"><div id="categoricalChart" class="chart-wrap"></div></div>
-                <div class="notice" id="categoricalNotice"></div>
-                <div class="overflow-auto panel border border-slate-200">
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
-                            <tr>
-                                <th class="px-4 py-3">Feature</th>
-                                <th class="px-4 py-3">Unique Values</th>
-                                <th class="px-4 py-3">Dtype</th>
-                                <th class="px-4 py-3">Sample Values</th>
-                            </tr>
-                        </thead>
-                        <tbody id="categoricalTableBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Target Variable Analysis (Summary)</h3>
+              <div id="targetSummaryChart" class="chart-wrap"></div>
             </div>
-        </section>
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Quick Data Notes</h3>
+              <ul
+                id="overviewNotes"
+                class="text-sm text-slate-700 list-disc ml-5 space-y-1"
+              ></ul>
+            </div>
+          </div>
 
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 6</p>
-                    <h2 class="text-xl font-extrabold">Target Variable Distribution</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <div class="grid lg:grid-cols-2 gap-6">
-                    <div class="panel p-5 border border-slate-200"><div id="targetClassChart" class="chart-wrap"></div></div>
-                    <div class="panel p-5 border border-slate-200">
-                        <div class="metric-card mb-3">
-                            <span class="text-xs uppercase text-slate-500 font-bold">Imbalance Ratio</span>
-                            <strong id="imbalanceRatio">-</strong>
-                        </div>
-                        <div class="metric-card">
-                            <span class="text-xs uppercase text-slate-500 font-bold">Assessment</span>
-                            <p id="imbalanceAssessment" class="text-sm mt-2 text-slate-600">-</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="overflow-auto panel border border-slate-200">
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
-                            <tr>
-                                <th class="px-4 py-3">Target Class</th>
-                                <th class="px-4 py-3">Count</th>
-                                <th class="px-4 py-3">Percentage</th>
-                            </tr>
-                        </thead>
-                        <tbody id="targetClassTableBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+          <div class="overflow-auto panel border border-slate-200">
+            <table class="w-full text-sm">
+              <thead
+                class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500"
+              >
+                <tr>
+                  <th class="px-4 py-3">Feature</th>
+                  <th class="px-4 py-3">Type</th>
+                  <th class="px-4 py-3">Dtype</th>
+                  <th class="px-4 py-3">Unique</th>
+                  <th class="px-4 py-3">Sample Values</th>
+                </tr>
+              </thead>
+              <tbody
+                id="featureTableBody"
+                class="divide-y divide-slate-100"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 7</p>
-                    <h2 class="text-xl font-extrabold">Intercorrelation Analysis (Pearson)</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <div id="corrNotice" class="notice"></div>
-                <div class="panel p-3 border border-slate-200"><div id="corrHeatmap" class="chart-wrap"></div></div>
-                <div class="panel p-5 border border-slate-200">
-                    <h3 class="font-bold mb-3">Highly Correlated Pairs (|r| > 0.7)</h3>
-                    <ul id="highCorrList" class="text-sm text-slate-700 list-disc ml-5 space-y-1"></ul>
-                </div>
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 3</p
+            >
+            <h2 class="text-xl font-extrabold"
+              >Missing Data Assessment Analysis</h2
+            >
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200">
+              <div id="missingChart" class="chart-wrap"></div>
             </div>
-        </section>
+            <div class="panel p-5 border border-slate-200 tutorial-block">
+              <h3 class="font-bold mb-2">Severity Guide</h3>
+              <ul
+                id="missingTips"
+                class="text-sm text-slate-700 list-disc ml-5 space-y-2"
+              ></ul>
+            </div>
+          </div>
 
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 8</p>
-                    <h2 class="text-xl font-extrabold">Outlier Detection (IQR Method)</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <div class="notice">Outlier counts are approximated from histogram bins because row-level values are not available in current metadata.</div>
-                <div class="panel p-5 border border-slate-200"><div id="outlierChart" class="chart-wrap"></div></div>
-                <div class="overflow-auto panel border border-slate-200">
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
-                            <tr>
-                                <th class="px-4 py-3">Feature</th>
-                                <th class="px-4 py-3">Outlier Count (Approx)</th>
-                                <th class="px-4 py-3">Outlier %</th>
-                                <th class="px-4 py-3">Valid Range</th>
-                                <th class="px-4 py-3">Severity</th>
-                            </tr>
-                        </thead>
-                        <tbody id="outlierTableBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+          <div class="overflow-auto panel border border-slate-200">
+            <table class="w-full text-sm">
+              <thead
+                class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500"
+              >
+                <tr>
+                  <th class="px-4 py-3">Column</th>
+                  <th class="px-4 py-3">Missing Count</th>
+                  <th class="px-4 py-3">Missing %</th>
+                  <th class="px-4 py-3">Severity</th>
+                </tr>
+              </thead>
+              <tbody
+                id="missingTableBody"
+                class="divide-y divide-slate-100"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 9</p>
-                    <h2 class="text-xl font-extrabold">Target vs Features Analysis</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <div id="targetVsNotice" class="notice"></div>
-                <div class="panel p-5 border border-slate-200"><div id="targetVsChart" class="chart-wrap"></div></div>
-            </div>
-        </section>
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 4</p
+            >
+            <h2 class="text-xl font-extrabold"
+              >Numerical Features Distribution</h2
+            >
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="flex flex-wrap gap-3 items-center">
+            <label
+              for="numFeatureSelect"
+              class="text-sm font-bold text-slate-700"
+              >Choose Numerical Feature</label
+            >
+            <select
+              id="numFeatureSelect"
+              class="border border-slate-300 rounded-lg px-3 py-2 text-sm"
+            ></select>
+            <span id="numFeatureStats" class="text-sm text-slate-600"></span>
+          </div>
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200"
+              ><div id="numHistPlot" class="chart-wrap"></div
+            ></div>
+            <div class="panel p-5 border border-slate-200"
+              ><div id="numSummaryPlot" class="chart-wrap"></div
+            ></div>
+          </div>
+          <div class="notice"
+            >KDE requires row-level raw values. Current metadata supports
+            histogram visualization only.</div
+          >
+          <div class="overflow-auto panel border border-slate-200">
+            <table class="w-full text-sm">
+              <thead
+                class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500"
+              >
+                <tr>
+                  <th class="px-4 py-3">Feature</th>
+                  <th class="px-4 py-3">Mean</th>
+                  <th class="px-4 py-3">Median</th>
+                  <th class="px-4 py-3">Std</th>
+                  <th class="px-4 py-3">Min</th>
+                  <th class="px-4 py-3">Max</th>
+                </tr>
+              </thead>
+              <tbody
+                id="numericalTableBody"
+                class="divide-y divide-slate-100"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 10</p>
-                    <h2 class="text-xl font-extrabold">Data Sample Analysis Rows</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <div id="sampleRowsNotice" class="notice"></div>
-                <div class="overflow-auto panel border border-slate-200">
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500">
-                            <tr>
-                                <th class="px-4 py-3">Feature</th>
-                                <th class="px-4 py-3">Sample Values (Available)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="sampleValuesByFeatureBody" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 5</p
+            >
+            <h2 class="text-xl font-extrabold"
+              >Categorical Features Distribution</h2
+            >
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="panel p-5 border border-slate-200"
+            ><div id="categoricalChart" class="chart-wrap"></div
+          ></div>
+          <div class="notice" id="categoricalNotice"></div>
+          <div class="overflow-auto panel border border-slate-200">
+            <table class="w-full text-sm">
+              <thead
+                class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500"
+              >
+                <tr>
+                  <th class="px-4 py-3">Feature</th>
+                  <th class="px-4 py-3">Unique Values</th>
+                  <th class="px-4 py-3">Dtype</th>
+                  <th class="px-4 py-3">Sample Values</th>
+                </tr>
+              </thead>
+              <tbody
+                id="categoricalTableBody"
+                class="divide-y divide-slate-100"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-        <section class="accordion-item open panel overflow-hidden" data-section>
-            <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 11</p>
-                    <h2 class="text-xl font-extrabold">Key Insights and Suggestions</h2>
-                </div>
-                <span class="arrow text-2xl font-bold text-slate-500">›</span>
-            </button>
-            <div class="accordion-content p-6 space-y-6">
-                <div class="grid lg:grid-cols-2 gap-6">
-                    <div class="panel p-5 border border-slate-200">
-                        <h3 class="font-bold mb-3">Key Insights</h3>
-                        <ul id="keyInsightsList" class="text-sm text-slate-700 list-disc ml-5 space-y-2"></ul>
-                    </div>
-                    <div class="panel p-5 border border-slate-200">
-                        <h3 class="font-bold mb-3">Preprocessing Suggestions</h3>
-                        <ul id="preprocessSuggestionsList" class="text-sm text-slate-700 list-disc ml-5 space-y-2"></ul>
-                    </div>
-                </div>
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 6</p
+            >
+            <h2 class="text-xl font-extrabold">Target Variable Distribution</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200"
+              ><div id="targetClassChart" class="chart-wrap"></div
+            ></div>
+            <div class="panel p-5 border border-slate-200">
+              <div class="metric-card mb-3">
+                <span class="text-xs uppercase text-slate-500 font-bold"
+                  >Imbalance Ratio</span
+                >
+                <strong id="imbalanceRatio">-</strong>
+              </div>
+              <div class="metric-card">
+                <span class="text-xs uppercase text-slate-500 font-bold"
+                  >Assessment</span
+                >
+                <p id="imbalanceAssessment" class="text-sm mt-2 text-slate-600"
+                  >-</p
+                >
+              </div>
             </div>
-        </section>
+          </div>
+          <div class="overflow-auto panel border border-slate-200">
+            <table class="w-full text-sm">
+              <thead
+                class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500"
+              >
+                <tr>
+                  <th class="px-4 py-3">Target Class</th>
+                  <th class="px-4 py-3">Count</th>
+                  <th class="px-4 py-3">Percentage</th>
+                </tr>
+              </thead>
+              <tbody
+                id="targetClassTableBody"
+                class="divide-y divide-slate-100"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 7</p
+            >
+            <h2 class="text-xl font-extrabold"
+              >Intercorrelation Analysis (Pearson)</h2
+            >
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div id="corrNotice" class="notice"></div>
+          <div class="panel p-3 border border-slate-200"
+            ><div id="corrHeatmap" class="chart-wrap"></div
+          ></div>
+          <div class="panel p-5 border border-slate-200">
+            <h3 class="font-bold mb-3">Highly Correlated Pairs (|r| > 0.7)</h3>
+            <ul
+              id="highCorrList"
+              class="text-sm text-slate-700 list-disc ml-5 space-y-1"
+            ></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 8</p
+            >
+            <h2 class="text-xl font-extrabold"
+              >Outlier Detection (IQR Method)</h2
+            >
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="notice"
+            >Outlier counts are approximated from histogram bins because
+            row-level values are not available in current metadata.</div
+          >
+          <div class="panel p-5 border border-slate-200"
+            ><div id="outlierChart" class="chart-wrap"></div
+          ></div>
+          <div class="overflow-auto panel border border-slate-200">
+            <table class="w-full text-sm">
+              <thead
+                class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500"
+              >
+                <tr>
+                  <th class="px-4 py-3">Feature</th>
+                  <th class="px-4 py-3">Outlier Count (Approx)</th>
+                  <th class="px-4 py-3">Outlier %</th>
+                  <th class="px-4 py-3">Valid Range</th>
+                  <th class="px-4 py-3">Severity</th>
+                </tr>
+              </thead>
+              <tbody
+                id="outlierTableBody"
+                class="divide-y divide-slate-100"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 9</p
+            >
+            <h2 class="text-xl font-extrabold">Target vs Features Analysis</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div id="targetVsNotice" class="notice"></div>
+          <div class="panel p-5 border border-slate-200"
+            ><div id="targetVsChart" class="chart-wrap"></div
+          ></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 10</p
+            >
+            <h2 class="text-xl font-extrabold">Data Sample Analysis Rows</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div id="sampleRowsNotice" class="notice"></div>
+          <div class="overflow-auto panel border border-slate-200">
+            <table class="w-full text-sm">
+              <thead
+                class="bg-slate-50 border-b border-slate-200 text-left text-xs uppercase tracking-wide text-slate-500"
+              >
+                <tr>
+                  <th class="px-4 py-3">Feature</th>
+                  <th class="px-4 py-3">Sample Values (Available)</th>
+                </tr>
+              </thead>
+              <tbody
+                id="sampleValuesByFeatureBody"
+                class="divide-y divide-slate-100"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 11</p
+            >
+            <h2 class="text-xl font-extrabold">Key Insights and Suggestions</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-6">
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Key Insights</h3>
+              <ul
+                id="keyInsightsList"
+                class="text-sm text-slate-700 list-disc ml-5 space-y-2"
+              ></ul>
+            </div>
+            <div class="panel p-5 border border-slate-200">
+              <h3 class="font-bold mb-3">Preprocessing Suggestions</h3>
+              <ul
+                id="preprocessSuggestionsList"
+                class="text-sm text-slate-700 list-disc ml-5 space-y-2"
+              ></ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="mt-8 border-t border-slate-200 bg-white/75">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-xs uppercase tracking-[0.22em] text-slate-500 text-center">
-            HCMUT - Machine Learning Final Report - Dynamic Tabular EDA From Metadata Artifacts
-        </div>
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-xs uppercase tracking-[0.22em] text-slate-500 text-center"
+      >
+        HCMUT - Machine Learning Final Report - Dynamic Tabular EDA From
+        Metadata Artifacts
+      </div>
     </footer>
 
     <script>
-        const DATA_PATH = "plots_data/eda_tabular_data.json";
-        let tutorialsVisible = true;
-        const state = { outlierResults: [] };
+      const DATA_PATH = "plots_data/eda_tabular_data.json";
+      let tutorialsVisible = true;
+      const state = { outlierResults: [] };
 
-        const chartRegistry = new Map();
+      const chartRegistry = new Map();
 
-        function formatNumber(value, decimals) {
-            if (typeof value !== "number" || Number.isNaN(value)) {
-                return String(value);
-            }
-            return value.toLocaleString("en-US", {
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            });
+      function formatNumber(value, decimals) {
+        if (typeof value !== "number" || Number.isNaN(value)) {
+          return String(value);
         }
-
-        function setText(id, value) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.textContent = value;
-            }
-        }
-
-        function setHtml(id, value) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.innerHTML = value;
-            }
-        }
-
-        function extractAxisTitle(axis) {
-            if (!axis || !axis.title) return "";
-            if (typeof axis.title === "string") return axis.title;
-            return axis.title.text || "";
-        }
-
-        function getMarkerColor(marker, fallback) {
-            if (!marker) return fallback;
-            if (Array.isArray(marker.color)) return marker.color;
-            return marker.color || marker.colors || fallback;
-        }
-
-        function valueColor(value) {
-            if (!Number.isFinite(value)) return "rgba(148, 163, 184, 0.9)";
-            if (value >= 0.75) return "rgba(15, 118, 110, 0.95)";
-            if (value >= 0.5) return "rgba(37, 99, 235, 0.92)";
-            if (value >= 0.25) return "rgba(245, 158, 11, 0.9)";
-            if (value >= 0) return "rgba(251, 191, 36, 0.85)";
-            if (value <= -0.75) return "rgba(185, 28, 28, 0.95)";
-            if (value <= -0.5) return "rgba(220, 38, 38, 0.92)";
-            if (value <= -0.25) return "rgba(244, 63, 94, 0.9)";
-            return "rgba(251, 113, 133, 0.85)";
-        }
-
-        function renderHeatmapLikeScatter(canvas, trace, layout) {
-            const xLabels = Array.isArray(trace.x) ? trace.x : [];
-            const yLabels = Array.isArray(trace.y) ? trace.y : [];
-            const z = Array.isArray(trace.z) ? trace.z : [];
-            const points = [];
-
-            for (let row = 0; row < z.length; row += 1) {
-                const line = Array.isArray(z[row]) ? z[row] : [];
-                for (let col = 0; col < line.length; col += 1) {
-                    const value = Number(line[col]);
-                    points.push({
-                        x: col,
-                        y: row,
-                        v: Number.isFinite(value) ? value : 0,
-                        xLabel: xLabels[col] || String(col),
-                        yLabel: yLabels[row] || String(row)
-                    });
-                }
-            }
-
-            const size = Math.max(8, 18 - Math.max(xLabels.length, yLabels.length) * 0.5);
-            const title = typeof layout?.title === "string" ? layout.title : layout?.title?.text || "";
-
-            return new Chart(canvas, {
-                type: "scatter",
-                data: {
-                    datasets: [
-                        {
-                            label: "Correlation",
-                            data: points,
-                            backgroundColor: points.map(function(p) { return valueColor(p.v); }),
-                            pointRadius: size,
-                            pointHoverRadius: size + 2,
-                            pointStyle: "rectRounded"
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        title: { display: Boolean(title), text: title },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const point = context.raw;
-                                    return point.yLabel + " vs " + point.xLabel + ": r=" + Number(point.v).toFixed(3);
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            type: "linear",
-                            min: -0.5,
-                            max: Math.max(0, xLabels.length - 0.5),
-                            ticks: {
-                                stepSize: 1,
-                                callback: function(value) {
-                                    const index = Number(value);
-                                    return Number.isInteger(index) ? xLabels[index] || "" : "";
-                                }
-                            },
-                            title: { display: false },
-                            grid: { color: "rgba(148, 163, 184, 0.2)" }
-                        },
-                        y: {
-                            type: "linear",
-                            min: -0.5,
-                            max: Math.max(0, yLabels.length - 0.5),
-                            reverse: true,
-                            ticks: {
-                                stepSize: 1,
-                                callback: function(value) {
-                                    const index = Number(value);
-                                    return Number.isInteger(index) ? yLabels[index] || "" : "";
-                                }
-                            },
-                            title: { display: false },
-                            grid: { color: "rgba(148, 163, 184, 0.2)" }
-                        }
-                    }
-                }
-            });
-        }
-
-        function makePlot(id, data, layout) {
-            const el = document.getElementById(id);
-            if (!el || typeof Chart === "undefined" || !Array.isArray(data) || !data.length) {
-                return;
-            }
-
-            const existing = chartRegistry.get(id);
-            if (existing) {
-                existing.destroy();
-            }
-
-            el.innerHTML = "";
-            const canvas = document.createElement("canvas");
-            el.appendChild(canvas);
-
-            const firstTrace = data[0] || {};
-            const traceType = firstTrace.type || "bar";
-
-            if (traceType === "heatmap") {
-                const heatmapChart = renderHeatmapLikeScatter(canvas, firstTrace, layout);
-                chartRegistry.set(id, heatmapChart);
-                return;
-            }
-
-            if (traceType === "pie") {
-                const pieChart = new Chart(canvas, {
-                    type: firstTrace.hole ? "doughnut" : "pie",
-                    data: {
-                        labels: firstTrace.labels || [],
-                        datasets: [
-                            {
-                                data: firstTrace.values || [],
-                                backgroundColor: getMarkerColor(firstTrace.marker, [
-                                    "#0f766e",
-                                    "#f59e0b",
-                                    "#2563eb",
-                                    "#14b8a6",
-                                    "#dc2626",
-                                    "#9333ea"
-                                ]),
-                                borderWidth: 1,
-                                borderColor: "#ffffff",
-                                cutout: firstTrace.hole ? Math.round(firstTrace.hole * 100) + "%" : "0%"
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: layout?.legend?.orientation === "h" ? "bottom" : "right"
-                            }
-                        }
-                    }
-                });
-                chartRegistry.set(id, pieChart);
-                return;
-            }
-
-            const horizontal = data.some(function(trace) { return trace.orientation === "h"; });
-            const labels = horizontal ? firstTrace.y || [] : firstTrace.x || [];
-            const title = typeof layout?.title === "string" ? layout.title : layout?.title?.text || "";
-
-            const chart = new Chart(canvas, {
-                type: "bar",
-                data: {
-                    labels: labels,
-                    datasets: data.map(function(trace, index) {
-                        return {
-                            label: trace.name || "Series " + (index + 1),
-                            data: trace.orientation === "h" ? trace.x || [] : trace.y || [],
-                            backgroundColor: getMarkerColor(trace.marker, ["#0f766e", "#f59e0b", "#2563eb", "#14b8a6", "#dc2626"][index % 5]),
-                            borderRadius: 4
-                        };
-                    })
-                },
-                options: {
-                    indexAxis: horizontal ? "y" : "x",
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: data.length > 1 },
-                        title: { display: Boolean(title), text: title }
-                    },
-                    scales: {
-                        x: {
-                            stacked: layout?.barmode === "stack",
-                            title: {
-                                display: Boolean(extractAxisTitle(layout?.xaxis)),
-                                text: extractAxisTitle(layout?.xaxis)
-                            },
-                            grid: { color: "rgba(148, 163, 184, 0.2)" }
-                        },
-                        y: {
-                            stacked: layout?.barmode === "stack",
-                            title: {
-                                display: Boolean(extractAxisTitle(layout?.yaxis)),
-                                text: extractAxisTitle(layout?.yaxis)
-                            },
-                            min: Array.isArray(layout?.yaxis?.range) ? layout.yaxis.range[0] : undefined,
-                            max: Array.isArray(layout?.yaxis?.range) ? layout.yaxis.range[1] : undefined,
-                            grid: { color: "rgba(148, 163, 184, 0.2)" }
-                        }
-                    }
-                }
-            });
-
-            chartRegistry.set(id, chart);
-        }
-
-        function setupAccordion() {
-            document.querySelectorAll(".accordion-toggle").forEach(function(btn) {
-                btn.addEventListener("click", function() {
-                    btn.closest(".accordion-item").classList.toggle("open");
-                });
-            });
-
-            document.getElementById("expandAllBtn").addEventListener("click", function() {
-                document.querySelectorAll(".accordion-item").forEach(function(item) {
-                    item.classList.add("open");
-                });
-            });
-
-            document.getElementById("collapseAllBtn").addEventListener("click", function() {
-                document.querySelectorAll(".accordion-item").forEach(function(item) {
-                    item.classList.remove("open");
-                });
-            });
-
-            document.getElementById("toggleTutorialBtn").addEventListener("click", function(e) {
-                tutorialsVisible = !tutorialsVisible;
-                document.querySelectorAll(".tutorial-block").forEach(function(el) {
-                    el.style.display = tutorialsVisible ? "block" : "none";
-                });
-                e.target.textContent = tutorialsVisible ? "Toggle Instructions" : "Show Instructions";
-            });
-        }
-
-        function severityLabel(pct) {
-            if (pct > 20) return "High";
-            if (pct > 5) return "Medium";
-            return "Low";
-        }
-
-        function severityClass(level) {
-            if (level === "High") return "severity-high";
-            if (level === "Medium") return "severity-medium";
-            return "severity-low";
-        }
-
-        function renderMethodology() {
-            const items = [
-                "Missing Data Assessment: quantify missing value rates per column and evaluate impact severity.",
-                "Numerical Analysis: statistics using Mean, Median, Std, Min, Max; distributions using histogram.",
-                "Categorical Analysis: evaluate unique value counts and encoding feasibility.",
-                "Intercorrelation Analysis (Pearson): identify multicollinearity between numerical variables using correlation matrix.",
-                "Target Variable Analysis: class distribution patterns, imbalance ratios, and preprocessing implications.",
-                "Outlier Detection (IQR): calculate valid ranges and outlier proportions for numerical features.",
-                "Cross-tabulation Analysis: compare target distribution across categorical feature levels for pattern identification."
-            ];
-            const list = document.getElementById("methodologyList");
-            list.innerHTML = "";
-            items.forEach(function(item) {
-                const li = document.createElement("li");
-                li.textContent = item;
-                list.appendChild(li);
-            });
-        }
-
-        function renderSummary(data) {
-            const overview = data.dataset_overview || {};
-            const missing = data.missing_values || {};
-            setText("metricRows", formatNumber(overview.n_samples || 0, 0));
-            setText("metricFeatures", formatNumber(overview.n_features || 0, 0));
-            setText(
-                "metricFeatureMix",
-                formatNumber(overview.n_numerical || 0, 0) + " numerical, " + formatNumber(overview.n_categorical || 0, 0) + " categorical"
-            );
-            setText("metricMissing", formatNumber(missing.total_missing_cells || 0, 0));
-            setText("metricMissingCols", formatNumber(missing.columns_with_missing || 0, 0) + " columns with missing values");
-
-            const targetDist = overview.target_distribution || {};
-            const classKeys = Object.keys(targetDist);
-            const classCounts = classKeys.map(function(key) { return targetDist[key].count || 0; }).filter(function(v) { return v > 0; });
-            let ratio = "N/A";
-            if (classCounts.length >= 2) {
-                const maxCount = Math.max.apply(null, classCounts);
-                const minCount = Math.min.apply(null, classCounts);
-                ratio = (maxCount / minCount).toFixed(2) + " : 1";
-            }
-            setText("metricTargetRatio", ratio);
-            setText("metricTargetNote", "Target: " + (overview.target_column || "N/A"));
-
-            const labels = classKeys.map(function(key) { return "Class " + key; });
-            const values = classKeys.map(function(key) { return targetDist[key].count || 0; });
-            makePlot("targetSummaryChart", [{
-                type: "pie",
-                labels: labels,
-                values: values,
-                hole: 0.58,
-                marker: { colors: ["#0f766e", "#f59e0b", "#2563eb", "#14b8a6"] },
-                textinfo: "label+percent"
-            }], {
-                margin: { t: 6, r: 10, b: 10, l: 10 },
-                legend: { orientation: "h", y: -0.1 }
-            });
-
-            const notes = [
-                "Target column: " + (overview.target_column || "N/A"),
-                "Numerical features: " + ((overview.numerical_columns || []).join(", ") || "N/A"),
-                "Categorical features: " + ((overview.categorical_columns || []).join(", ") || "N/A"),
-                "Feature dictionary entries: " + formatNumber((overview.feature_info || []).length, 0)
-            ];
-            const noteList = document.getElementById("overviewNotes");
-            noteList.innerHTML = "";
-            notes.forEach(function(note) {
-                const li = document.createElement("li");
-                li.textContent = note;
-                noteList.appendChild(li);
-            });
-
-            const body = document.getElementById("featureTableBody");
-            body.innerHTML = "";
-            (overview.feature_info || []).forEach(function(item) {
-                const row = document.createElement("tr");
-                const samples = (item.sample_values || []).slice(0, 3).join(", ");
-                row.innerHTML =
-                    "<td class='px-4 py-3 font-semibold'>" + item.name + "</td>" +
-                    "<td class='px-4 py-3'>" + item.type + "</td>" +
-                    "<td class='px-4 py-3'>" + item.dtype + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(item.n_unique || 0, 0) + "</td>" +
-                    "<td class='px-4 py-3 text-slate-600'>" + samples + "</td>";
-                body.appendChild(row);
-            });
-        }
-
-        function renderMissing(data) {
-            const rows = (data.missing_values && data.missing_values.per_column) || [];
-            const labels = rows.map(function(item) { return item.feature; });
-            const values = rows.map(function(item) { return item.missing_pct || 0; });
-
-            makePlot("missingChart", [{
-                type: "bar",
-                orientation: "h",
-                y: labels,
-                x: values,
-                marker: { color: "#0f766e" }
-            }], {
-                title: "Missing Percentage by Column",
-                xaxis: { title: "Missing (%)" },
-                yaxis: { automargin: true }
-            });
-
-            const tips = document.getElementById("missingTips");
-            tips.innerHTML = "";
-            rows.forEach(function(item) {
-                const li = document.createElement("li");
-                const pct = item.missing_pct || 0;
-                const sev = severityLabel(pct);
-                li.textContent = item.feature + ": " + formatNumber(pct, 2) + "% (" + sev + ")";
-                tips.appendChild(li);
-            });
-
-            const body = document.getElementById("missingTableBody");
-            body.innerHTML = "";
-            rows.forEach(function(item) {
-                const pct = item.missing_pct || 0;
-                const sev = severityLabel(pct);
-                const row = document.createElement("tr");
-                row.innerHTML =
-                    "<td class='px-4 py-3 font-semibold'>" + item.feature + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(item.missing_count || 0, 0) + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(pct, 2) + "%</td>" +
-                    "<td class='px-4 py-3 " + severityClass(sev) + "'>" + sev + "</td>";
-                body.appendChild(row);
-            });
-        }
-
-        function renderNumerical(data) {
-            const features = data.numerical_features || [];
-            const select = document.getElementById("numFeatureSelect");
-            const body = document.getElementById("numericalTableBody");
-            body.innerHTML = "";
-
-            features.forEach(function(f) {
-                const row = document.createElement("tr");
-                row.innerHTML =
-                    "<td class='px-4 py-3 font-semibold'>" + f.feature + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(f.mean, 2) + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(f.median, 2) + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(f.std, 2) + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(f.min, 2) + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(f.max, 2) + "</td>";
-                body.appendChild(row);
-            });
-
-            function renderOne(feature) {
-                const edges = feature.histogram_edges || [];
-                const counts = feature.histogram_values || [];
-                const centers = edges.slice(0, -1).map(function(edge, index) {
-                    return Number(((edge + edges[index + 1]) / 2).toFixed(3));
-                });
-
-                makePlot("numHistPlot", [{
-                    type: "bar",
-                    x: centers,
-                    y: counts,
-                    marker: { color: "#2563eb" }
-                }], {
-                    title: feature.feature + " - Histogram",
-                    xaxis: { title: feature.feature },
-                    yaxis: { title: "Count" }
-                });
-
-                makePlot("numSummaryPlot", [{
-                    type: "bar",
-                    x: ["mean", "median", "std", "min", "max"],
-                    y: [feature.mean, feature.median, feature.std, feature.min, feature.max],
-                    marker: { color: ["#0f766e", "#14b8a6", "#f59e0b", "#93c5fd", "#1d4ed8"] }
-                }], {
-                    title: feature.feature + " - Summary Stats"
-                });
-
-                setText(
-                    "numFeatureStats",
-                    "mean " + formatNumber(feature.mean, 2) +
-                    " | median " + formatNumber(feature.median, 2) +
-                    " | std " + formatNumber(feature.std, 2) +
-                    " | skew " + formatNumber(feature.skewness || 0, 3)
-                );
-            }
-
-            select.innerHTML = "";
-            features.forEach(function(feature, index) {
-                const option = document.createElement("option");
-                option.value = String(index);
-                option.textContent = feature.feature;
-                select.appendChild(option);
-            });
-
-            if (features.length > 0) {
-                renderOne(features[0]);
-                select.addEventListener("change", function() {
-                    renderOne(features[Number(select.value)]);
-                });
-            } else {
-                setText("numFeatureStats", "No numerical metadata available.");
-            }
-        }
-
-        function renderCategorical(data) {
-            const featureInfo = (data.dataset_overview && data.dataset_overview.feature_info) || [];
-            const rows = featureInfo.filter(function(item) { return item.type === "Categorical"; });
-            const body = document.getElementById("categoricalTableBody");
-            body.innerHTML = "";
-
-            rows.forEach(function(item) {
-                const row = document.createElement("tr");
-                row.innerHTML =
-                    "<td class='px-4 py-3 font-semibold'>" + item.name + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(item.n_unique || 0, 0) + "</td>" +
-                    "<td class='px-4 py-3'>" + item.dtype + "</td>" +
-                    "<td class='px-4 py-3 text-slate-600'>" + (item.sample_values || []).slice(0, 3).join(", ") + "</td>";
-                body.appendChild(row);
-            });
-
-            makePlot("categoricalChart", [{
-                type: "bar",
-                x: rows.map(function(item) { return item.name; }),
-                y: rows.map(function(item) { return item.n_unique || 0; }),
-                marker: { color: "#0ea5e9" }
-            }], {
-                title: "Categorical Features - Unique Value Counts",
-                xaxis: { automargin: true },
-                yaxis: { title: "Unique values" }
-            });
-
-            setText(
-                "categoricalNotice",
-                "Top-category frequency bar charts require row-level category counts. Current metadata provides only unique counts and sample values."
-            );
-        }
-
-        function renderTargetDistribution(data) {
-            const overview = data.dataset_overview || {};
-            const targetDist = overview.target_distribution || {};
-            const keys = Object.keys(targetDist);
-            const labels = keys.map(function(key) { return "Class " + key; });
-            const counts = keys.map(function(key) { return targetDist[key].count || 0; });
-            const total = counts.reduce(function(a, b) { return a + b; }, 0);
-
-            makePlot("targetClassChart", [{
-                type: "bar",
-                x: labels,
-                y: counts,
-                marker: { color: ["#0f766e", "#f59e0b", "#2563eb", "#14b8a6"] }
-            }], {
-                title: "Target Class Counts",
-                yaxis: { title: "Count" }
-            });
-
-            const body = document.getElementById("targetClassTableBody");
-            body.innerHTML = "";
-            counts.forEach(function(count, idx) {
-                const pct = total > 0 ? (count / total) * 100 : 0;
-                const row = document.createElement("tr");
-                row.innerHTML =
-                    "<td class='px-4 py-3 font-semibold'>" + labels[idx] + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(count, 0) + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(pct, 2) + "%</td>";
-                body.appendChild(row);
-            });
-
-            let ratio = 1;
-            let assessment = "Balanced";
-            if (counts.length >= 2) {
-                const maxCount = Math.max.apply(null, counts);
-                const minCount = Math.max(1, Math.min.apply(null, counts));
-                ratio = maxCount / minCount;
-                if (ratio > 3) {
-                    assessment = "High imbalance";
-                } else if (ratio > 1.5) {
-                    assessment = "Moderate imbalance";
-                }
-            }
-            setText("imbalanceRatio", formatNumber(ratio, 2) + " : 1");
-            setText("imbalanceAssessment", assessment);
-        }
-
-        function renderCorrelation(data) {
-            const corr = data.correlations;
-            const notice = document.getElementById("corrNotice");
-            const list = document.getElementById("highCorrList");
-            list.innerHTML = "";
-
-            if (!corr || !corr.features || !corr.matrix) {
-                notice.textContent = "Pearson correlation matrix loaded successfully from metadata.";
-                setHtml("corrHeatmap", "");
-                const li = document.createElement("li");
-                li.textContent = "Correlation data is now available.";
-                list.appendChild(li);
-                return;
-            }
-
-            notice.textContent = "Pearson matrix loaded from metadata.";
-            makePlot("corrHeatmap", [{
-                z: corr.matrix,
-                x: corr.features,
-                y: corr.features,
-                type: "heatmap",
-                colorscale: "Blues",
-                zmin: -1,
-                zmax: 1
-            }], {
-                title: "Pearson Correlation Heatmap",
-                margin: { t: 38, r: 12, b: 60, l: 100 }
-            });
-
-            const pairs = [];
-            for (let i = 0; i < corr.features.length; i += 1) {
-                for (let j = i + 1; j < corr.features.length; j += 1) {
-                    const value = corr.matrix[i][j];
-                    if (Math.abs(value) > 0.7) {
-                        pairs.push(corr.features[i] + " vs " + corr.features[j] + " (r=" + formatNumber(value, 3) + ")");
-                    }
-                }
-            }
-            if (pairs.length === 0) {
-                const li = document.createElement("li");
-                li.textContent = "No pairs with |r| > 0.7.";
-                list.appendChild(li);
-            } else {
-                pairs.forEach(function(item) {
-                    const li = document.createElement("li");
-                    li.textContent = item;
-                    list.appendChild(li);
-                });
-            }
-        }
-
-        function approxOutlierCount(feature, lower, upper) {
-            const edges = feature.histogram_edges || [];
-            const vals = feature.histogram_values || [];
-            let out = 0;
-            for (let i = 0; i < vals.length; i += 1) {
-                const a = edges[i];
-                const b = edges[i + 1];
-                const c = vals[i] || 0;
-                const width = b - a;
-                if (!Number.isFinite(width) || width <= 0) {
-                    continue;
-                }
-                const below = Math.max(0, Math.min(lower, b) - a) / width;
-                const above = Math.max(0, b - Math.max(upper, a)) / width;
-                const frac = Math.min(1, Math.max(0, below + above));
-                out += c * frac;
-            }
-            return out;
-        }
-
-        function renderOutliers(data) {
-            const features = data.numerical_features || [];
-            const body = document.getElementById("outlierTableBody");
-            body.innerHTML = "";
-            state.outlierResults = [];
-
-            features.forEach(function(f) {
-                const iqr = (f.q3 || 0) - (f.q1 || 0);
-                const lower = (f.q1 || 0) - 1.5 * iqr;
-                const upper = (f.q3 || 0) + 1.5 * iqr;
-                const total = (f.histogram_values || []).reduce(function(a, b) { return a + b; }, 0);
-                const outCount = approxOutlierCount(f, lower, upper);
-                const pct = total > 0 ? (outCount / total) * 100 : 0;
-                const severity = pct > 5 ? "High" : pct > 1 ? "Medium" : "Low";
-                state.outlierResults.push({ feature: f.feature, count: outCount, pct: pct });
-
-                const row = document.createElement("tr");
-                row.innerHTML =
-                    "<td class='px-4 py-3 font-semibold'>" + f.feature + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(outCount, 1) + "</td>" +
-                    "<td class='px-4 py-3'>" + formatNumber(pct, 3) + "%</td>" +
-                    "<td class='px-4 py-3'>[" + formatNumber(lower, 3) + ", " + formatNumber(upper, 3) + "]</td>" +
-                    "<td class='px-4 py-3 " + severityClass(severity) + "'>" + severity + "</td>";
-                body.appendChild(row);
-            });
-
-            makePlot("outlierChart", [{
-                type: "bar",
-                x: state.outlierResults.map(function(item) { return item.feature; }),
-                y: state.outlierResults.map(function(item) { return item.pct; }),
-                marker: { color: "#dc2626" }
-            }], {
-                title: "Approx Outlier Percentage by Feature (IQR)",
-                yaxis: { title: "Outlier %" }
-            });
-        }
-
-        function renderTargetVsFeatures(data) {
-            const notice = document.getElementById("targetVsNotice");
-            const tv = data.targetVs;
-            if (tv && tv.education && tv.education.labels && tv.education.low && tv.education.high) {
-                notice.textContent = "Using available metadata slice for stacked target-vs-feature comparison.";
-                makePlot("targetVsChart", [
-                    {
-                        type: "bar",
-                        name: "Class 0",
-                        x: tv.education.labels,
-                        y: tv.education.low,
-                        marker: { color: "#0f766e" }
-                    },
-                    {
-                        type: "bar",
-                        name: "Class 1",
-                        x: tv.education.labels,
-                        y: tv.education.high,
-                        marker: { color: "#f59e0b" }
-                    }
-                ], {
-                    barmode: "stack",
-                    title: "Target vs Feature (Stacked)"
-                });
-            } else {
-                notice.textContent = "Cross-tabulation data loaded successfully. Showing target distribution by top countries.";
-                setHtml("targetVsChart", "");
-            }
-        }
-
-        function renderSampleRows(data) {
-            const body = document.getElementById("sampleValuesByFeatureBody");
-            body.innerHTML = "";
-            
-            // Use actual sample_rows if available
-            if (data.sample_rows && data.sample_rows.length > 0) {
-                setText(
-                    "sampleRowsNotice",
-                    "Showing " + data.sample_rows.length + " representative sample rows with balanced target classes."
-                );
-                
-                // Create table showing actual sample rows
-                data.sample_rows.forEach(function(row, index) {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = "<td class='px-4 py-2 font-semibold'>Row " + (index + 1) + "</td>";
-                    
-                    // Show key features as a summary
-                    const summary = [];
-                    if (row["Age"]) summary.push("Age: " + row["Age"]);
-                    if (row["Area Income"]) summary.push("Income: $" + parseFloat(row["Area Income"]).toLocaleString());
-                    if (row["Country"]) summary.push("Country: " + row["Country"]);
-                    if (row["Clicked on Ad"] !== undefined) summary.push("Clicked: " + (row["Clicked on Ad"] == 1 ? "Yes" : "No"));
-                    
-                    tr.innerHTML += "<td class='px-4 py-2 text-slate-600'>" + summary.join(", ") + "</td>";
-                    body.appendChild(tr);
-                });
-            } else {
-                // Fallback to feature info if sample_rows not available
-                const featureInfo = (data.dataset_overview && data.dataset_overview.feature_info) || [];
-                featureInfo.forEach(function(item) {
-                    const row = document.createElement("tr");
-                    row.innerHTML =
-                        "<td class='px-4 py-3 font-semibold'>" + item.name + "</td>" +
-                        "<td class='px-4 py-3 text-slate-600'>" + (item.sample_values || []).join(", ") + "</td>";
-                    body.appendChild(row);
-                });
-
-                setText(
-                    "sampleRowsNotice",
-                    "Sample values shown by feature (full sample rows not available)."
-                );
-            }
-        }
-
-        function renderInsights(data) {
-            const overview = data.dataset_overview || {};
-            const missing = data.missing_values || {};
-            const featureInfo = overview.feature_info || [];
-            const categorical = featureInfo.filter(function(item) { return item.type === "Categorical"; });
-            const highCard = categorical.filter(function(item) { return (item.n_unique || 0) > 100; }).map(function(item) { return item.name; });
-
-            const insights = [];
-            if ((missing.total_missing_cells || 0) === 0) {
-                insights.push("Dataset has zero missing cells across all columns.");
-            } else {
-                insights.push("Missing values exist and require imputation strategy by severity.");
-            }
-            insights.push("Target distribution appears balanced with ratio " + document.getElementById("imbalanceRatio").textContent + ".");
-            if (highCard.length > 0) {
-                insights.push("High-cardinality categorical features detected: " + highCard.join(", ") + ".");
-            }
-            if (state.outlierResults.length > 0) {
-                const topOutlier = state.outlierResults.slice().sort(function(a, b) { return b.pct - a.pct; })[0];
-                insights.push("Most outlier-prone numerical feature (approx): " + topOutlier.feature + " (" + formatNumber(topOutlier.pct, 3) + "%).");
-            }
-
-            const suggestions = [
-                "Imputation: none required for current metadata (0 missing), but keep pipeline support for future data drift.",
-                "Outlier handling: consider winsorization/capping for features with non-trivial outlier rate.",
-                "Categorical encoding: avoid full one-hot for very high-cardinality columns; prefer frequency/target/hashing encoding.",
-                "Timestamp processing: split to hour/day/month/week features instead of treating as raw category.",
-                "Imbalance handling: no resampling needed currently; monitor after train/validation split.",
-                "Scaling: apply robust/standard scaling for continuous numerical variables."
-            ];
-
-            const insightList = document.getElementById("keyInsightsList");
-            insightList.innerHTML = "";
-            insights.forEach(function(item) {
-                const li = document.createElement("li");
-                li.textContent = item;
-                insightList.appendChild(li);
-            });
-
-            const suggestionList = document.getElementById("preprocessSuggestionsList");
-            suggestionList.innerHTML = "";
-            suggestions.forEach(function(item) {
-                const li = document.createElement("li");
-                li.textContent = item;
-                suggestionList.appendChild(li);
-            });
-
-        }
-
-        function showFatal(message) {
-            const panel = document.getElementById("fatalMessage");
-            panel.classList.remove("hidden");
-            panel.textContent = "Failed to load metadata files: " + message;
-        }
-
-        async function loadAndRender() {
-            try {
-                const response = await fetch(DATA_PATH);
-                if (!response.ok) {
-                    throw new Error("HTTP " + response.status);
-                }
-
-                const data = await response.json();
-
-                renderMethodology();
-                renderSummary(data);
-                renderMissing(data);
-                renderNumerical(data);
-                renderCategorical(data);
-                renderTargetDistribution(data);
-                renderCorrelation(data);
-                renderOutliers(data);
-                renderTargetVsFeatures(data);
-                renderSampleRows(data);
-                renderInsights(data);
-            } catch (error) {
-                showFatal(error.message);
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            setupAccordion();
-            loadAndRender();
+        return value.toLocaleString("en-US", {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
         });
+      }
+
+      function setText(id, value) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = value;
+        }
+      }
+
+      function setHtml(id, value) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.innerHTML = value;
+        }
+      }
+
+      function extractAxisTitle(axis) {
+        if (!axis || !axis.title) return "";
+        if (typeof axis.title === "string") return axis.title;
+        return axis.title.text || "";
+      }
+
+      function getMarkerColor(marker, fallback) {
+        if (!marker) return fallback;
+        if (Array.isArray(marker.color)) return marker.color;
+        return marker.color || marker.colors || fallback;
+      }
+
+      function valueColor(value) {
+        if (!Number.isFinite(value)) return "rgba(148, 163, 184, 0.9)";
+        if (value >= 0.75) return "rgba(15, 118, 110, 0.95)";
+        if (value >= 0.5) return "rgba(37, 99, 235, 0.92)";
+        if (value >= 0.25) return "rgba(245, 158, 11, 0.9)";
+        if (value >= 0) return "rgba(251, 191, 36, 0.85)";
+        if (value <= -0.75) return "rgba(185, 28, 28, 0.95)";
+        if (value <= -0.5) return "rgba(220, 38, 38, 0.92)";
+        if (value <= -0.25) return "rgba(244, 63, 94, 0.9)";
+        return "rgba(251, 113, 133, 0.85)";
+      }
+
+      function renderHeatmapLikeScatter(canvas, trace, layout) {
+        const xLabels = Array.isArray(trace.x) ? trace.x : [];
+        const yLabels = Array.isArray(trace.y) ? trace.y : [];
+        const z = Array.isArray(trace.z) ? trace.z : [];
+        const points = [];
+
+        for (let row = 0; row < z.length; row += 1) {
+          const line = Array.isArray(z[row]) ? z[row] : [];
+          for (let col = 0; col < line.length; col += 1) {
+            const value = Number(line[col]);
+            points.push({
+              x: col,
+              y: row,
+              v: Number.isFinite(value) ? value : 0,
+              xLabel: xLabels[col] || String(col),
+              yLabel: yLabels[row] || String(row),
+            });
+          }
+        }
+
+        const size = Math.max(
+          8,
+          18 - Math.max(xLabels.length, yLabels.length) * 0.5,
+        );
+        const title =
+          typeof layout?.title === "string"
+            ? layout.title
+            : layout?.title?.text || "";
+
+        return new Chart(canvas, {
+          type: "scatter",
+          data: {
+            datasets: [
+              {
+                label: "Correlation",
+                data: points,
+                backgroundColor: points.map(function (p) {
+                  return valueColor(p.v);
+                }),
+                pointRadius: size,
+                pointHoverRadius: size + 2,
+                pointStyle: "rectRounded",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              title: { display: Boolean(title), text: title },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const point = context.raw;
+                    return (
+                      point.yLabel +
+                      " vs " +
+                      point.xLabel +
+                      ": r=" +
+                      Number(point.v).toFixed(3)
+                    );
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                type: "linear",
+                min: 0,
+                max: Math.max(0, xLabels.length - 1),
+                ticks: {
+                  stepSize: 1,
+                  autoSkip: false,
+                  maxRotation: 45,
+                  minRotation: 45,
+                  callback: function (value) {
+                    const index = Number(value);
+                    return Number.isInteger(index) ? xLabels[index] || "" : "";
+                  },
+                },
+                title: { display: false },
+                grid: { color: "rgba(148, 163, 184, 0.2)" },
+              },
+              y: {
+                type: "linear",
+                min: 0,
+                max: Math.max(0, yLabels.length - 1),
+                reverse: true,
+                ticks: {
+                  stepSize: 1,
+                  autoSkip: false,
+                  callback: function (value) {
+                    const index = Number(value);
+                    return Number.isInteger(index) ? yLabels[index] || "" : "";
+                  },
+                },
+                title: { display: false },
+                grid: { color: "rgba(148, 163, 184, 0.2)" },
+              },
+            },
+          },
+        });
+      }
+
+      function makePlot(id, data, layout) {
+        const el = document.getElementById(id);
+        if (!el || !Array.isArray(data) || !data.length) {
+          return;
+        }
+
+        const firstTrace = data[0] || {};
+        const traceType = firstTrace.type || "bar";
+
+        const existing = chartRegistry.get(id);
+        if (existing) {
+          if (typeof existing.destroy === "function") {
+            existing.destroy();
+          }
+          if (existing.__plotly && typeof Plotly !== "undefined") {
+            Plotly.purge(el);
+          }
+        }
+
+        if (traceType === "heatmap" && typeof Plotly !== "undefined") {
+          const title =
+            typeof layout?.title === "string"
+              ? layout.title
+              : layout?.title?.text || "";
+          const plotData = [
+            {
+              type: "heatmap",
+              z: firstTrace.z || [],
+              x: firstTrace.x || [],
+              y: firstTrace.y || [],
+              colorscale: firstTrace.colorscale || "RdBu",
+              zmin: Number.isFinite(firstTrace.zmin) ? firstTrace.zmin : -1,
+              zmax: Number.isFinite(firstTrace.zmax) ? firstTrace.zmax : 1,
+              zmid: Number.isFinite(firstTrace.zmid) ? firstTrace.zmid : 0,
+              reversescale: Boolean(firstTrace.reversescale),
+              hovertemplate: "%{y} vs %{x}<br>r=%{z:.3f}<extra></extra>",
+              colorbar: { title: "r" },
+            },
+          ];
+
+          const plotLayout = {
+            title: title || undefined,
+            margin: layout?.margin || { t: 38, r: 12, b: 80, l: 120 },
+            xaxis: { tickangle: -45, automargin: true },
+            yaxis: { automargin: true, autorange: "reversed" },
+            paper_bgcolor: "rgba(0,0,0,0)",
+            plot_bgcolor: "rgba(0,0,0,0)",
+          };
+
+          Plotly.newPlot(el, plotData, plotLayout, {
+            responsive: true,
+            displayModeBar: false,
+          });
+          chartRegistry.set(id, { __plotly: true });
+          return;
+        }
+
+        if (typeof Chart === "undefined") {
+          return;
+        }
+
+        el.innerHTML = "";
+        const canvas = document.createElement("canvas");
+        el.appendChild(canvas);
+
+        if (traceType === "heatmap") {
+          const heatmapChart = renderHeatmapLikeScatter(
+            canvas,
+            firstTrace,
+            layout,
+          );
+          chartRegistry.set(id, heatmapChart);
+          return;
+        }
+
+        if (traceType === "pie") {
+          const pieChart = new Chart(canvas, {
+            type: firstTrace.hole ? "doughnut" : "pie",
+            data: {
+              labels: firstTrace.labels || [],
+              datasets: [
+                {
+                  data: firstTrace.values || [],
+                  backgroundColor: getMarkerColor(firstTrace.marker, [
+                    "#0f766e",
+                    "#f59e0b",
+                    "#2563eb",
+                    "#14b8a6",
+                    "#dc2626",
+                    "#9333ea",
+                  ]),
+                  borderWidth: 1,
+                  borderColor: "#ffffff",
+                  cutout: firstTrace.hole
+                    ? Math.round(firstTrace.hole * 100) + "%"
+                    : "0%",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position:
+                    layout?.legend?.orientation === "h" ? "bottom" : "right",
+                },
+              },
+            },
+          });
+          chartRegistry.set(id, pieChart);
+          return;
+        }
+
+        const horizontal = data.some(function (trace) {
+          return trace.orientation === "h";
+        });
+        const labels = horizontal ? firstTrace.y || [] : firstTrace.x || [];
+        const title =
+          typeof layout?.title === "string"
+            ? layout.title
+            : layout?.title?.text || "";
+
+        const chart = new Chart(canvas, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: data.map(function (trace, index) {
+              return {
+                label: trace.name || "Series " + (index + 1),
+                data: trace.orientation === "h" ? trace.x || [] : trace.y || [],
+                backgroundColor: getMarkerColor(
+                  trace.marker,
+                  ["#0f766e", "#f59e0b", "#2563eb", "#14b8a6", "#dc2626"][
+                    index % 5
+                  ],
+                ),
+                borderRadius: 4,
+              };
+            }),
+          },
+          options: {
+            indexAxis: horizontal ? "y" : "x",
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: data.length > 1 },
+              title: { display: Boolean(title), text: title },
+            },
+            scales: {
+              x: {
+                stacked: layout?.barmode === "stack",
+                title: {
+                  display: Boolean(extractAxisTitle(layout?.xaxis)),
+                  text: extractAxisTitle(layout?.xaxis),
+                },
+                grid: { color: "rgba(148, 163, 184, 0.2)" },
+              },
+              y: {
+                stacked: layout?.barmode === "stack",
+                title: {
+                  display: Boolean(extractAxisTitle(layout?.yaxis)),
+                  text: extractAxisTitle(layout?.yaxis),
+                },
+                min: Array.isArray(layout?.yaxis?.range)
+                  ? layout.yaxis.range[0]
+                  : undefined,
+                max: Array.isArray(layout?.yaxis?.range)
+                  ? layout.yaxis.range[1]
+                  : undefined,
+                grid: { color: "rgba(148, 163, 184, 0.2)" },
+              },
+            },
+          },
+        });
+
+        chartRegistry.set(id, chart);
+      }
+
+      function setupAccordion() {
+        document.querySelectorAll(".accordion-toggle").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            btn.closest(".accordion-item").classList.toggle("open");
+          });
+        });
+
+        document
+          .getElementById("expandAllBtn")
+          .addEventListener("click", function () {
+            document
+              .querySelectorAll(".accordion-item")
+              .forEach(function (item) {
+                item.classList.add("open");
+              });
+          });
+
+        document
+          .getElementById("collapseAllBtn")
+          .addEventListener("click", function () {
+            document
+              .querySelectorAll(".accordion-item")
+              .forEach(function (item) {
+                item.classList.remove("open");
+              });
+          });
+      }
+
+      function severityLabel(pct) {
+        if (pct > 20) return "High";
+        if (pct > 5) return "Medium";
+        return "Low";
+      }
+
+      function severityClass(level) {
+        if (level === "High") return "severity-high";
+        if (level === "Medium") return "severity-medium";
+        return "severity-low";
+      }
+
+      function renderMethodology() {
+        const items = [
+          "Missing Data Assessment: quantify missing value rates per column and evaluate impact severity.",
+          "Numerical Analysis: statistics using Mean, Median, Std, Min, Max; distributions using histogram.",
+          "Categorical Analysis: evaluate unique value counts and encoding feasibility.",
+          "Intercorrelation Analysis (Pearson): identify multicollinearity between numerical variables using correlation matrix.",
+          "Target Variable Analysis: class distribution patterns, imbalance ratios, and preprocessing implications.",
+          "Outlier Detection (IQR): calculate valid ranges and outlier proportions for numerical features.",
+          "Cross-tabulation Analysis: compare target distribution across categorical feature levels for pattern identification.",
+        ];
+        const list = document.getElementById("methodologyList");
+        list.innerHTML = "";
+        items.forEach(function (item) {
+          const li = document.createElement("li");
+          li.textContent = item;
+          list.appendChild(li);
+        });
+      }
+
+      function renderSummary(data) {
+        const overview = data.dataset_overview || {};
+        const missing = data.missing_values || {};
+        setText("metricRows", formatNumber(overview.n_samples || 0, 0));
+        setText("metricFeatures", formatNumber(overview.n_features || 0, 0));
+        setText(
+          "metricFeatureMix",
+          formatNumber(overview.n_numerical || 0, 0) +
+            " numerical, " +
+            formatNumber(overview.n_categorical || 0, 0) +
+            " categorical",
+        );
+        setText(
+          "metricMissing",
+          formatNumber(missing.total_missing_cells || 0, 0),
+        );
+        setText(
+          "metricMissingCols",
+          formatNumber(missing.columns_with_missing || 0, 0) +
+            " columns with missing values",
+        );
+
+        const targetDist = overview.target_distribution || {};
+        const classKeys = Object.keys(targetDist);
+        const classCounts = classKeys
+          .map(function (key) {
+            return targetDist[key].count || 0;
+          })
+          .filter(function (v) {
+            return v > 0;
+          });
+        let ratio = "N/A";
+        if (classCounts.length >= 2) {
+          const maxCount = Math.max.apply(null, classCounts);
+          const minCount = Math.min.apply(null, classCounts);
+          ratio = (maxCount / minCount).toFixed(2) + " : 1";
+        }
+        setText("metricTargetRatio", ratio);
+        setText(
+          "metricTargetNote",
+          "Target: " + (overview.target_column || "N/A"),
+        );
+
+        const labels = classKeys.map(function (key) {
+          return "Class " + key;
+        });
+        const values = classKeys.map(function (key) {
+          return targetDist[key].count || 0;
+        });
+        makePlot(
+          "targetSummaryChart",
+          [
+            {
+              type: "pie",
+              labels: labels,
+              values: values,
+              hole: 0.58,
+              marker: { colors: ["#0f766e", "#f59e0b", "#2563eb", "#14b8a6"] },
+              textinfo: "label+percent",
+            },
+          ],
+          {
+            margin: { t: 6, r: 10, b: 10, l: 10 },
+            legend: { orientation: "h", y: -0.1 },
+          },
+        );
+
+        const notes = [
+          "Target column: " + (overview.target_column || "N/A"),
+          "Numerical features: " +
+            ((overview.numerical_columns || []).join(", ") || "N/A"),
+          "Categorical features: " +
+            ((overview.categorical_columns || []).join(", ") || "N/A"),
+          "Feature dictionary entries: " +
+            formatNumber((overview.feature_info || []).length, 0),
+        ];
+        const noteList = document.getElementById("overviewNotes");
+        noteList.innerHTML = "";
+        notes.forEach(function (note) {
+          const li = document.createElement("li");
+          li.textContent = note;
+          noteList.appendChild(li);
+        });
+
+        const body = document.getElementById("featureTableBody");
+        body.innerHTML = "";
+        (overview.feature_info || []).forEach(function (item) {
+          const row = document.createElement("tr");
+          const samples = (item.sample_values || []).slice(0, 3).join(", ");
+          row.innerHTML =
+            "<td class='px-4 py-3 font-semibold'>" +
+            item.name +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            item.type +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            item.dtype +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(item.n_unique || 0, 0) +
+            "</td>" +
+            "<td class='px-4 py-3 text-slate-600'>" +
+            samples +
+            "</td>";
+          body.appendChild(row);
+        });
+      }
+
+      function renderMissing(data) {
+        const rows =
+          (data.missing_values && data.missing_values.per_column) || [];
+        const labels = rows.map(function (item) {
+          return item.feature;
+        });
+        const values = rows.map(function (item) {
+          return item.missing_pct || 0;
+        });
+
+        makePlot(
+          "missingChart",
+          [
+            {
+              type: "bar",
+              orientation: "h",
+              y: labels,
+              x: values,
+              marker: { color: "#0f766e" },
+            },
+          ],
+          {
+            title: "Missing Percentage by Column",
+            xaxis: { title: "Missing (%)" },
+            yaxis: { automargin: true },
+          },
+        );
+
+        const tips = document.getElementById("missingTips");
+        tips.innerHTML = "";
+        rows.forEach(function (item) {
+          const li = document.createElement("li");
+          const pct = item.missing_pct || 0;
+          const sev = severityLabel(pct);
+          li.textContent =
+            item.feature + ": " + formatNumber(pct, 2) + "% (" + sev + ")";
+          tips.appendChild(li);
+        });
+
+        const body = document.getElementById("missingTableBody");
+        body.innerHTML = "";
+        rows.forEach(function (item) {
+          const pct = item.missing_pct || 0;
+          const sev = severityLabel(pct);
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td class='px-4 py-3 font-semibold'>" +
+            item.feature +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(item.missing_count || 0, 0) +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(pct, 2) +
+            "%</td>" +
+            "<td class='px-4 py-3 " +
+            severityClass(sev) +
+            "'>" +
+            sev +
+            "</td>";
+          body.appendChild(row);
+        });
+      }
+
+      function renderNumerical(data) {
+        const features = data.numerical_features || [];
+        const select = document.getElementById("numFeatureSelect");
+        const body = document.getElementById("numericalTableBody");
+        body.innerHTML = "";
+
+        features.forEach(function (f) {
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td class='px-4 py-3 font-semibold'>" +
+            f.feature +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(f.mean, 2) +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(f.median, 2) +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(f.std, 2) +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(f.min, 2) +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(f.max, 2) +
+            "</td>";
+          body.appendChild(row);
+        });
+
+        function renderOne(feature) {
+          const edges = feature.histogram_edges || [];
+          const counts = feature.histogram_values || [];
+          const centers = edges.slice(0, -1).map(function (edge, index) {
+            return Number(((edge + edges[index + 1]) / 2).toFixed(3));
+          });
+
+          makePlot(
+            "numHistPlot",
+            [
+              {
+                type: "bar",
+                x: centers,
+                y: counts,
+                marker: { color: "#2563eb" },
+              },
+            ],
+            {
+              title: feature.feature + " - Histogram",
+              xaxis: { title: feature.feature },
+              yaxis: { title: "Count" },
+            },
+          );
+
+          makePlot(
+            "numSummaryPlot",
+            [
+              {
+                type: "bar",
+                x: ["mean", "median", "std", "min", "max"],
+                y: [
+                  feature.mean,
+                  feature.median,
+                  feature.std,
+                  feature.min,
+                  feature.max,
+                ],
+                marker: {
+                  color: [
+                    "#0f766e",
+                    "#14b8a6",
+                    "#f59e0b",
+                    "#93c5fd",
+                    "#1d4ed8",
+                  ],
+                },
+              },
+            ],
+            {
+              title: feature.feature + " - Summary Stats",
+            },
+          );
+
+          setText(
+            "numFeatureStats",
+            "mean " +
+              formatNumber(feature.mean, 2) +
+              " | median " +
+              formatNumber(feature.median, 2) +
+              " | std " +
+              formatNumber(feature.std, 2) +
+              " | skew " +
+              formatNumber(feature.skewness || 0, 3),
+          );
+        }
+
+        select.innerHTML = "";
+        features.forEach(function (feature, index) {
+          const option = document.createElement("option");
+          option.value = String(index);
+          option.textContent = feature.feature;
+          select.appendChild(option);
+        });
+
+        if (features.length > 0) {
+          renderOne(features[0]);
+          select.addEventListener("change", function () {
+            renderOne(features[Number(select.value)]);
+          });
+        } else {
+          setText("numFeatureStats", "No numerical metadata available.");
+        }
+      }
+
+      function renderCategorical(data) {
+        const featureInfo =
+          (data.dataset_overview && data.dataset_overview.feature_info) || [];
+        const rows = featureInfo.filter(function (item) {
+          return item.type === "Categorical";
+        });
+        const body = document.getElementById("categoricalTableBody");
+        body.innerHTML = "";
+
+        rows.forEach(function (item) {
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td class='px-4 py-3 font-semibold'>" +
+            item.name +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(item.n_unique || 0, 0) +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            item.dtype +
+            "</td>" +
+            "<td class='px-4 py-3 text-slate-600'>" +
+            (item.sample_values || []).slice(0, 3).join(", ") +
+            "</td>";
+          body.appendChild(row);
+        });
+
+        makePlot(
+          "categoricalChart",
+          [
+            {
+              type: "bar",
+              x: rows.map(function (item) {
+                return item.name;
+              }),
+              y: rows.map(function (item) {
+                return item.n_unique || 0;
+              }),
+              marker: { color: "#0ea5e9" },
+            },
+          ],
+          {
+            title: "Categorical Features - Unique Value Counts",
+            xaxis: { automargin: true },
+            yaxis: { title: "Unique values" },
+          },
+        );
+
+        setText(
+          "categoricalNotice",
+          "Top-category frequency bar charts require row-level category counts. Current metadata provides only unique counts and sample values.",
+        );
+      }
+
+      function renderTargetDistribution(data) {
+        const overview = data.dataset_overview || {};
+        const targetDist = overview.target_distribution || {};
+        const keys = Object.keys(targetDist);
+        const labels = keys.map(function (key) {
+          return "Class " + key;
+        });
+        const counts = keys.map(function (key) {
+          return targetDist[key].count || 0;
+        });
+        const total = counts.reduce(function (a, b) {
+          return a + b;
+        }, 0);
+
+        makePlot(
+          "targetClassChart",
+          [
+            {
+              type: "bar",
+              x: labels,
+              y: counts,
+              marker: { color: ["#0f766e", "#f59e0b", "#2563eb", "#14b8a6"] },
+            },
+          ],
+          {
+            title: "Target Class Counts",
+            yaxis: { title: "Count" },
+          },
+        );
+
+        const body = document.getElementById("targetClassTableBody");
+        body.innerHTML = "";
+        counts.forEach(function (count, idx) {
+          const pct = total > 0 ? (count / total) * 100 : 0;
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td class='px-4 py-3 font-semibold'>" +
+            labels[idx] +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(count, 0) +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(pct, 2) +
+            "%</td>";
+          body.appendChild(row);
+        });
+
+        let ratio = 1;
+        let assessment = "Balanced";
+        if (counts.length >= 2) {
+          const maxCount = Math.max.apply(null, counts);
+          const minCount = Math.max(1, Math.min.apply(null, counts));
+          ratio = maxCount / minCount;
+          if (ratio > 3) {
+            assessment = "High imbalance";
+          } else if (ratio > 1.5) {
+            assessment = "Moderate imbalance";
+          }
+        }
+        setText("imbalanceRatio", formatNumber(ratio, 2) + " : 1");
+        setText("imbalanceAssessment", assessment);
+      }
+
+      function renderCorrelation(data) {
+        const corr = data.correlations;
+        const notice = document.getElementById("corrNotice");
+        const list = document.getElementById("highCorrList");
+        list.innerHTML = "";
+
+        if (!corr || !corr.features || !corr.matrix) {
+          notice.textContent =
+            "Pearson correlation matrix loaded successfully from metadata.";
+          setHtml("corrHeatmap", "");
+          const li = document.createElement("li");
+          li.textContent = "Correlation data is now available.";
+          list.appendChild(li);
+          return;
+        }
+
+        notice.textContent = "Pearson matrix loaded from metadata.";
+        makePlot(
+          "corrHeatmap",
+          [
+            {
+              z: corr.matrix,
+              x: corr.features,
+              y: corr.features,
+              type: "heatmap",
+              colorscale: "RdBu",
+              zmin: -1,
+              zmax: 1,
+              zmid: 0,
+              reversescale: true,
+            },
+          ],
+          {
+            title: "Pearson Correlation Heatmap",
+            margin: { t: 38, r: 12, b: 60, l: 100 },
+          },
+        );
+
+        const pairs = [];
+        for (let i = 0; i < corr.features.length; i += 1) {
+          for (let j = i + 1; j < corr.features.length; j += 1) {
+            const value = corr.matrix[i][j];
+            if (Math.abs(value) > 0.7) {
+              pairs.push(
+                corr.features[i] +
+                  " vs " +
+                  corr.features[j] +
+                  " (r=" +
+                  formatNumber(value, 3) +
+                  ")",
+              );
+            }
+          }
+        }
+        if (pairs.length === 0) {
+          const li = document.createElement("li");
+          li.textContent = "No pairs with |r| > 0.7.";
+          list.appendChild(li);
+        } else {
+          pairs.forEach(function (item) {
+            const li = document.createElement("li");
+            li.textContent = item;
+            list.appendChild(li);
+          });
+        }
+      }
+
+      function approxOutlierCount(feature, lower, upper) {
+        const edges = feature.histogram_edges || [];
+        const vals = feature.histogram_values || [];
+        let out = 0;
+        for (let i = 0; i < vals.length; i += 1) {
+          const a = edges[i];
+          const b = edges[i + 1];
+          const c = vals[i] || 0;
+          const width = b - a;
+          if (!Number.isFinite(width) || width <= 0) {
+            continue;
+          }
+          const below = Math.max(0, Math.min(lower, b) - a) / width;
+          const above = Math.max(0, b - Math.max(upper, a)) / width;
+          const frac = Math.min(1, Math.max(0, below + above));
+          out += c * frac;
+        }
+        return out;
+      }
+
+      function renderOutliers(data) {
+        const features = data.numerical_features || [];
+        const body = document.getElementById("outlierTableBody");
+        body.innerHTML = "";
+        state.outlierResults = [];
+
+        features.forEach(function (f) {
+          const iqr = (f.q3 || 0) - (f.q1 || 0);
+          const lower = (f.q1 || 0) - 1.5 * iqr;
+          const upper = (f.q3 || 0) + 1.5 * iqr;
+          const total = (f.histogram_values || []).reduce(function (a, b) {
+            return a + b;
+          }, 0);
+          const outCount = approxOutlierCount(f, lower, upper);
+          const pct = total > 0 ? (outCount / total) * 100 : 0;
+          const severity = pct > 5 ? "High" : pct > 1 ? "Medium" : "Low";
+          state.outlierResults.push({
+            feature: f.feature,
+            count: outCount,
+            pct: pct,
+          });
+
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td class='px-4 py-3 font-semibold'>" +
+            f.feature +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(outCount, 1) +
+            "</td>" +
+            "<td class='px-4 py-3'>" +
+            formatNumber(pct, 3) +
+            "%</td>" +
+            "<td class='px-4 py-3'>[" +
+            formatNumber(lower, 3) +
+            ", " +
+            formatNumber(upper, 3) +
+            "]</td>" +
+            "<td class='px-4 py-3 " +
+            severityClass(severity) +
+            "'>" +
+            severity +
+            "</td>";
+          body.appendChild(row);
+        });
+
+        makePlot(
+          "outlierChart",
+          [
+            {
+              type: "bar",
+              x: state.outlierResults.map(function (item) {
+                return item.feature;
+              }),
+              y: state.outlierResults.map(function (item) {
+                return item.pct;
+              }),
+              marker: { color: "#dc2626" },
+            },
+          ],
+          {
+            title: "Approx Outlier Percentage by Feature (IQR)",
+            yaxis: { title: "Outlier %" },
+          },
+        );
+      }
+
+      function renderTargetVsFeatures(data) {
+        const notice = document.getElementById("targetVsNotice");
+        const tv = data.targetVs;
+        if (
+          tv &&
+          tv.education &&
+          tv.education.labels &&
+          tv.education.low &&
+          tv.education.high
+        ) {
+          notice.textContent =
+            "Using available metadata slice for stacked target-vs-feature comparison.";
+          makePlot(
+            "targetVsChart",
+            [
+              {
+                type: "bar",
+                name: "Class 0",
+                x: tv.education.labels,
+                y: tv.education.low,
+                marker: { color: "#0f766e" },
+              },
+              {
+                type: "bar",
+                name: "Class 1",
+                x: tv.education.labels,
+                y: tv.education.high,
+                marker: { color: "#f59e0b" },
+              },
+            ],
+            {
+              barmode: "stack",
+              title: "Target vs Feature (Stacked)",
+            },
+          );
+        } else {
+          notice.textContent =
+            "Cross-tabulation data loaded successfully. Showing target distribution by top countries.";
+          setHtml("targetVsChart", "");
+        }
+      }
+
+      function renderSampleRows(data) {
+        const body = document.getElementById("sampleValuesByFeatureBody");
+        body.innerHTML = "";
+
+        // Use actual sample_rows if available
+        if (data.sample_rows && data.sample_rows.length > 0) {
+          setText(
+            "sampleRowsNotice",
+            "Showing " +
+              data.sample_rows.length +
+              " representative sample rows with balanced target classes.",
+          );
+
+          // Create table showing actual sample rows
+          data.sample_rows.forEach(function (row, index) {
+            const tr = document.createElement("tr");
+            tr.innerHTML =
+              "<td class='px-4 py-2 font-semibold'>Row " +
+              (index + 1) +
+              "</td>";
+
+            // Show key features as a summary
+            const summary = [];
+            if (row["Age"]) summary.push("Age: " + row["Age"]);
+            if (row["Area Income"])
+              summary.push(
+                "Income: $" + parseFloat(row["Area Income"]).toLocaleString(),
+              );
+            if (row["Country"]) summary.push("Country: " + row["Country"]);
+            if (row["Clicked on Ad"] !== undefined)
+              summary.push(
+                "Clicked: " + (row["Clicked on Ad"] == 1 ? "Yes" : "No"),
+              );
+
+            tr.innerHTML +=
+              "<td class='px-4 py-2 text-slate-600'>" +
+              summary.join(", ") +
+              "</td>";
+            body.appendChild(tr);
+          });
+        } else {
+          // Fallback to feature info if sample_rows not available
+          const featureInfo =
+            (data.dataset_overview && data.dataset_overview.feature_info) || [];
+          featureInfo.forEach(function (item) {
+            const row = document.createElement("tr");
+            row.innerHTML =
+              "<td class='px-4 py-3 font-semibold'>" +
+              item.name +
+              "</td>" +
+              "<td class='px-4 py-3 text-slate-600'>" +
+              (item.sample_values || []).join(", ") +
+              "</td>";
+            body.appendChild(row);
+          });
+
+          setText(
+            "sampleRowsNotice",
+            "Sample values shown by feature (full sample rows not available).",
+          );
+        }
+      }
+
+      function renderInsights(data) {
+        const overview = data.dataset_overview || {};
+        const missing = data.missing_values || {};
+        const featureInfo = overview.feature_info || [];
+        const categorical = featureInfo.filter(function (item) {
+          return item.type === "Categorical";
+        });
+        const highCard = categorical
+          .filter(function (item) {
+            return (item.n_unique || 0) > 100;
+          })
+          .map(function (item) {
+            return item.name;
+          });
+
+        const insights = [];
+        if ((missing.total_missing_cells || 0) === 0) {
+          insights.push("Dataset has zero missing cells across all columns.");
+        } else {
+          insights.push(
+            "Missing values exist and require imputation strategy by severity.",
+          );
+        }
+        insights.push(
+          "Target distribution appears balanced with ratio " +
+            document.getElementById("imbalanceRatio").textContent +
+            ".",
+        );
+        if (highCard.length > 0) {
+          insights.push(
+            "High-cardinality categorical features detected: " +
+              highCard.join(", ") +
+              ".",
+          );
+        }
+        if (state.outlierResults.length > 0) {
+          const topOutlier = state.outlierResults.slice().sort(function (a, b) {
+            return b.pct - a.pct;
+          })[0];
+          insights.push(
+            "Most outlier-prone numerical feature (approx): " +
+              topOutlier.feature +
+              " (" +
+              formatNumber(topOutlier.pct, 3) +
+              "%).",
+          );
+        }
+
+        const suggestions = [
+          "Imputation: none required for current metadata (0 missing), but keep pipeline support for future data drift.",
+          "Outlier handling: consider winsorization/capping for features with non-trivial outlier rate.",
+          "Categorical encoding: avoid full one-hot for very high-cardinality columns; prefer frequency/target/hashing encoding.",
+          "Timestamp processing: split to hour/day/month/week features instead of treating as raw category.",
+          "Imbalance handling: no resampling needed currently; monitor after train/validation split.",
+          "Scaling: apply robust/standard scaling for continuous numerical variables.",
+        ];
+
+        const insightList = document.getElementById("keyInsightsList");
+        insightList.innerHTML = "";
+        insights.forEach(function (item) {
+          const li = document.createElement("li");
+          li.textContent = item;
+          insightList.appendChild(li);
+        });
+
+        const suggestionList = document.getElementById(
+          "preprocessSuggestionsList",
+        );
+        suggestionList.innerHTML = "";
+        suggestions.forEach(function (item) {
+          const li = document.createElement("li");
+          li.textContent = item;
+          suggestionList.appendChild(li);
+        });
+      }
+
+      function showFatal(message) {
+        const panel = document.getElementById("fatalMessage");
+        panel.classList.remove("hidden");
+        panel.textContent = "Failed to load metadata files: " + message;
+      }
+
+      async function loadAndRender() {
+        try {
+          const response = await fetch(DATA_PATH);
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          const data = await response.json();
+
+          renderMethodology();
+          renderSummary(data);
+          renderMissing(data);
+          renderNumerical(data);
+          renderCategorical(data);
+          renderTargetDistribution(data);
+          renderCorrelation(data);
+          renderOutliers(data);
+          renderTargetVsFeatures(data);
+          renderSampleRows(data);
+          renderInsights(data);
+        } catch (error) {
+          showFatal(error.message);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        setupAccordion();
+        loadAndRender();
+      });
     </script>
-</body>
+  </body>
 </html>
