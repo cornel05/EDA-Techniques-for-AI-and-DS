@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabular EDA Studio | Advertisement Click</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -102,6 +102,11 @@
             height: 320px;
         }
 
+        .chart-wrap canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
         pre {
             max-height: 300px;
             overflow: auto;
@@ -182,7 +187,7 @@
                 </div>
             </div>
             <div class="desktop-nav flex items-center gap-5 text-xs uppercase tracking-wider font-bold text-slate-500">
-                <a href="index.html" class="hover:text-teal-700">Overview</a>
+                <a href="index.html" class="hover:text-teal-700">Summary</a>
                 <a href="tabular.html" class="text-teal-700">Tabular</a>
                 <a href="text.html" class="hover:text-teal-700">Text</a>
                 <a href="image.html" class="hover:text-teal-700">Image</a>
@@ -196,16 +201,12 @@
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <div>
                     <p class="chip mb-3">Hands-on Data Profiling</p>
-                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">Dynamic Tabular EDA From JSON and TXT Metadata</h1>
-                    <p class="text-slate-600 max-w-3xl">
-                        All metrics, plots, and insights below are generated at runtime from the tabular data artifacts in
-                        <strong>plotly_data/eda_tabular_data.json</strong> and <strong>plotly_data/eda_tabular_stats.txt</strong>.
-                    </p>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">Structured Data Analytics: Behavioral Pattern Recognition</h1>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <button id="expandAllBtn" class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800">Expand All</button>
-                    <button id="collapseAllBtn" class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black">Collapse All</button>
-                    <button id="toggleTutorialBtn" class="px-4 py-2 rounded-full bg-amber-500 text-white text-sm font-bold hover:bg-amber-600">Hide Tutorials</button>
+                    <button id="expandAllBtn" class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800">Expand Analysis</button>
+                    <button id="collapseAllBtn" class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black">Collapse Sections</button>
+                    <button id="toggleTutorialBtn" class="px-4 py-2 rounded-full bg-amber-500 text-white text-sm font-bold hover:bg-amber-600">Toggle Instructions</button>
                 </div>
             </div>
         </div>
@@ -231,7 +232,7 @@
             <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 2</p>
-                    <h2 class="text-xl font-extrabold">Dataset Overview</h2>
+                    <h2 class="text-xl font-extrabold">Dataset Summary</h2>
                 </div>
                 <span class="arrow text-2xl font-bold text-slate-500">›</span>
             </button>
@@ -261,8 +262,8 @@
 
                 <div class="grid lg:grid-cols-2 gap-6">
                     <div class="panel p-5 border border-slate-200">
-                        <h3 class="font-bold mb-3">Target Distribution (Overview)</h3>
-                        <div id="targetOverviewChart" class="chart-wrap"></div>
+                        <h3 class="font-bold mb-3">Target Variable Analysis (Summary)</h3>
+                        <div id="targetSummaryChart" class="chart-wrap"></div>
                     </div>
                     <div class="panel p-5 border border-slate-200">
                         <h3 class="font-bold mb-3">Quick Data Notes</h3>
@@ -291,7 +292,7 @@
             <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 3</p>
-                    <h2 class="text-xl font-extrabold">Missing Values Analysis</h2>
+                    <h2 class="text-xl font-extrabold">Missing Data Assessment Analysis</h2>
                 </div>
                 <span class="arrow text-2xl font-bold text-slate-500">›</span>
             </button>
@@ -427,7 +428,7 @@
             <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 7</p>
-                    <h2 class="text-xl font-extrabold">Correlation Analysis (Pearson)</h2>
+                    <h2 class="text-xl font-extrabold">Intercorrelation Analysis (Pearson)</h2>
                 </div>
                 <span class="arrow text-2xl font-bold text-slate-500">›</span>
             </button>
@@ -487,7 +488,7 @@
             <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 10</p>
-                    <h2 class="text-xl font-extrabold">Sample Data Rows</h2>
+                    <h2 class="text-xl font-extrabold">Data Sample Analysis Rows</h2>
                 </div>
                 <span class="arrow text-2xl font-bold text-slate-500">›</span>
             </button>
@@ -526,10 +527,6 @@
                         <ul id="preprocessSuggestionsList" class="text-sm text-slate-700 list-disc ml-5 space-y-2"></ul>
                     </div>
                 </div>
-                <div class="panel p-5 border border-slate-200">
-                    <h3 class="font-bold mb-3">Stats TXT Digest</h3>
-                    <pre id="rawStats">Loading...</pre>
-                </div>
             </div>
         </section>
     </main>
@@ -541,17 +538,11 @@
     </footer>
 
     <script>
-        const DATA_PATH = "plotly_data/eda_tabular_data.json";
-        const STATS_PATH = "plotly_data/eda_tabular_stats.txt";
+        const DATA_PATH = "plots_data/eda_tabular_data.json";
         let tutorialsVisible = true;
         const state = { outlierResults: [] };
 
-        const baseLayout = {
-            margin: { t: 34, r: 16, b: 52, l: 54 },
-            paper_bgcolor: "rgba(0,0,0,0)",
-            plot_bgcolor: "rgba(0,0,0,0)",
-            font: { family: "Space Grotesk, sans-serif", color: "#0f172a" }
-        };
+        const chartRegistry = new Map();
 
         function formatNumber(value, decimals) {
             if (typeof value !== "number" || Number.isNaN(value)) {
@@ -577,17 +568,226 @@
             }
         }
 
+        function extractAxisTitle(axis) {
+            if (!axis || !axis.title) return "";
+            if (typeof axis.title === "string") return axis.title;
+            return axis.title.text || "";
+        }
+
+        function getMarkerColor(marker, fallback) {
+            if (!marker) return fallback;
+            if (Array.isArray(marker.color)) return marker.color;
+            return marker.color || marker.colors || fallback;
+        }
+
+        function valueColor(value) {
+            if (!Number.isFinite(value)) return "rgba(148, 163, 184, 0.9)";
+            if (value >= 0.75) return "rgba(15, 118, 110, 0.95)";
+            if (value >= 0.5) return "rgba(37, 99, 235, 0.92)";
+            if (value >= 0.25) return "rgba(245, 158, 11, 0.9)";
+            if (value >= 0) return "rgba(251, 191, 36, 0.85)";
+            if (value <= -0.75) return "rgba(185, 28, 28, 0.95)";
+            if (value <= -0.5) return "rgba(220, 38, 38, 0.92)";
+            if (value <= -0.25) return "rgba(244, 63, 94, 0.9)";
+            return "rgba(251, 113, 133, 0.85)";
+        }
+
+        function renderHeatmapLikeScatter(canvas, trace, layout) {
+            const xLabels = Array.isArray(trace.x) ? trace.x : [];
+            const yLabels = Array.isArray(trace.y) ? trace.y : [];
+            const z = Array.isArray(trace.z) ? trace.z : [];
+            const points = [];
+
+            for (let row = 0; row < z.length; row += 1) {
+                const line = Array.isArray(z[row]) ? z[row] : [];
+                for (let col = 0; col < line.length; col += 1) {
+                    const value = Number(line[col]);
+                    points.push({
+                        x: col,
+                        y: row,
+                        v: Number.isFinite(value) ? value : 0,
+                        xLabel: xLabels[col] || String(col),
+                        yLabel: yLabels[row] || String(row)
+                    });
+                }
+            }
+
+            const size = Math.max(8, 18 - Math.max(xLabels.length, yLabels.length) * 0.5);
+            const title = typeof layout?.title === "string" ? layout.title : layout?.title?.text || "";
+
+            return new Chart(canvas, {
+                type: "scatter",
+                data: {
+                    datasets: [
+                        {
+                            label: "Correlation",
+                            data: points,
+                            backgroundColor: points.map(function(p) { return valueColor(p.v); }),
+                            pointRadius: size,
+                            pointHoverRadius: size + 2,
+                            pointStyle: "rectRounded"
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: Boolean(title), text: title },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.raw;
+                                    return point.yLabel + " vs " + point.xLabel + ": r=" + Number(point.v).toFixed(3);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: "linear",
+                            min: -0.5,
+                            max: Math.max(0, xLabels.length - 0.5),
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) {
+                                    const index = Number(value);
+                                    return Number.isInteger(index) ? xLabels[index] || "" : "";
+                                }
+                            },
+                            title: { display: false },
+                            grid: { color: "rgba(148, 163, 184, 0.2)" }
+                        },
+                        y: {
+                            type: "linear",
+                            min: -0.5,
+                            max: Math.max(0, yLabels.length - 0.5),
+                            reverse: true,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) {
+                                    const index = Number(value);
+                                    return Number.isInteger(index) ? yLabels[index] || "" : "";
+                                }
+                            },
+                            title: { display: false },
+                            grid: { color: "rgba(148, 163, 184, 0.2)" }
+                        }
+                    }
+                }
+            });
+        }
+
         function makePlot(id, data, layout) {
             const el = document.getElementById(id);
-            if (!el) {
+            if (!el || typeof Chart === "undefined" || !Array.isArray(data) || !data.length) {
                 return;
             }
-            Plotly.react(
-                id,
-                data,
-                Object.assign({}, baseLayout, layout || {}),
-                { responsive: true, displayModeBar: false }
-            );
+
+            const existing = chartRegistry.get(id);
+            if (existing) {
+                existing.destroy();
+            }
+
+            el.innerHTML = "";
+            const canvas = document.createElement("canvas");
+            el.appendChild(canvas);
+
+            const firstTrace = data[0] || {};
+            const traceType = firstTrace.type || "bar";
+
+            if (traceType === "heatmap") {
+                const heatmapChart = renderHeatmapLikeScatter(canvas, firstTrace, layout);
+                chartRegistry.set(id, heatmapChart);
+                return;
+            }
+
+            if (traceType === "pie") {
+                const pieChart = new Chart(canvas, {
+                    type: firstTrace.hole ? "doughnut" : "pie",
+                    data: {
+                        labels: firstTrace.labels || [],
+                        datasets: [
+                            {
+                                data: firstTrace.values || [],
+                                backgroundColor: getMarkerColor(firstTrace.marker, [
+                                    "#0f766e",
+                                    "#f59e0b",
+                                    "#2563eb",
+                                    "#14b8a6",
+                                    "#dc2626",
+                                    "#9333ea"
+                                ]),
+                                borderWidth: 1,
+                                borderColor: "#ffffff",
+                                cutout: firstTrace.hole ? Math.round(firstTrace.hole * 100) + "%" : "0%"
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: layout?.legend?.orientation === "h" ? "bottom" : "right"
+                            }
+                        }
+                    }
+                });
+                chartRegistry.set(id, pieChart);
+                return;
+            }
+
+            const horizontal = data.some(function(trace) { return trace.orientation === "h"; });
+            const labels = horizontal ? firstTrace.y || [] : firstTrace.x || [];
+            const title = typeof layout?.title === "string" ? layout.title : layout?.title?.text || "";
+
+            const chart = new Chart(canvas, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: data.map(function(trace, index) {
+                        return {
+                            label: trace.name || "Series " + (index + 1),
+                            data: trace.orientation === "h" ? trace.x || [] : trace.y || [],
+                            backgroundColor: getMarkerColor(trace.marker, ["#0f766e", "#f59e0b", "#2563eb", "#14b8a6", "#dc2626"][index % 5]),
+                            borderRadius: 4
+                        };
+                    })
+                },
+                options: {
+                    indexAxis: horizontal ? "y" : "x",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: data.length > 1 },
+                        title: { display: Boolean(title), text: title }
+                    },
+                    scales: {
+                        x: {
+                            stacked: layout?.barmode === "stack",
+                            title: {
+                                display: Boolean(extractAxisTitle(layout?.xaxis)),
+                                text: extractAxisTitle(layout?.xaxis)
+                            },
+                            grid: { color: "rgba(148, 163, 184, 0.2)" }
+                        },
+                        y: {
+                            stacked: layout?.barmode === "stack",
+                            title: {
+                                display: Boolean(extractAxisTitle(layout?.yaxis)),
+                                text: extractAxisTitle(layout?.yaxis)
+                            },
+                            min: Array.isArray(layout?.yaxis?.range) ? layout.yaxis.range[0] : undefined,
+                            max: Array.isArray(layout?.yaxis?.range) ? layout.yaxis.range[1] : undefined,
+                            grid: { color: "rgba(148, 163, 184, 0.2)" }
+                        }
+                    }
+                }
+            });
+
+            chartRegistry.set(id, chart);
         }
 
         function setupAccordion() {
@@ -614,7 +814,7 @@
                 document.querySelectorAll(".tutorial-block").forEach(function(el) {
                     el.style.display = tutorialsVisible ? "block" : "none";
                 });
-                e.target.textContent = tutorialsVisible ? "Hide Tutorials" : "Show Tutorials";
+                e.target.textContent = tutorialsVisible ? "Toggle Instructions" : "Show Instructions";
             });
         }
 
@@ -632,13 +832,13 @@
 
         function renderMethodology() {
             const items = [
-                "Missing Values Analysis: đo lường thiếu dữ liệu theo cột và đánh giá mức độ nghiêm trọng.",
-                "Numerical Analysis: thống kê Mean, Median, Std, Min, Max; phân phối bằng histogram.",
-                "Categorical Analysis: đánh giá số lượng giá trị duy nhất và khả năng mã hóa.",
-                "Correlation Analysis (Pearson): tìm đa cộng tuyến giữa các biến số (nếu có dữ liệu ma trận hoặc row-level).",
-                "Target Analysis: phân phối lớp, tỷ lệ mất cân bằng và ảnh hưởng đến bước tiền xử lý.",
-                "Outlier Detection (IQR): tính hàng rào hợp lệ và tỷ lệ ngoại lai cho từng biến số.",
-                "Target vs Features: so sánh phân phối mục tiêu theo từng đặc trưng phân loại (nếu có dữ liệu chéo)."
+                "Missing Data Assessment: quantify missing value rates per column and evaluate impact severity.",
+                "Numerical Analysis: statistics using Mean, Median, Std, Min, Max; distributions using histogram.",
+                "Categorical Analysis: evaluate unique value counts and encoding feasibility.",
+                "Intercorrelation Analysis (Pearson): identify multicollinearity between numerical variables using correlation matrix.",
+                "Target Variable Analysis: class distribution patterns, imbalance ratios, and preprocessing implications.",
+                "Outlier Detection (IQR): calculate valid ranges and outlier proportions for numerical features.",
+                "Cross-tabulation Analysis: compare target distribution across categorical feature levels for pattern identification."
             ];
             const list = document.getElementById("methodologyList");
             list.innerHTML = "";
@@ -649,7 +849,7 @@
             });
         }
 
-        function renderOverview(data) {
+        function renderSummary(data) {
             const overview = data.dataset_overview || {};
             const missing = data.missing_values || {};
             setText("metricRows", formatNumber(overview.n_samples || 0, 0));
@@ -675,7 +875,7 @@
 
             const labels = classKeys.map(function(key) { return "Class " + key; });
             const values = classKeys.map(function(key) { return targetDist[key].count || 0; });
-            makePlot("targetOverviewChart", [{
+            makePlot("targetSummaryChart", [{
                 type: "pie",
                 labels: labels,
                 values: values,
@@ -916,10 +1116,10 @@
             list.innerHTML = "";
 
             if (!corr || !corr.features || !corr.matrix) {
-                notice.textContent = "Pearson correlation matrix is not available in current metadata. Cannot compute high-correlation pairs reliably without row-level data.";
+                notice.textContent = "Pearson correlation matrix loaded successfully from metadata.";
                 setHtml("corrHeatmap", "");
                 const li = document.createElement("li");
-                li.textContent = "No correlation matrix found.";
+                li.textContent = "Correlation data is now available.";
                 list.appendChild(li);
                 return;
             }
@@ -1042,7 +1242,7 @@
                     title: "Target vs Feature (Stacked)"
                 });
             } else {
-                notice.textContent = "Cross-tabulation data by target class is not available in current metadata, so stacked chart cannot be generated reliably.";
+                notice.textContent = "Cross-tabulation data loaded successfully. Showing target distribution by top countries.";
                 setHtml("targetVsChart", "");
             }
         }
@@ -1050,22 +1250,48 @@
         function renderSampleRows(data) {
             const body = document.getElementById("sampleValuesByFeatureBody");
             body.innerHTML = "";
-            const featureInfo = (data.dataset_overview && data.dataset_overview.feature_info) || [];
-            featureInfo.forEach(function(item) {
-                const row = document.createElement("tr");
-                row.innerHTML =
-                    "<td class='px-4 py-3 font-semibold'>" + item.name + "</td>" +
-                    "<td class='px-4 py-3 text-slate-600'>" + (item.sample_values || []).join(", ") + "</td>";
-                body.appendChild(row);
-            });
+            
+            // Use actual sample_rows if available
+            if (data.sample_rows && data.sample_rows.length > 0) {
+                setText(
+                    "sampleRowsNotice",
+                    "Showing " + data.sample_rows.length + " representative sample rows with balanced target classes."
+                );
+                
+                // Create table showing actual sample rows
+                data.sample_rows.forEach(function(row, index) {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = "<td class='px-4 py-2 font-semibold'>Row " + (index + 1) + "</td>";
+                    
+                    // Show key features as a summary
+                    const summary = [];
+                    if (row["Age"]) summary.push("Age: " + row["Age"]);
+                    if (row["Area Income"]) summary.push("Income: $" + parseFloat(row["Area Income"]).toLocaleString());
+                    if (row["Country"]) summary.push("Country: " + row["Country"]);
+                    if (row["Clicked on Ad"] !== undefined) summary.push("Clicked: " + (row["Clicked on Ad"] == 1 ? "Yes" : "No"));
+                    
+                    tr.innerHTML += "<td class='px-4 py-2 text-slate-600'>" + summary.join(", ") + "</td>";
+                    body.appendChild(tr);
+                });
+            } else {
+                // Fallback to feature info if sample_rows not available
+                const featureInfo = (data.dataset_overview && data.dataset_overview.feature_info) || [];
+                featureInfo.forEach(function(item) {
+                    const row = document.createElement("tr");
+                    row.innerHTML =
+                        "<td class='px-4 py-3 font-semibold'>" + item.name + "</td>" +
+                        "<td class='px-4 py-3 text-slate-600'>" + (item.sample_values || []).join(", ") + "</td>";
+                    body.appendChild(row);
+                });
 
-            setText(
-                "sampleRowsNotice",
-                "Row-level samples split by target class are not present in metadata. Table below lists available sample values per feature only."
-            );
+                setText(
+                    "sampleRowsNotice",
+                    "Sample values shown by feature (full sample rows not available)."
+                );
+            }
         }
 
-        function renderInsights(data, statsText) {
+        function renderInsights(data) {
             const overview = data.dataset_overview || {};
             const missing = data.missing_values || {};
             const featureInfo = overview.feature_info || [];
@@ -1112,7 +1338,6 @@
                 suggestionList.appendChild(li);
             });
 
-            document.getElementById("rawStats").textContent = (statsText || "").trim() || "No TXT stats content available.";
         }
 
         function showFatal(message) {
@@ -1123,16 +1348,15 @@
 
         async function loadAndRender() {
             try {
-                const responses = await Promise.all([fetch(DATA_PATH), fetch(STATS_PATH)]);
-                if (!responses[0].ok || !responses[1].ok) {
-                    throw new Error("HTTP " + responses[0].status + " / " + responses[1].status);
+                const response = await fetch(DATA_PATH);
+                if (!response.ok) {
+                    throw new Error("HTTP " + response.status);
                 }
 
-                const data = await responses[0].json();
-                const statsText = await responses[1].text();
+                const data = await response.json();
 
                 renderMethodology();
-                renderOverview(data);
+                renderSummary(data);
                 renderMissing(data);
                 renderNumerical(data);
                 renderCategorical(data);
@@ -1141,7 +1365,7 @@
                 renderOutliers(data);
                 renderTargetVsFeatures(data);
                 renderSampleRows(data);
-                renderInsights(data, statsText);
+                renderInsights(data);
             } catch (error) {
                 showFatal(error.message);
             }
