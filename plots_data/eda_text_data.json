@@ -1363,5 +1363,53 @@
       "English-only dataset \u2014 not suitable for multilingual QA",
       "SQuAD 1.1 has no unanswerable questions \u2014 consider SQuAD 2.0 for robustness"
     ]
+  },
+  "sample_documents": {
+    "data_availability": "Representative QA pairs available",
+    "examples_note": "Sample question-answer pairs from SQuAD 1.1 dataset showing diverse question types and answer patterns.",
+    "sample_qa_pairs": [
+      {
+        "question_type": "Other",
+        "question": "To whom did the Virgin Mary allegedly appear in 1858 in Lourdes France?",
+        "context": "Architecturally, the school has a Catholic character. Atop the Main Building's gold dome is a golden statue of the Virgin Mary. Immediately in front of the Main Building and facing it, is a copper statue of Christ with arms upraised with the legend \"Venite Ad Me Omnes\". Next to the Main Building is ...",
+        "answer": "Saint Bernadette Soubirous",
+        "title": "University_of_Notre_Dame"
+      },
+      {
+        "question_type": "What",
+        "question": "What is in front of the Notre Dame Main Building?",
+        "context": "Architecturally, the school has a Catholic character. Atop the Main Building's gold dome is a golden statue of the Virgin Mary. Immediately in front of the Main Building and facing it, is a copper statue of Christ with arms upraised with the legend \"Venite Ad Me Omnes\". Next to the Main Building is ...",
+        "answer": "a copper statue of Christ",
+        "title": "University_of_Notre_Dame"
+      },
+      {
+        "question_type": "When",
+        "question": "When did the Scholastic Magazine of Notre dame begin publishing?",
+        "context": "As at most other universities, Notre Dame's students run a number of news media outlets. The nine student-run outlets include three newspapers, both a radio and television station, and several magazines and journals. Begun as a one-page journal in September 1876, the Scholastic magazine is issued tw...",
+        "answer": "September 1876",
+        "title": "University_of_Notre_Dame"
+      },
+      {
+        "question_type": "How",
+        "question": "How often is Notre Dame's the Juggler published?",
+        "context": "As at most other universities, Notre Dame's students run a number of news media outlets. The nine student-run outlets include three newspapers, both a radio and television station, and several magazines and journals. Begun as a one-page journal in September 1876, the Scholastic magazine is issued tw...",
+        "answer": "twice",
+        "title": "University_of_Notre_Dame"
+      },
+      {
+        "question_type": "Where",
+        "question": "Where is the headquarters of the Congregation of the Holy Cross?",
+        "context": "The university is the major seat of the Congregation of Holy Cross (albeit not its official headquarters, which are in Rome). Its main seminary, Moreau Seminary, is located on the campus across St. Joseph lake from the Main Building. Old College, the oldest building on campus and located near the sh...",
+        "answer": "Rome",
+        "title": "University_of_Notre_Dame"
+      },
+      {
+        "question_type": "Who",
+        "question": "Who was the president of Notre Dame in 2012?",
+        "context": "As of 2012[update] research continued in many fields. The university president, John Jenkins, described his hope that Notre Dame would become \"one of the pre\u2013eminent research institutions in the world\" in his inaugural address. The university has many multi-disciplinary institutes devoted to researc...",
+        "answer": "John Jenkins",
+        "title": "University_of_Notre_Dame"
+      }
+    ]
   }
 }
