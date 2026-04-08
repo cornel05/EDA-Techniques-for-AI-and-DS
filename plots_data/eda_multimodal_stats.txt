@@ -160,6 +160,10 @@ Top female words: [('woman', 3402), ('girl', 3328), ('her', 1178), ('girls', 844
 
 === SECTION 10: KEY INSIGHTS (UPDATED) ===
 
+=== COLOR CHANNEL & BRIGHTNESS STATS ===
+Average channel intensity: R=117.04, G=113.82, B=103.24
+Average brightness: 111.37
+
   DATASET_CHARACTERISTICS:
     • 8091 unique images × 5 captions = 40455 multimodal pairs
     • 2 modalities: Image (JPEG) + Text (English caption)
@@ -172,6 +176,7 @@ Top female words: [('woman', 3402), ('girl', 3328), ('her', 1178), ('girls', 844
     • Most described subjects: dog, man, woman, boy, girl
     • Inter-annotator Jaccard similarity: 0.278 (moderate agreement)
     • Warm-toned images: R=117.0, G=113.8, B=103.2
+    • Brightness: 111.4
     • POS distribution: NOUNs dominate captions (typical for descriptive text)
     • Gender bias ratio: 1.62x (more male-gendered words than female)
     • Duplicate captions across images: 199 unique captions shared
