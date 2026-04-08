@@ -394,6 +394,25 @@
               </p>
             </div>
           </div>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="panel p-4">
+              <h4 class="font-bold text-slate-700 mb-3">
+                Training Set Distribution (N=73,257)
+              </h4>
+              <div class="chart-wrap" style="height: 300px">
+                <canvas id="trainChart"></canvas>
+              </div>
+            </div>
+            <div class="panel p-4">
+              <h4 class="font-bold text-slate-700 mb-3">
+                Test Set Distribution (N=26,032)
+              </h4>
+              <div class="chart-wrap" style="height: 300px">
+                <canvas id="testChart"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -955,7 +974,7 @@
         try {
           const [dataResponse, chartsResponse] = await Promise.all([
             fetch("./plots_data/eda_svhn_data.json"),
-            fetch("./plots_data/eda_svhn_charts.json"),
+            fetch("./plots_data/eda_image_charts.json"),
           ]);
 
           if (dataResponse.ok && chartsResponse.ok) {
@@ -1006,6 +1025,8 @@
 
         // Section 2: Class Distribution Analysis
         createClassChart();
+        createTrainChart(charts);
+        createTestChart(charts);
 
         // Section 3: Data Quality Validation
         createFormatChart(data);
@@ -1086,6 +1107,78 @@
         // Update imbalance ratio display
         document.getElementById("imbalance-ratio-display").textContent =
           imbalanceRatio + "x";
+      }
+
+      function createTrainChart(charts) {
+        const ctx = document.getElementById("trainChart").getContext("2d");
+        const chartData = charts.trainChart;
+        new Chart(ctx, {
+          type: chartData.type,
+          data: {
+            labels: chartData.labels,
+            datasets: [
+              {
+                label: "Percentage",
+                data: chartData.data,
+                backgroundColor: chartData.colors,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: chartData.title,
+              },
+              legend: { display: true },
+            },
+            scales: {
+              y: {
+                title: { display: true, text: "Percentage (%)" },
+                beginAtZero: true,
+              },
+              x: { title: { display: true, text: "Digit Class" } },
+            },
+          },
+        });
+      }
+
+      function createTestChart(charts) {
+        const ctx = document.getElementById("testChart").getContext("2d");
+        const chartData = charts.testChart;
+        new Chart(ctx, {
+          type: chartData.type,
+          data: {
+            labels: chartData.labels,
+            datasets: [
+              {
+                label: "Percentage",
+                data: chartData.data,
+                backgroundColor: chartData.colors,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: chartData.title,
+              },
+              legend: { display: true },
+            },
+            scales: {
+              y: {
+                title: { display: true, text: "Percentage (%)" },
+                beginAtZero: true,
+              },
+              x: { title: { display: true, text: "Digit Class" } },
+            },
+          },
+        });
       }
 
       function createFormatChart(data) {
@@ -1555,8 +1648,54 @@
           },
           quality_assessment: { data_completeness: 100.0 },
         };
+        const fallbackCharts = {
+          trainChart: {
+            chart_id: "trainChart",
+            type: "bar",
+            labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+            data: [
+              6.75, 18.92, 14.45, 11.6, 10.18, 9.39, 7.82, 7.64, 6.89, 6.36,
+            ],
+            colors: [
+              "#1e40af",
+              "#1d4ed8",
+              "#1e3a8a",
+              "#1e3a8a",
+              "#1e3a8a",
+              "#1e3a8a",
+              "#1e3a8a",
+              "#1e3a8a",
+              "#1e3a8a",
+              "#1e3a8a",
+            ],
+            title: "Training Set Distribution (N=73,257)",
+          },
+          testChart: {
+            chart_id: "testChart",
+            type: "bar",
+            labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+            data: [
+              6.7, 19.59, 15.94, 11.07, 9.69, 9.16, 7.59, 7.76, 6.38, 6.13,
+            ],
+            colors: [
+              "#dc2626",
+              "#ef4444",
+              "#b91c1c",
+              "#b91c1c",
+              "#b91c1c",
+              "#b91c1c",
+              "#b91c1c",
+              "#b91c1c",
+              "#b91c1c",
+              "#b91c1c",
+            ],
+            title: "Test Set Distribution (N=26,032)",
+          },
+        };
 
         createClassChart();
+        createTrainChart(fallbackCharts);
+        createTestChart(fallbackCharts);
         createFormatChart(fallbackData);
         createQualityChart(fallbackData);
         createScatterChart(fallbackData);
@@ -1574,8 +1713,7 @@
       <div
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-xs uppercase tracking-[0.22em] text-slate-500 text-center"
       >
-        HCMUT - P4AI-DS Final Report - Dynamic Image EDA From Metadata
-        Artifacts
+        HCMUT - P4AI-DS Final Report - Dynamic Image EDA From Metadata Artifacts
       </div>
     </footer>
   </body>
