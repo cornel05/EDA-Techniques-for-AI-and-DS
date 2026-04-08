@@ -1440,27 +1440,229 @@
   ],
   "insights": {
     "dataset_characteristics": [
-      "Dataset contains 1000 samples with 5 features",
-      "Target is perfectly balanced: 500 vs 500 (ratio 1.00:1)",
-      "No missing values found in any column",
+      "Dataset contains 1000 samples with 9 features (excl. target)",
+      "Target is perfectly balanced: 500 vs 500 (ratio 1.00:1) — no oversampling needed",
+      "No missing values in any column — no imputation required",
       "No duplicate rows detected",
       "5 numerical + 4 categorical features"
     ],
     "key_findings": [
-      "Strongest predictor: Daily Internet Usage (r = -0.7865)",
-      "Second strongest: Daily Time Spent on Site (r = -0.7481)",
-      "Age positively correlated with clicking (r = 0.4925)",
-      "Gender (Male) shows virtually no predictive power (r = -0.0380)",
-      "Users who click: older, lower income, less internet usage, less time on site",
-      "Clear class separation in pairplot \u2192 simple classifiers could perform well"
+      "Strongest predictor: Daily Internet Usage (r = -0.79, 32% mean-difference between classes)",
+      "Second strongest: Daily Time Spent on Site (r = -0.75, 31% mean-difference)",
+      "Age positively correlated with clicking (r = +0.49, 27% mean-difference)",
+      "Area Income: moderate signal (r = -0.48, 21% mean-difference)",
+      "Male (gender) shows near-zero predictive power (r = -0.04, 8% mean-difference)",
+      "Users who click are: older, lower income, less daily internet usage, less time on site",
+      "Daily Internet Usage and Daily Time Spent are correlated (r = 0.52) — mild multicollinearity"
     ],
     "preprocessing_suggestions": [
-      "Drop Ad Topic Line (near-unique text, high cardinality)",
-      "Drop City (too many unique values) or group by Country",
-      "Extract Hour, Month, DayOfWeek from Timestamp then drop Timestamp",
-      "Standardize numerical features before model training",
-      "Only 9 mild outliers \u2014 no aggressive capping needed",
+      "Drop Ad Topic Line (1000/1000 unique values — effectively an identifier, not a category)",
+      "Drop City (969/1000 unique values — too sparse for encoding)",
+      "Extract Hour, Month, DayOfWeek from Timestamp then drop raw Timestamp",
+      "Standardize numerical features (Daily Time Spent, Age, Area Income, Daily Internet Usage)",
+      "Consider dropping Male — adds near-zero signal and increases model noise",
+      "Encode Country with top-K or target encoding; group rare countries into 'Other'",
+      "Only 9 mild outliers in Area Income — no aggressive capping needed",
       "No imputation needed (0 missing values)"
-    ]
+    ],
+    "modeling_readiness": {
+      "class_balance": "Perfectly balanced (50/50) — standard accuracy metrics are valid",
+      "strongest_signals": ["Daily Internet Usage", "Daily Time Spent on Site", "Age", "Area Income"],
+      "weak_signals": ["Male"],
+      "drop_candidates": ["Ad Topic Line", "City", "Timestamp (raw)"],
+      "engineering_steps": ["Extract Hour/Month/DayOfWeek from Timestamp"],
+      "multicollinearity_risk": "Moderate: Daily Internet Usage and Daily Time Spent (r=0.52). Monitor VIF if using linear models.",
+      "scaling_needed": true,
+      "outlier_action": "No action needed — only 9 mild outliers in Area Income (0.9%)",
+      "recommended_baseline_models": ["Logistic Regression", "Random Forest", "Decision Tree"]
+    }
+  },
+  "methodology_steps": [
+    {
+      "step": 1,
+      "name": "Data Quality (Compact Sanity Check)",
+      "purpose": "Verify missing values, duplicate rows, and class balance before proceeding.",
+      "insight": "This dataset has 0 missing values, 0 duplicate rows, and a perfectly balanced target (50/50). No imputation or oversampling is needed.",
+      "type": "core"
+    },
+    {
+      "step": 2,
+      "name": "Feature Role Audit",
+      "purpose": "Classify every column into predictive, contextual, or identifier-like roles.",
+      "insight": "Reveals which fields are useful signals vs. overfitting/leakage risks. Ad Topic Line, City, and raw Timestamp are near-unique and must not be encoded naively.",
+      "type": "core"
+    },
+    {
+      "step": 3,
+      "name": "Numerical Distributions",
+      "purpose": "Inspect distribution shape, spread, and outliers for all numeric features.",
+      "insight": "All features are reasonably distributed. Only Area Income has mild outliers (9, 0.9%). No aggressive capping needed.",
+      "type": "core"
+    },
+    {
+      "step": 4,
+      "name": "Support-Aware Categorical Analysis",
+      "purpose": "Frequency analysis for categorical features with support counts to avoid misleading rates.",
+      "insight": "Country is the only categorical feature worth encoding. Ad Topic Line, City, and Timestamp are near-unique identifiers that should be dropped or transformed.",
+      "type": "core"
+    },
+    {
+      "step": 5,
+      "name": "Correlation Analysis",
+      "purpose": "Measure linear relationships among numeric features and with the target.",
+      "insight": "Daily Internet Usage (r=\u22120.79) and Daily Time Spent on Site (r=\u22120.75) are the strongest predictors. The two are also correlated with each other (r=0.52), indicating moderate multicollinearity.",
+      "type": "core"
+    },
+    {
+      "step": 6,
+      "name": "Target Signal Rankings",
+      "purpose": "Explicitly rank features by their separation power using mean-difference percentage.",
+      "insight": "Daily Internet Usage separates classes most (32% mean diff), followed by Daily Time Spent (31%), Age (27%), Area Income (21%). Male is effectively noise (~8% diff, r\u2248\u22120.04).",
+      "type": "core"
+    },
+    {
+      "step": 7,
+      "name": "Count-Aware Temporal Analysis",
+      "purpose": "Extract Hour, Month, DayOfWeek from Timestamp and evaluate click rates per bin WITH support counts.",
+      "insight": "Click-rate patterns by hour/day/month appear only mildly variable. With ~40 samples per hour bin, most variation is sampling noise. Temporal features provide marginal signal and should be treated as optional engineering.",
+      "type": "optional"
+    },
+    {
+      "step": 8,
+      "name": "Modeling Readiness Summary",
+      "purpose": "Translate EDA findings into concrete preprocessing and feature-engineering decisions.",
+      "insight": "Drop Ad Topic Line, City; extract temporal features from Timestamp then drop it; standardize numerical features; consider dropping Male; use Country with top-K or target encoding.",
+      "type": "core"
+    }
+  ],
+  "feature_roles": {
+    "behavioral_predictors": {
+      "columns": ["Daily Time Spent on Site", "Daily Internet Usage"],
+      "description": "Direct behavioral signals — strongest predictors of ad click intent.",
+      "modeling_notes": "Keep and standardize before model training."
+    },
+    "demographic_context": {
+      "columns": ["Age", "Area Income", "Male"],
+      "description": "Demographic and socioeconomic context variables.",
+      "modeling_notes": "Keep Age and Area Income (moderate signal). Male adds near-zero signal (r\u2248-0.04); consider dropping."
+    },
+    "quasi_identifiers": {
+      "columns": ["Ad Topic Line", "City", "Timestamp"],
+      "description": "High-cardinality or near-unique fields. These are effectively identifiers, not generalizable categories.",
+      "modeling_notes": "Drop Ad Topic Line (1000 unique). Drop City (969/1000 unique). Extract Hour/Month/DayOfWeek from Timestamp, then drop raw Timestamp."
+    },
+    "moderate_cardinality": {
+      "columns": ["Country"],
+      "description": "Country has 237 unique values across 1000 rows. Usable with care.",
+      "modeling_notes": "Top-K encoding or target encoding with cross-validation. Rare countries should be grouped into 'Other'."
+    },
+    "target": {
+      "columns": ["Clicked on Ad"],
+      "description": "Binary target variable — whether the user clicked the advertisement.",
+      "modeling_notes": "Perfectly balanced (50/50). No oversampling needed."
+    }
+  },
+  "target_signal_rankings": [
+    {
+      "rank": 1,
+      "feature": "Daily Internet Usage",
+      "target_correlation": -0.7865,
+      "no_click_mean": 214.51,
+      "click_mean": 145.49,
+      "mean_diff_pct": 32.18,
+      "signal_strength": "Very Strong",
+      "direction": "Users who click use LESS daily internet (lower daily usage)",
+      "note": "Primary behavioral signal — users who click have more focused, lighter internet usage patterns"
+    },
+    {
+      "rank": 2,
+      "feature": "Daily Time Spent on Site",
+      "target_correlation": -0.7481,
+      "no_click_mean": 76.85,
+      "click_mean": 53.15,
+      "mean_diff_pct": 30.84,
+      "signal_strength": "Very Strong",
+      "direction": "Users who click spend LESS time on site per session",
+      "note": "Correlated with Daily Internet Usage (r=0.52) — mild multicollinearity risk"
+    },
+    {
+      "rank": 3,
+      "feature": "Age",
+      "target_correlation": 0.4925,
+      "no_click_mean": 31.68,
+      "click_mean": 40.33,
+      "mean_diff_pct": 27.3,
+      "signal_strength": "Strong",
+      "direction": "Users who click are OLDER on average",
+      "note": "Older users are less engaged with the site and more likely to click ads"
+    },
+    {
+      "rank": 4,
+      "feature": "Area Income",
+      "target_correlation": -0.4763,
+      "no_click_mean": 61385.59,
+      "click_mean": 48614.41,
+      "mean_diff_pct": 20.8,
+      "signal_strength": "Moderate",
+      "direction": "Users who click come from LOWER income areas",
+      "note": "Lower-income users may be more receptive to advertisement offers"
+    },
+    {
+      "rank": 5,
+      "feature": "Male",
+      "target_correlation": -0.038,
+      "no_click_mean": 0.5,
+      "click_mean": 0.46,
+      "mean_diff_pct": 8.0,
+      "signal_strength": "Negligible",
+      "direction": "Essentially no gender difference in click behavior",
+      "note": "Binary feature; the 8% difference is within sampling noise. Consider dropping."
+    }
+  ],
+  "country_support": {
+    "note": "Top-10 countries by frequency. Support counts shown — rates based on 8-9 samples are unreliable.",
+    "countries": [
+      {"country": "Afghanistan", "no_click": 3, "click": 5, "total": 8, "click_rate_pct": 62.5},
+      {"country": "Australia", "no_click": 1, "click": 7, "total": 8, "click_rate_pct": 87.5},
+      {"country": "Czech Republic", "no_click": 5, "click": 4, "total": 9, "click_rate_pct": 44.4},
+      {"country": "France", "no_click": 4, "click": 5, "total": 9, "click_rate_pct": 55.6},
+      {"country": "Greece", "no_click": 5, "click": 3, "total": 8, "click_rate_pct": 37.5},
+      {"country": "Liberia", "no_click": 2, "click": 6, "total": 8, "click_rate_pct": 75.0},
+      {"country": "Micronesia", "no_click": 4, "click": 4, "total": 8, "click_rate_pct": 50.0},
+      {"country": "Peru", "no_click": 3, "click": 5, "total": 8, "click_rate_pct": 62.5},
+      {"country": "Senegal", "no_click": 3, "click": 5, "total": 8, "click_rate_pct": 62.5},
+      {"country": "Turkey", "no_click": 1, "click": 7, "total": 8, "click_rate_pct": 87.5}
+    ],
+    "sparse_warning": "Each country has only 8-9 samples. Click rates are unreliable. Country should be encoded with regularization (e.g., target encoding with CV) to avoid overfitting."
+  },
+  "temporal_support": {
+    "note": "Support counts per temporal bin. Low support (~40/hour) means click rates are noisy.",
+    "hour_support": {
+      "0": {"count": 36, "click_rate": 0.5778},
+      "1": {"count": 30, "click_rate": 0.5},
+      "2": {"count": 36, "click_rate": 0.4722},
+      "3": {"count": 42, "click_rate": 0.5476},
+      "4": {"count": 42, "click_rate": 0.5},
+      "5": {"count": 44, "click_rate": 0.4773},
+      "6": {"count": 39, "click_rate": 0.5897},
+      "7": {"count": 54, "click_rate": 0.4815},
+      "8": {"count": 43, "click_rate": 0.4884},
+      "9": {"count": 35, "click_rate": 0.5714},
+      "10": {"count": 31, "click_rate": 0.4516},
+      "11": {"count": 40, "click_rate": 0.6},
+      "12": {"count": 38, "click_rate": 0.4211},
+      "13": {"count": 44, "click_rate": 0.5},
+      "14": {"count": 43, "click_rate": 0.4884},
+      "15": {"count": 35, "click_rate": 0.5429},
+      "16": {"count": 39, "click_rate": 0.4103},
+      "17": {"count": 41, "click_rate": 0.561},
+      "18": {"count": 41, "click_rate": 0.6098},
+      "19": {"count": 39, "click_rate": 0.4872},
+      "20": {"count": 50, "click_rate": 0.48},
+      "21": {"count": 48, "click_rate": 0.3958},
+      "22": {"count": 43, "click_rate": 0.4419},
+      "23": {"count": 44, "click_rate": 0.4091}
+    },
+    "sparse_warning": "With ~40 samples per hour bin, click-rate variation (0.40–0.61) likely reflects sampling noise rather than genuine time-of-day patterns. Temporal features should be treated as optional engineering candidates."
   }
 }
