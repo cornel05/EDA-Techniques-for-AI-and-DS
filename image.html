@@ -258,6 +258,42 @@
             </div>
         </section>
 
+        <section class="accordion-item panel overflow-hidden" data-section>
+    <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 2</p>
+            <h2 class="text-xl font-extrabold">🔢 Digit Class Distribution Analysis</h2>
+        </div>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+    </button>
+    <div class="accordion-content p-6 space-y-5">
+        <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+            <button class="chip hover:bg-slate-50">📚 Tutorial 1: Label Balance</button>
+            <button class="chip hover:bg-slate-50">📚 Tutorial 2: Imbalance Ratios</button>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="md:col-span-2 panel p-4">
+                <h4 class="font-bold text-slate-700 mb-3">Samples per Digit Class</h4>
+                <div class="chart-wrap" style="height: 300px;">
+                    <canvas id="classChart"></canvas>
+                </div>
+            </div>
+            <div class="panel p-4 flex flex-col justify-center text-center space-y-4">
+                <h4 class="font-bold text-slate-700">Imbalance Insight</h4>
+                <div class="metric-card">
+                    <span class="text-xs uppercase text-slate-500 font-bold">Imbalance Ratio</span>
+                    <strong class="text-amber-600" id="imbalance-ratio-display">3.03x</strong>
+                </div>
+                <p class="text-sm text-slate-500">
+                    Digit '1' is the most frequent (~19K), while Digit '9' is the least (~6K). 
+                    This 3x difference suggests a moderate imbalance that may require weighted loss during training.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
         <!-- Section 2: Dataset Summary & Data Quality Validation -->
         <section class="accordion-item panel overflow-hidden" data-section>
             <button class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
@@ -671,7 +707,10 @@
             // Update statistics displays first
             updateStatisticsDisplays(data);
             
-            // Section 2: Data Quality Validation
+            // Section 2: Class Distribution Analysis
+            createClassChart();
+            
+            // Section 2b: Data Quality Validation
             createFormatChart(data);
             createQualityChart(data);
             
@@ -689,6 +728,51 @@
             // Section 6: Brightness & Contrast
             createBrightnessChart(data);
             createContrastChart(data);
+        }
+
+        function createClassChart() {
+            const ctx = document.getElementById('classChart').getContext('2d');
+            const labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const data = [6692, 18960, 14734, 11379, 9981, 9266, 7704, 7614, 6705, 6254];
+            const colors = ['#0a7ea4', '#0ea5b5', '#22c1c3', '#2ec4b6', '#76c893', '#a7c957', '#f4a261', '#f59e0b', '#e76f51', '#d62828'];
+            
+            // Calculate imbalance ratio
+            const maxCount = Math.max(...data);
+            const minCount = Math.min(...data);
+            const imbalanceRatio = (maxCount / minCount).toFixed(2);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Samples per Digit Class',
+                        data: data,
+                        backgroundColor: colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'SVHN Class Distribution'
+                        },
+                        legend: { display: true }
+                    },
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'Number of Samples' },
+                            beginAtZero: true
+                        },
+                        x: { title: { display: true, text: 'Digit Class' } }
+                    }
+                }
+            });
+            
+            // Update imbalance ratio display
+            document.getElementById('imbalance-ratio-display').textContent = imbalanceRatio + 'x';
         }
 
         function createFormatChart(data) {
@@ -1081,6 +1165,7 @@
                 quality_assessment: { data_completeness: 100.0 }
             };
             
+            createClassChart();
             createFormatChart(fallbackData);
             createQualityChart(fallbackData);
             createScatterChart(fallbackData);
