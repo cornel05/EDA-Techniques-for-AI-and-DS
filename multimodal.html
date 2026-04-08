@@ -516,10 +516,19 @@
 
           <div>
             <h3 class="text-lg font-bold text-slate-900 mb-4"
-              >RGB Channel Means & Brightness</h3
+              >Average Channel Intensity Distribution</h3
             >
             <div class="chart-box">
-              <canvas id="rgb-brightness-chart"></canvas>
+              <canvas id="rgb-channels-hist"></canvas>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Brightness Distribution</h3
+            >
+            <div class="chart-box">
+              <canvas id="brightness-hist"></canvas>
             </div>
           </div>
 
@@ -658,6 +667,15 @@
             >
             <div class="chart-box">
               <canvas id="similarity-hist"></canvas>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-4"
+              >Caption Length vs Similarity</h3
+            >
+            <div class="chart-box">
+              <canvas id="length-similarity-scatter"></canvas>
             </div>
           </div>
 
@@ -971,7 +989,8 @@
           renderDimensionStats(data);
           renderWidthHeightScatter(data);
           renderAspectRatioHist(data);
-          renderRGBBrightnessChart(data);
+          renderRGBChannelsHistogram(data);
+          renderBrightnessHistogram(data);
           renderFileSizeHist(data);
 
           // Section 5: Textual Modality
@@ -985,6 +1004,7 @@
           // Section 6: Cross-Modal
           renderSimilarityStats(data);
           renderSimilarityHist(data);
+          renderLengthSimilarityScatter(data);
           renderLengthSizeScatter(data);
 
           // Section 7: Target Variable Analysis
@@ -1321,33 +1341,139 @@
         });
       }
 
-      function renderRGBBrightnessChart(data) {
-        const color = data.visual_modality.color_channels;
-        createChart("rgb-brightness-chart", {
-          type: "bar",
+      function renderRGBChannelsHistogram(data) {
+        const color = data.visual_modality?.color_channels;
+        
+        if (!color || !color.red_histogram || !color.histogram_edges) {
+          const canvas = document.getElementById("rgb-channels-hist");
+          if (canvas && canvas.parentElement) {
+            canvas.parentElement.innerHTML = `
+              <div class="limitation-note">
+                <strong>Note:</strong> RGB channel histogram data is not available.
+              </div>
+            `;
+          }
+          return;
+        }
+        
+        // Create labels from histogram edges
+        const labels = color.histogram_edges
+          .slice(0, -1)
+          .map((edge, i) => 
+            `${Math.round(edge)}-${Math.round(color.histogram_edges[i + 1])}`
+          );
+        
+        createChart("rgb-channels-hist", {
+          type: "line",
           data: {
-            labels: ["Red", "Green", "Blue", "Brightness"],
+            labels: labels,
             datasets: [
               {
-                label: "Mean Value",
-                data: [
-                  color.red_mean,
-                  color.green_mean,
-                  color.blue_mean,
-                  color.brightness_mean,
-                ],
-                backgroundColor: [
-                  "rgba(239, 68, 68, 0.6)",
-                  "rgba(34, 197, 94, 0.6)",
-                  "rgba(59, 130, 246, 0.6)",
-                  "rgba(251, 191, 36, 0.6)",
-                ],
-                borderColor: [
-                  "rgba(239, 68, 68, 1)",
-                  "rgba(34, 197, 94, 1)",
-                  "rgba(59, 130, 246, 1)",
-                  "rgba(251, 191, 36, 1)",
-                ],
+                label: "Red Channel",
+                data: color.red_histogram,
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                borderColor: "rgba(239, 68, 68, 1)",
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+              },
+              {
+                label: "Green Channel",
+                data: color.green_histogram,
+                backgroundColor: "rgba(34, 197, 94, 0.1)",
+                borderColor: "rgba(34, 197, 94, 1)",
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+              },
+              {
+                label: "Blue Channel",
+                data: color.blue_histogram,
+                backgroundColor: "rgba(59, 130, 246, 0.1)",
+                borderColor: "rgba(59, 130, 246, 1)",
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            plugins: {
+              legend: { 
+                display: true,
+                position: 'top',
+              },
+              tooltip: {
+                callbacks: {
+                  title: function(context) {
+                    return 'Intensity Range: ' + context[0].label;
+                  },
+                  label: function(context) {
+                    return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' pixels';
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: "Pixel Intensity (0-255)" },
+                ticks: { 
+                  maxRotation: 45, 
+                  minRotation: 45,
+                  autoSkip: true,
+                  maxTicksLimit: 10,
+                },
+              },
+              y: { 
+                title: { display: true, text: "Frequency" },
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+
+      function renderBrightnessHistogram(data) {
+        const color = data.visual_modality?.color_channels;
+        
+        if (!color || !color.brightness_histogram || !color.histogram_edges) {
+          const canvas = document.getElementById("brightness-hist");
+          if (canvas && canvas.parentElement) {
+            canvas.parentElement.innerHTML = `
+              <div class="limitation-note">
+                <strong>Note:</strong> Brightness histogram data is not available.
+              </div>
+            `;
+          }
+          return;
+        }
+        
+        // Create labels from histogram edges
+        const labels = color.histogram_edges
+          .slice(0, -1)
+          .map((edge, i) => 
+            `${Math.round(edge)}-${Math.round(color.histogram_edges[i + 1])}`
+          );
+        
+        // Get mean brightness for annotation
+        const meanBrightness = data.color_brightness_summary?.average_brightness || color.brightness_mean;
+        
+        createChart("brightness-hist", {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Brightness Distribution",
+                data: color.brightness_histogram,
+                backgroundColor: "rgba(251, 191, 36, 0.6)",
+                borderColor: "rgba(251, 191, 36, 1)",
                 borderWidth: 1,
               },
             ],
@@ -1357,12 +1483,53 @@
             maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  title: function(context) {
+                    return 'Brightness Range: ' + context[0].label;
+                  },
+                  label: function(context) {
+                    return 'Frequency: ' + context.parsed.y.toLocaleString() + ' pixels';
+                  },
+                  afterLabel: function(context) {
+                    if (meanBrightness) {
+                      return 'Mean Brightness: ' + meanBrightness.toFixed(2);
+                    }
+                    return '';
+                  }
+                }
+              },
+              annotation: meanBrightness ? {
+                annotations: {
+                  meanLine: {
+                    type: 'line',
+                    xMin: meanBrightness / 6.5,  // Approximate position based on 0-255 range
+                    xMax: meanBrightness / 6.5,
+                    borderColor: 'rgb(220, 38, 38)',
+                    borderWidth: 2,
+                    borderDash: [6, 6],
+                    label: {
+                      display: true,
+                      content: `Mean: ${meanBrightness.toFixed(1)}`,
+                      position: 'start',
+                    }
+                  }
+                }
+              } : {}
             },
             scales: {
-              y: {
-                title: { display: true, text: "Mean Value (0-255)" },
+              x: {
+                title: { display: true, text: "Brightness Range (0-255)" },
+                ticks: { 
+                  maxRotation: 45, 
+                  minRotation: 45,
+                  autoSkip: true,
+                  maxTicksLimit: 10,
+                },
+              },
+              y: { 
+                title: { display: true, text: "Frequency" },
                 beginAtZero: true,
-                max: 255,
               },
             },
           },
@@ -1715,6 +1882,57 @@
                 ticks: { maxRotation: 45, minRotation: 45 },
               },
               y: { title: { display: true, text: "Count" } },
+            },
+          },
+        });
+      }
+
+      function renderLengthSimilarityScatter(data) {
+        const scatter = data.cross_modal_analysis?.length_similarity_scatter;
+        if (!scatter || !scatter.caption_lengths || !scatter.similarities) {
+          showError("length-similarity-scatter", "Scatter data not available");
+          return;
+        }
+
+        const scatterData = scatter.caption_lengths.map((len, i) => ({
+          x: len,
+          y: scatter.similarities[i],
+        }));
+
+        // Get correlation info if available
+        const correlation = data.cross_modal_analysis?.correlations?.caption_length_vs_similarity;
+        const corrText = correlation 
+          ? `r = ${correlation.r.toFixed(3)}, p = ${correlation.p_value.toExponential(2)}`
+          : '';
+
+        createChart("length-similarity-scatter", {
+          type: "scatter",
+          data: {
+            datasets: [
+              {
+                label: "Caption Length vs Similarity",
+                data: scatterData,
+                backgroundColor: "rgba(147, 51, 234, 0.4)",
+                borderColor: "rgba(147, 51, 234, 1)",
+                pointRadius: 3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: !!corrText,
+                text: corrText,
+                font: { size: 11, family: "'Space Grotesk', sans-serif" },
+                color: '#64748b'
+              }
+            },
+            scales: {
+              x: { title: { display: true, text: "Average Caption Length (words)" } },
+              y: { title: { display: true, text: "Average Jaccard Similarity" } },
             },
           },
         });
