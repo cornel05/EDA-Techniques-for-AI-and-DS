@@ -1,0 +1,40 @@
+======================================================================
+EDA TABULAR STATS — Advertisement Click on Ad
+======================================================================
+
+Total Samples: 1000
+Total Features: 9 (excl. target)
+Numerical Features (5): ['Daily Time Spent on Site', 'Age', 'Area Income', 'Daily Internet Usage', 'Male']
+Categorical Features (4): ['Ad Topic Line', 'City', 'Country', 'Timestamp']
+
+Target Variable: Clicked on Ad
+  Class 0: 500 samples (50.0%)
+  Class 1: 500 samples (50.0%)
+
+Feature Descriptions:
+  Daily Time Spent on Site [Numerical] dtype=float64, unique=900
+  Age [Numerical] dtype=int64, unique=43
+  Area Income [Numerical] dtype=float64, unique=1000
+  Daily Internet Usage [Numerical] dtype=float64, unique=966
+  Ad Topic Line [Categorical] dtype=str, unique=1000
+  City [Categorical] dtype=str, unique=969
+  Male [Numerical] dtype=int64, unique=2
+  Country [Categorical] dtype=str, unique=237
+  Timestamp [Categorical] dtype=str, unique=1000
+  Clicked on Ad [Target] dtype=int64, unique=2
+
+Target Variable: Clicked on Ad
+  Class 0: 500 samples (50.0%)
+  Class 1: 500 samples (50.0%)
+
+Feature Descriptions:
+  Daily Time Spent on Site [Numerical] dtype=float64, unique=900
+  Age [Numerical] dtype=int64, unique=43
+  Area Income [Numerical] dtype=float64, unique=1000
+  Daily Internet Usage [Numerical] dtype=float64, unique=966
+  Ad Topic Line [Categorical] dtype=str, unique=1000
+  City [Categorical] dtype=str, unique=969
+  Male [Numerical] dtype=int64, unique=2
+  Country [Categorical] dtype=str, unique=237
+  Timestamp [Categorical] dtype=str, unique=1000
+  Clicked on Ad [Target] dtype=int64, unique=2

@@ -2,27 +2,18 @@
 EDA TABULAR STATS — Advertisement Click on Ad
 ======================================================================
 
-=== SECTION 2: DATASET OVERVIEW ===
-Total Samples: 1000
-Total Features: 9 (excl. target)
-Numerical Features (5): ['Daily Time Spent on Site', 'Age', 'Area Income', 'Daily Internet Usage', 'Male']
-Categorical Features (4): ['Ad Topic Line', 'City', 'Country', 'Timestamp']
 
-Target Variable: Clicked on Ad
-  Class 0: 500 samples (50.0%)
-  Class 1: 500 samples (50.0%)
-
-Feature Descriptions:
-  Daily Time Spent on Site [Numerical] dtype=float64, unique=900
-  Age [Numerical] dtype=int64, unique=43
-  Area Income [Numerical] dtype=float64, unique=1000
-  Daily Internet Usage [Numerical] dtype=float64, unique=966
-  Ad Topic Line [Categorical] dtype=str, unique=1000
-  City [Categorical] dtype=str, unique=969
-  Male [Numerical] dtype=int64, unique=2
-  Country [Categorical] dtype=str, unique=237
-  Timestamp [Categorical] dtype=str, unique=1000
-  Clicked on Ad [Target] dtype=int64, unique=2
+=== FEATURE ROLE AUDIT ===
+  BEHAVIORAL_PREDICTORS: ['Daily Time Spent on Site', 'Daily Internet Usage']
+    Direct behavioral signals — strongest predictors of ad click intent.
+  DEMOGRAPHIC_CONTEXT: ['Age', 'Area Income', 'Male']
+    Demographic and socioeconomic context variables.
+  QUASI_IDENTIFIERS: ['Ad Topic Line', 'City', 'Timestamp']
+    High-cardinality or near-unique fields. These are effectively identifiers, not generalizable categories.
+  MODERATE_CARDINALITY: ['Country']
+    Country has 237 unique values across 1000 rows. Usable with care.
+  TARGET: ['Clicked on Ad']
+    Binary target variable — whether the user clicked the advertisement.
 
 === SECTION 3: MISSING VALUES ANALYSIS ===
 Total Missing Cells: 0
@@ -199,6 +190,6 @@ First sample row:
     • No imputation needed (0 missing values)
 
 ======================================================================
-Stats exported to: eda_tabular_stats.txt
-JSON data exported to: eda_tabular_data.json
+Stats exported to: ../plots_data/eda_tabular_stats.txt
+JSON data exported to: ../plots_data/eda_tabular_data.json
 ======================================================================

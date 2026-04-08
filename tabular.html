@@ -362,6 +362,25 @@
               class="text-xs font-bold uppercase tracking-widest text-slate-500"
               >Section 3</p
             >
+            <h2 class="text-xl font-extrabold">Feature Role Audit</h2>
+          </div>
+          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+        </button>
+        <div class="accordion-content p-6 space-y-4">
+          <div class="notice">Classifies every column into a predictive, contextual, identifier-like, or target role — clarifying what to keep, transform, or drop before modeling.</div>
+          <div id="featureRolesGrid" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+        </div>
+      </section>
+
+      <section class="accordion-item open panel overflow-hidden" data-section>
+        <button
+          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between"
+        >
+          <div>
+            <p
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              >Section 4</p
+            >
             <h2 class="text-xl font-extrabold"
               >Missing Data Assessment Analysis</h2
             >
@@ -410,7 +429,7 @@
           <div>
             <p
               class="text-xs font-bold uppercase tracking-widest text-slate-500"
-              >Section 4</p
+              >Section 5</p
             >
             <h2 class="text-xl font-extrabold"
               >Numerical Features Distribution</h2
@@ -473,7 +492,7 @@
           <div>
             <p
               class="text-xs font-bold uppercase tracking-widest text-slate-500"
-              >Section 5</p
+              >Section 6</p
             >
             <h2 class="text-xl font-extrabold"
               >Categorical Features Distribution</h2
@@ -514,7 +533,7 @@
           <div>
             <p
               class="text-xs font-bold uppercase tracking-widest text-slate-500"
-              >Section 6</p
+              >Section 7</p
             >
             <h2 class="text-xl font-extrabold">Target Variable Distribution</h2>
           </div>
@@ -569,7 +588,7 @@
           <div>
             <p
               class="text-xs font-bold uppercase tracking-widest text-slate-500"
-              >Section 7</p
+              >Section 8</p
             >
             <h2 class="text-xl font-extrabold"
               >Intercorrelation Analysis (Pearson)</h2
@@ -583,7 +602,7 @@
             ><div id="corrHeatmap" class="chart-wrap"></div
           ></div>
           <div class="panel p-5 border border-slate-200">
-            <h3 class="font-bold mb-3">Highly Correlated Pairs (|r| > 0.7)</h3>
+            <h3 class="font-bold mb-3">Moderately+ Correlated Pairs (|r| &gt; 0.3)</h3>
             <ul
               id="highCorrList"
               class="text-sm text-slate-700 list-disc ml-5 space-y-1"
@@ -599,7 +618,7 @@
           <div>
             <p
               class="text-xs font-bold uppercase tracking-widest text-slate-500"
-              >Section 8</p
+              >Section 9</p
             >
             <h2 class="text-xl font-extrabold"
               >Outlier Detection (IQR Method)</h2
@@ -644,17 +663,28 @@
           <div>
             <p
               class="text-xs font-bold uppercase tracking-widest text-slate-500"
-              >Section 9</p
+              >Section 10</p
             >
-            <h2 class="text-xl font-extrabold">Target vs Features Analysis</h2>
+            <h2 class="text-xl font-extrabold">Target Signal &amp; Feature Analysis</h2>
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
         </button>
         <div class="accordion-content p-6 space-y-6">
           <div id="targetVsNotice" class="notice"></div>
-          <div class="panel p-5 border border-slate-200"
-            ><div id="targetVsChart" class="chart-wrap"></div
-          ></div>
+          <div class="panel p-5 border border-slate-200">
+            <h3 class="font-bold mb-3">Feature Signal Rankings (by Mean-Difference %)</h3>
+            <div id="targetSignalChart" class="chart-wrap"></div>
+          </div>
+          <div class="panel p-5 border border-slate-200">
+            <h3 class="font-bold mb-3">Click vs No-Click by Country (Top-10, Support-Aware)</h3>
+            <div id="targetVsChart" class="chart-wrap"></div>
+            <p id="countryWarning" class="text-xs text-amber-700 mt-2 italic"></p>
+          </div>
+          <div class="panel p-5 border border-slate-200">
+            <h3 class="font-bold mb-3">Click Rate by Hour of Day</h3>
+            <div id="temporalHourChart" class="chart-wrap"></div>
+            <p id="temporalWarning" class="text-xs text-amber-700 mt-2 italic"></p>
+          </div>
         </div>
       </section>
 
@@ -665,7 +695,7 @@
           <div>
             <p
               class="text-xs font-bold uppercase tracking-widest text-slate-500"
-              >Section 10</p
+              >Section 11</p
             >
             <h2 class="text-xl font-extrabold">Data Sample Analysis Rows</h2>
           </div>
@@ -699,16 +729,16 @@
           <div>
             <p
               class="text-xs font-bold uppercase tracking-widest text-slate-500"
-              >Section 11</p
+              >Section 12</p
             >
-            <h2 class="text-xl font-extrabold">Key Insights and Suggestions</h2>
+            <h2 class="text-xl font-extrabold">Key Insights &amp; Modeling Readiness</h2>
           </div>
           <span class="arrow text-2xl font-bold text-slate-500">›</span>
         </button>
         <div class="accordion-content p-6 space-y-6">
           <div class="grid lg:grid-cols-2 gap-6">
             <div class="panel p-5 border border-slate-200">
-              <h3 class="font-bold mb-3">Key Insights</h3>
+              <h3 class="font-bold mb-3">Key Findings</h3>
               <ul
                 id="keyInsightsList"
                 class="text-sm text-slate-700 list-disc ml-5 space-y-2"
@@ -721,6 +751,10 @@
                 class="text-sm text-slate-700 list-disc ml-5 space-y-2"
               ></ul>
             </div>
+          </div>
+          <div id="modelingReadinessPanel" class="panel p-5 border border-slate-200 space-y-4">
+            <h3 class="font-bold">Modeling Readiness Checklist</h3>
+            <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4" id="modelingReadinessGrid"></div>
           </div>
         </div>
       </section>
@@ -1114,22 +1148,144 @@
         return "severity-low";
       }
 
-      function renderMethodology() {
-        const items = [
-          "Missing Data Assessment: quantify missing value rates per column and evaluate impact severity.",
-          "Numerical Analysis: statistics using Mean, Median, Std, Min, Max; distributions using histogram.",
-          "Categorical Analysis: evaluate unique value counts and encoding feasibility.",
-          "Intercorrelation Analysis (Pearson): identify multicollinearity between numerical variables using correlation matrix.",
-          "Target Variable Analysis: class distribution patterns, imbalance ratios, and preprocessing implications.",
-          "Outlier Detection (IQR): calculate valid ranges and outlier proportions for numerical features.",
-          "Cross-tabulation Analysis: compare target distribution across categorical feature levels for pattern identification.",
-        ];
+      function renderMethodology(data) {
         const list = document.getElementById("methodologyList");
         list.innerHTML = "";
-        items.forEach(function (item) {
-          const li = document.createElement("li");
-          li.textContent = item;
-          list.appendChild(li);
+        const steps = (data && data.methodology_steps) || [];
+        if (steps.length > 0) {
+          steps.forEach(function (step) {
+            const li = document.createElement("li");
+            const badge = step.type === "optional" ? "◎" : "★";
+            const tag =
+              step.type === "optional"
+                ? ' <span class="text-xs bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded ml-1">optional</span>'
+                : ' <span class="text-xs bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded ml-1">core</span>';
+            li.innerHTML =
+              "<strong>" +
+              badge +
+              " Step " +
+              step.step +
+              ": " +
+              step.name +
+              "</strong>" +
+              tag +
+              " — " +
+              step.insight;
+            list.appendChild(li);
+          });
+        } else {
+          const fallback = [
+            "Data Quality Check: verify missing values, duplicates, and class balance.",
+            "Numerical Analysis: Mean, Median, Std, histograms, and outlier detection.",
+            "Categorical Analysis: unique value counts and encoding feasibility.",
+            "Correlation Analysis: identify multicollinearity between numerical features.",
+            "Target Variable Analysis: class distribution and imbalance assessment.",
+            "Outlier Detection (IQR): valid ranges and outlier proportions.",
+            "Cross-tabulation: compare target distribution across feature levels.",
+          ];
+          fallback.forEach(function (item) {
+            const li = document.createElement("li");
+            li.textContent = item;
+            list.appendChild(li);
+          });
+        }
+      }
+
+      function renderFeatureRoles(data) {
+        const grid = document.getElementById("featureRolesGrid");
+        if (!grid) return;
+        grid.innerHTML = "";
+        const roles = data.feature_roles;
+        if (!roles) {
+          grid.innerHTML =
+            '<p class="text-sm text-slate-500 col-span-3">Feature role data not available.</p>';
+          return;
+        }
+
+        const roleConfig = {
+          behavioral_predictors: {
+            label: "Behavioral Predictors",
+            border: "border-green-300",
+            bg: "bg-green-50",
+            text: "text-green-800",
+            badge: "bg-green-200 text-green-900",
+            icon: "▲",
+          },
+          demographic_context: {
+            label: "Demographic & Context",
+            border: "border-blue-300",
+            bg: "bg-blue-50",
+            text: "text-blue-800",
+            badge: "bg-blue-200 text-blue-900",
+            icon: "●",
+          },
+          quasi_identifiers: {
+            label: "Quasi-Identifiers — Drop/Transform",
+            border: "border-red-300",
+            bg: "bg-red-50",
+            text: "text-red-800",
+            badge: "bg-red-200 text-red-900",
+            icon: "✕",
+          },
+          moderate_cardinality: {
+            label: "Moderate Cardinality — Use with Care",
+            border: "border-amber-300",
+            bg: "bg-amber-50",
+            text: "text-amber-800",
+            badge: "bg-amber-200 text-amber-900",
+            icon: "⚠",
+          },
+          target: {
+            label: "Target Variable",
+            border: "border-purple-300",
+            bg: "bg-purple-50",
+            text: "text-purple-800",
+            badge: "bg-purple-200 text-purple-900",
+            icon: "◎",
+          },
+        };
+
+        Object.keys(roleConfig).forEach(function (key) {
+          if (!roles[key]) return;
+          const cfg = roleConfig[key];
+          const role = roles[key];
+
+          const card = document.createElement("div");
+          card.className =
+            "panel border " +
+            cfg.border +
+            " " +
+            cfg.bg +
+            " p-4 space-y-2 rounded-lg";
+
+          const header = document.createElement("h4");
+          header.className = "font-bold text-sm " + cfg.text;
+          header.textContent = cfg.icon + " " + cfg.label;
+          card.appendChild(header);
+
+          const cols = document.createElement("div");
+          cols.className = "flex flex-wrap gap-1 mt-1";
+          (role.columns || []).forEach(function (col) {
+            const badge = document.createElement("span");
+            badge.className =
+              "inline-block px-2 py-0.5 rounded text-xs font-mono font-semibold " +
+              cfg.badge;
+            badge.textContent = col;
+            cols.appendChild(badge);
+          });
+          card.appendChild(cols);
+
+          const desc = document.createElement("p");
+          desc.className = "text-xs text-slate-600 mt-1";
+          desc.textContent = role.description;
+          card.appendChild(desc);
+
+          const notes = document.createElement("p");
+          notes.className = "text-xs italic text-slate-500 mt-1 border-t border-slate-200 pt-1";
+          notes.textContent = "→ " + role.modeling_notes;
+          card.appendChild(notes);
+
+          grid.appendChild(card);
         });
       }
 
@@ -1468,10 +1624,20 @@
           },
         );
 
-        setText(
-          "categoricalNotice",
-          "Top-category frequency bar charts require row-level category counts. Current metadata provides only unique counts and sample values.",
-        );
+        const highCard = rows
+          .filter(function (item) {
+            return (item.n_unique || 0) / 1000 > 0.5;
+          })
+          .map(function (item) {
+            return item.name + " (" + (item.n_unique || 0) + " unique)";
+          });
+        const noticeText =
+          highCard.length > 0
+            ? "⚠ High-cardinality features detected: " +
+              highCard.join(", ") +
+              ". These act as near-unique identifiers and should be dropped or transformed before modeling."
+            : "Categorical features loaded. Unique counts shown; raw frequency bars require row-level data.";
+        setText("categoricalNotice", noticeText);
       }
 
       function renderTargetDistribution(data) {
@@ -1580,21 +1746,28 @@
         for (let i = 0; i < corr.features.length; i += 1) {
           for (let j = i + 1; j < corr.features.length; j += 1) {
             const value = corr.matrix[i][j];
-            if (Math.abs(value) > 0.7) {
+            if (Math.abs(value) > 0.3) {
+              const strength =
+                Math.abs(value) >= 0.7
+                  ? " [strong]"
+                  : Math.abs(value) >= 0.5
+                  ? " [moderate]"
+                  : " [weak]";
               pairs.push(
                 corr.features[i] +
                   " vs " +
                   corr.features[j] +
                   " (r=" +
                   formatNumber(value, 3) +
-                  ")",
+                  ")" +
+                  strength,
               );
             }
           }
         }
         if (pairs.length === 0) {
           const li = document.createElement("li");
-          li.textContent = "No pairs with |r| > 0.7.";
+          li.textContent = "No pairs with |r| > 0.3.";
           list.appendChild(li);
         } else {
           pairs.forEach(function (item) {
@@ -1694,43 +1867,128 @@
 
       function renderTargetVsFeatures(data) {
         const notice = document.getElementById("targetVsNotice");
-        const tv = data.targetVs;
-        if (
-          tv &&
-          tv.education &&
-          tv.education.labels &&
-          tv.education.low &&
-          tv.education.high
-        ) {
-          notice.textContent =
-            "Using available metadata slice for stacked target-vs-feature comparison.";
+        notice.textContent =
+          "Features ranked by mean-difference between click (class 1) and no-click (class 0) groups. Country and temporal analyses include support counts to flag sparse data.";
+
+        // Signal rankings horizontal bar chart
+        const rankings = data.target_signal_rankings || [];
+        if (rankings.length > 0) {
+          const sorted = rankings
+            .slice()
+            .sort(function (a, b) {
+              return a.mean_diff_pct - b.mean_diff_pct;
+            });
+          const colors = sorted.map(function (r) {
+            if (r.signal_strength === "Very Strong") return "#0f766e";
+            if (r.signal_strength === "Strong") return "#2563eb";
+            if (r.signal_strength === "Moderate") return "#f59e0b";
+            return "#94a3b8";
+          });
+          makePlot(
+            "targetSignalChart",
+            [
+              {
+                type: "bar",
+                orientation: "h",
+                x: sorted.map(function (r) {
+                  return r.mean_diff_pct;
+                }),
+                y: sorted.map(function (r) {
+                  return r.feature;
+                }),
+                marker: { color: colors },
+                text: sorted.map(function (r) {
+                  return r.signal_strength;
+                }),
+                textposition: "outside",
+              },
+            ],
+            {
+              title: "Feature Signal Strength — Mean-Difference % Between Classes",
+              xaxis: { title: "Mean-Difference % (No-Click vs Click)" },
+              margin: { l: 200, r: 120, t: 40, b: 50 },
+            },
+          );
+        }
+
+        // Country support-aware grouped bar chart
+        const cs = data.country_support;
+        if (cs && cs.countries && cs.countries.length > 0) {
+          const countries = cs.countries;
           makePlot(
             "targetVsChart",
             [
               {
                 type: "bar",
-                name: "Class 0",
-                x: tv.education.labels,
-                y: tv.education.low,
+                name: "No Click",
+                x: countries.map(function (c) {
+                  return c.country;
+                }),
+                y: countries.map(function (c) {
+                  return c.no_click;
+                }),
                 marker: { color: "#0f766e" },
               },
               {
                 type: "bar",
-                name: "Class 1",
-                x: tv.education.labels,
-                y: tv.education.high,
+                name: "Click",
+                x: countries.map(function (c) {
+                  return c.country;
+                }),
+                y: countries.map(function (c) {
+                  return c.click;
+                }),
                 marker: { color: "#f59e0b" },
               },
             ],
             {
-              barmode: "stack",
-              title: "Target vs Feature (Stacked)",
+              barmode: "group",
+              title: "Click vs No-Click by Country (Top-10)",
+              yaxis: { title: "Count" },
+              xaxis: { automargin: true },
             },
           );
-        } else {
-          notice.textContent =
-            "Cross-tabulation data loaded successfully. Showing target distribution by top countries.";
-          setHtml("targetVsChart", "");
+          const warn = document.getElementById("countryWarning");
+          if (warn) warn.textContent = cs.sparse_warning || "";
+        }
+
+        // Temporal hour click-rate bar chart
+        const ts = data.temporal_support;
+        if (ts && ts.hour_support) {
+          const hours = Object.keys(ts.hour_support)
+            .map(Number)
+            .sort(function (a, b) {
+              return a - b;
+            });
+          const clickRates = hours.map(function (h) {
+            return (ts.hour_support[String(h)].click_rate * 100).toFixed(1);
+          });
+          const counts = hours.map(function (h) {
+            return ts.hour_support[String(h)].count;
+          });
+          makePlot(
+            "temporalHourChart",
+            [
+              {
+                type: "bar",
+                x: hours,
+                y: clickRates,
+                marker: { color: "#2563eb" },
+                name: "Click Rate %",
+                text: counts.map(function (c) {
+                  return "n=" + c;
+                }),
+                textposition: "outside",
+              },
+            ],
+            {
+              title: "Click Rate by Hour of Day (support ~40 samples/bin)",
+              xaxis: { title: "Hour (0–23)", dtick: 1 },
+              yaxis: { title: "Click Rate (%)", range: [0, 80] },
+            },
+          );
+          const warn = document.getElementById("temporalWarning");
+          if (warn) warn.textContent = ts.sparse_warning || "";
         }
       }
 
@@ -1798,79 +2056,133 @@
       }
 
       function renderInsights(data) {
+        const insightsData = data.insights || {};
+        const keyFindings = insightsData.key_findings || [];
+        const preprocessSuggestions = insightsData.preprocessing_suggestions || [];
+        const modelingReadiness = insightsData.modeling_readiness || null;
+
+        // Fallback if JSON insights not present
         const overview = data.dataset_overview || {};
         const missing = data.missing_values || {};
-        const featureInfo = overview.feature_info || [];
-        const categorical = featureInfo.filter(function (item) {
-          return item.type === "Categorical";
-        });
-        const highCard = categorical
-          .filter(function (item) {
-            return (item.n_unique || 0) > 100;
-          })
-          .map(function (item) {
-            return item.name;
-          });
 
-        const insights = [];
+        const fallbackInsights = [];
         if ((missing.total_missing_cells || 0) === 0) {
-          insights.push("Dataset has zero missing cells across all columns.");
+          fallbackInsights.push("Dataset has zero missing cells across all columns.");
         } else {
-          insights.push(
-            "Missing values exist and require imputation strategy by severity.",
-          );
+          fallbackInsights.push("Missing values exist and require imputation strategy by severity.");
         }
-        insights.push(
-          "Target distribution appears balanced with ratio " +
+        fallbackInsights.push(
+          "Target distribution ratio: " +
             document.getElementById("imbalanceRatio").textContent +
             ".",
         );
-        if (highCard.length > 0) {
-          insights.push(
-            "High-cardinality categorical features detected: " +
-              highCard.join(", ") +
-              ".",
-          );
-        }
-        if (state.outlierResults.length > 0) {
-          const topOutlier = state.outlierResults.slice().sort(function (a, b) {
-            return b.pct - a.pct;
-          })[0];
-          insights.push(
-            "Most outlier-prone numerical feature (approx): " +
-              topOutlier.feature +
-              " (" +
-              formatNumber(topOutlier.pct, 3) +
-              "%).",
-          );
-        }
-
-        const suggestions = [
-          "Imputation: none required for current metadata (0 missing), but keep pipeline support for future data drift.",
-          "Outlier handling: consider winsorization/capping for features with non-trivial outlier rate.",
-          "Categorical encoding: avoid full one-hot for very high-cardinality columns; prefer frequency/target/hashing encoding.",
-          "Timestamp processing: split to hour/day/month/week features instead of treating as raw category.",
-          "Imbalance handling: no resampling needed currently; monitor after train/validation split.",
-          "Scaling: apply robust/standard scaling for continuous numerical variables.",
-        ];
 
         const insightList = document.getElementById("keyInsightsList");
         insightList.innerHTML = "";
-        insights.forEach(function (item) {
+        const insightItems = keyFindings.length > 0 ? keyFindings : fallbackInsights;
+        insightItems.forEach(function (item) {
           const li = document.createElement("li");
           li.textContent = item;
           insightList.appendChild(li);
         });
 
-        const suggestionList = document.getElementById(
-          "preprocessSuggestionsList",
-        );
+        const suggestionList = document.getElementById("preprocessSuggestionsList");
         suggestionList.innerHTML = "";
-        suggestions.forEach(function (item) {
+        const suggestItems =
+          preprocessSuggestions.length > 0
+            ? preprocessSuggestions
+            : [
+                "Imputation: none required (0 missing), but keep pipeline support for future data drift.",
+                "Outlier handling: consider capping for features with non-trivial outlier rate.",
+                "Categorical encoding: avoid full one-hot for high-cardinality columns.",
+                "Timestamp: split to hour/day/month features rather than treating as raw category.",
+                "Scaling: apply standard/robust scaling for continuous numerical variables.",
+              ];
+        suggestItems.forEach(function (item) {
           const li = document.createElement("li");
           li.textContent = item;
           suggestionList.appendChild(li);
         });
+
+        // Modeling Readiness panel
+        const mrGrid = document.getElementById("modelingReadinessGrid");
+        if (mrGrid && modelingReadiness) {
+          mrGrid.innerHTML = "";
+
+          const cards = [
+            {
+              title: "Class Balance",
+              value: modelingReadiness.class_balance || "N/A",
+              color: "border-green-300 bg-green-50",
+              textColor: "text-green-800",
+            },
+            {
+              title: "Strongest Signals",
+              value: (modelingReadiness.strongest_signals || []).join(", "),
+              color: "border-teal-300 bg-teal-50",
+              textColor: "text-teal-800",
+            },
+            {
+              title: "Weak Signals",
+              value: (modelingReadiness.weak_signals || []).join(", ") || "None",
+              color: "border-slate-300 bg-slate-50",
+              textColor: "text-slate-700",
+            },
+            {
+              title: "Drop Candidates",
+              value: (modelingReadiness.drop_candidates || []).join(", ") || "None",
+              color: "border-red-300 bg-red-50",
+              textColor: "text-red-800",
+            },
+            {
+              title: "Engineering Steps",
+              value: (modelingReadiness.engineering_steps || []).join("; ") || "None",
+              color: "border-blue-300 bg-blue-50",
+              textColor: "text-blue-800",
+            },
+            {
+              title: "Multicollinearity Risk",
+              value: modelingReadiness.multicollinearity_risk || "N/A",
+              color: "border-amber-300 bg-amber-50",
+              textColor: "text-amber-800",
+            },
+            {
+              title: "Scaling Needed",
+              value: modelingReadiness.scaling_needed ? "Yes — standardize numeric features" : "No",
+              color: "border-slate-300 bg-slate-50",
+              textColor: "text-slate-700",
+            },
+            {
+              title: "Outlier Action",
+              value: modelingReadiness.outlier_action || "N/A",
+              color: "border-slate-300 bg-slate-50",
+              textColor: "text-slate-700",
+            },
+            {
+              title: "Recommended Baseline Models",
+              value: (modelingReadiness.recommended_baseline_models || []).join(", "),
+              color: "border-purple-300 bg-purple-50",
+              textColor: "text-purple-800",
+            },
+          ];
+
+          cards.forEach(function (card) {
+            const div = document.createElement("div");
+            div.className =
+              "panel border " + card.color + " p-3 rounded-lg space-y-1";
+            div.innerHTML =
+              '<p class="text-xs font-bold uppercase tracking-wide ' +
+              card.textColor +
+              '">' +
+              card.title +
+              '</p><p class="text-sm ' +
+              card.textColor +
+              '">' +
+              card.value +
+              "</p>";
+            mrGrid.appendChild(div);
+          });
+        }
       }
 
       function showFatal(message) {
@@ -1888,8 +2200,9 @@
 
           const data = await response.json();
 
-          renderMethodology();
+          renderMethodology(data);
           renderSummary(data);
+          renderFeatureRoles(data);
           renderMissing(data);
           renderNumerical(data);
           renderCategorical(data);
