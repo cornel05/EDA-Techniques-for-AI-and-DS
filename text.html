@@ -50,6 +50,7 @@
         border-radius: 18px;
         box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
         backdrop-filter: blur(10px);
+        transition: box-shadow 0.22s ease, transform 0.22s ease;
       }
 
       .metric-card {
@@ -57,6 +58,12 @@
         border: 1px solid var(--line);
         background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
         padding: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
       }
 
       .metric-card strong {
@@ -91,6 +98,14 @@
         transition: transform 0.2s ease;
       }
 
+      .accordion-toggle {
+        transition: background-color 0.2s ease;
+      }
+
+      .accordion-toggle:hover {
+        background: rgba(248, 250, 252, 0.65);
+      }
+
       .accordion-item.open .accordion-toggle .arrow {
         transform: rotate(90deg);
       }
@@ -99,6 +114,7 @@
         position: relative;
         min-height: 320px;
         height: 320px;
+        border-radius: 14px;
       }
 
       .chart-wrap canvas {
@@ -109,7 +125,7 @@
       .notice {
         border: 1px dashed #94a3b8;
         border-radius: 12px;
-        background: #f8fafc;
+        background: rgba(248, 250, 252, 0.8);
         color: #334155;
         padding: 0.9rem;
         font-size: 0.9rem;
@@ -123,7 +139,7 @@
         font-size: 0.74rem;
         font-weight: 700;
         color: #334155;
-        background: #f8fafc;
+        background: rgba(255, 255, 255, 0.88);
       }
 
       .fade-in {
