@@ -1103,7 +1103,7 @@
           // Enhanced duplicate section with multiple metrics
           html += `
             <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500">
-              <div class="font-semibold text-sm text-amber-900 mb-3">📋 Duplicate Captions Analysis</div>
+              <div class="font-semibold text-sm text-amber-900 mb-3">Duplicate Captions Analysis</div>
               <div class="space-y-3">
                 <div>
                   <div class="text-xs text-amber-700 mb-1">Unique Captions</div>
@@ -1343,7 +1343,7 @@
 
       function renderRGBChannelsHistogram(data) {
         const color = data.visual_modality?.color_channels;
-        
+
         if (!color || !color.red_histogram || !color.histogram_edges) {
           const canvas = document.getElementById("rgb-channels-hist");
           if (canvas && canvas.parentElement) {
@@ -1355,14 +1355,15 @@
           }
           return;
         }
-        
+
         // Create labels from histogram edges
         const labels = color.histogram_edges
           .slice(0, -1)
-          .map((edge, i) => 
-            `${Math.round(edge)}-${Math.round(color.histogram_edges[i + 1])}`
+          .map(
+            (edge, i) =>
+              `${Math.round(edge)}-${Math.round(color.histogram_edges[i + 1])}`,
           );
-        
+
         createChart("rgb-channels-hist", {
           type: "line",
           data: {
@@ -1401,36 +1402,41 @@
             responsive: true,
             maintainAspectRatio: false,
             interaction: {
-              mode: 'index',
+              mode: "index",
               intersect: false,
             },
             plugins: {
-              legend: { 
+              legend: {
                 display: true,
-                position: 'top',
+                position: "top",
               },
               tooltip: {
                 callbacks: {
-                  title: function(context) {
-                    return 'Intensity Range: ' + context[0].label;
+                  title: function (context) {
+                    return "Intensity Range: " + context[0].label;
                   },
-                  label: function(context) {
-                    return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' pixels';
-                  }
-                }
-              }
+                  label: function (context) {
+                    return (
+                      context.dataset.label +
+                      ": " +
+                      context.parsed.y.toLocaleString() +
+                      " pixels"
+                    );
+                  },
+                },
+              },
             },
             scales: {
               x: {
                 title: { display: true, text: "Pixel Intensity (0-255)" },
-                ticks: { 
-                  maxRotation: 45, 
+                ticks: {
+                  maxRotation: 45,
                   minRotation: 45,
                   autoSkip: true,
                   maxTicksLimit: 10,
                 },
               },
-              y: { 
+              y: {
                 title: { display: true, text: "Frequency" },
                 beginAtZero: true,
               },
@@ -1441,7 +1447,7 @@
 
       function renderBrightnessHistogram(data) {
         const color = data.visual_modality?.color_channels;
-        
+
         if (!color || !color.brightness_histogram || !color.histogram_edges) {
           const canvas = document.getElementById("brightness-hist");
           if (canvas && canvas.parentElement) {
@@ -1453,17 +1459,20 @@
           }
           return;
         }
-        
+
         // Create labels from histogram edges
         const labels = color.histogram_edges
           .slice(0, -1)
-          .map((edge, i) => 
-            `${Math.round(edge)}-${Math.round(color.histogram_edges[i + 1])}`
+          .map(
+            (edge, i) =>
+              `${Math.round(edge)}-${Math.round(color.histogram_edges[i + 1])}`,
           );
-        
+
         // Get mean brightness for annotation
-        const meanBrightness = data.color_brightness_summary?.average_brightness || color.brightness_mean;
-        
+        const meanBrightness =
+          data.color_brightness_summary?.average_brightness ||
+          color.brightness_mean;
+
         createChart("brightness-hist", {
           type: "bar",
           data: {
@@ -1485,49 +1494,55 @@
               legend: { display: false },
               tooltip: {
                 callbacks: {
-                  title: function(context) {
-                    return 'Brightness Range: ' + context[0].label;
+                  title: function (context) {
+                    return "Brightness Range: " + context[0].label;
                   },
-                  label: function(context) {
-                    return 'Frequency: ' + context.parsed.y.toLocaleString() + ' pixels';
+                  label: function (context) {
+                    return (
+                      "Frequency: " +
+                      context.parsed.y.toLocaleString() +
+                      " pixels"
+                    );
                   },
-                  afterLabel: function(context) {
+                  afterLabel: function (context) {
                     if (meanBrightness) {
-                      return 'Mean Brightness: ' + meanBrightness.toFixed(2);
+                      return "Mean Brightness: " + meanBrightness.toFixed(2);
                     }
-                    return '';
-                  }
-                }
+                    return "";
+                  },
+                },
               },
-              annotation: meanBrightness ? {
-                annotations: {
-                  meanLine: {
-                    type: 'line',
-                    xMin: meanBrightness / 6.5,  // Approximate position based on 0-255 range
-                    xMax: meanBrightness / 6.5,
-                    borderColor: 'rgb(220, 38, 38)',
-                    borderWidth: 2,
-                    borderDash: [6, 6],
-                    label: {
-                      display: true,
-                      content: `Mean: ${meanBrightness.toFixed(1)}`,
-                      position: 'start',
-                    }
+              annotation: meanBrightness
+                ? {
+                    annotations: {
+                      meanLine: {
+                        type: "line",
+                        xMin: meanBrightness / 6.5, // Approximate position based on 0-255 range
+                        xMax: meanBrightness / 6.5,
+                        borderColor: "rgb(220, 38, 38)",
+                        borderWidth: 2,
+                        borderDash: [6, 6],
+                        label: {
+                          display: true,
+                          content: `Mean: ${meanBrightness.toFixed(1)}`,
+                          position: "start",
+                        },
+                      },
+                    },
                   }
-                }
-              } : {}
+                : {},
             },
             scales: {
               x: {
                 title: { display: true, text: "Brightness Range (0-255)" },
-                ticks: { 
-                  maxRotation: 45, 
+                ticks: {
+                  maxRotation: 45,
                   minRotation: 45,
                   autoSkip: true,
                   maxTicksLimit: 10,
                 },
               },
-              y: { 
+              y: {
                 title: { display: true, text: "Frequency" },
                 beginAtZero: true,
               },
@@ -1900,10 +1915,11 @@
         }));
 
         // Get correlation info if available
-        const correlation = data.cross_modal_analysis?.correlations?.caption_length_vs_similarity;
-        const corrText = correlation 
+        const correlation =
+          data.cross_modal_analysis?.correlations?.caption_length_vs_similarity;
+        const corrText = correlation
           ? `r = ${correlation.r.toFixed(3)}, p = ${correlation.p_value.toExponential(2)}`
-          : '';
+          : "";
 
         createChart("length-similarity-scatter", {
           type: "scatter",
@@ -1927,12 +1943,19 @@
                 display: !!corrText,
                 text: corrText,
                 font: { size: 11, family: "'Space Grotesk', sans-serif" },
-                color: '#64748b'
-              }
+                color: "#64748b",
+              },
             },
             scales: {
-              x: { title: { display: true, text: "Average Caption Length (words)" } },
-              y: { title: { display: true, text: "Average Jaccard Similarity" } },
+              x: {
+                title: {
+                  display: true,
+                  text: "Average Caption Length (words)",
+                },
+              },
+              y: {
+                title: { display: true, text: "Average Jaccard Similarity" },
+              },
             },
           },
         });
