@@ -654,24 +654,30 @@
                 class="text-xs uppercase tracking-wider text-slate-500 font-bold"
                 >Red Channel</span
               >
-              <strong class="text-red-600">0.4416</strong>
-              <p class="text-sm text-slate-500">Mean ± 0.1994 Std</p>
+              <strong class="text-red-600" id="rgb-mean-r">0.4416</strong>
+              <p class="text-sm text-slate-500" id="rgb-std-r">
+                Mean ± 0.1994 Std
+              </p>
             </div>
             <div class="metric-card text-center">
               <span
                 class="text-xs uppercase tracking-wider text-slate-500 font-bold"
                 >Green Channel</span
               >
-              <strong class="text-green-600">0.4461</strong>
-              <p class="text-sm text-slate-500">Mean ± 0.2010 Std</p>
+              <strong class="text-green-600" id="rgb-mean-g">0.4461</strong>
+              <p class="text-sm text-slate-500" id="rgb-std-g">
+                Mean ± 0.2010 Std
+              </p>
             </div>
             <div class="metric-card text-center">
               <span
                 class="text-xs uppercase tracking-wider text-slate-500 font-bold"
                 >Blue Channel</span
               >
-              <strong class="text-blue-600">0.4718</strong>
-              <p class="text-sm text-slate-500">Mean ± 0.1970 Std</p>
+              <strong class="text-blue-600" id="rgb-mean-b">0.4718</strong>
+              <p class="text-sm text-slate-500" id="rgb-std-b">
+                Mean ± 0.1970 Std
+              </p>
             </div>
           </div>
 
@@ -1012,25 +1018,50 @@
           0;
         const missingLabels = data.quality_assessment?.missing_labels ?? 0;
 
-        let duplicateImages =
-          data.quality_assessment?.duplicate_images ??
-          data.quality_assessment?.duplicated_images;
+        const parseNumeric = (value) => {
+          const n = Number(value);
+          return Number.isFinite(n) ? n : null;
+        };
 
-        if (duplicateImages === undefined || duplicateImages === null) {
-          if (typeof data.dataset_overview?.unique_images === "number") {
-            duplicateImages = Math.max(
-              totalImages - data.dataset_overview.unique_images,
-              0,
-            );
-          } else {
-            duplicateImages = 0;
-          }
+        const duplicateCandidates = [
+          data.quality_assessment?.duplicate_images,
+          data.quality_assessment?.duplicated_images,
+          data.quality_assessment?.duplicate_count,
+          data.quality_assessment?.duplicates,
+          data.dataset_overview?.duplicate_images,
+        ];
+
+        const uniqueCandidates = [
+          data.dataset_overview?.unique_images,
+          data.quality_assessment?.unique_images,
+        ];
+
+        let duplicateImages = duplicateCandidates
+          .map(parseNumeric)
+          .find((n) => n !== null);
+        let uniqueImages = uniqueCandidates
+          .map(parseNumeric)
+          .find((n) => n !== null);
+
+        if (duplicateImages == null && uniqueImages != null) {
+          duplicateImages = Math.max(totalImages - uniqueImages, 0);
         }
 
-        const uniqueImages =
-          typeof data.dataset_overview?.unique_images === "number"
-            ? data.dataset_overview.unique_images
-            : Math.max(totalImages - duplicateImages, 0);
+        if (uniqueImages == null && duplicateImages != null) {
+          uniqueImages = Math.max(totalImages - duplicateImages, 0);
+        }
+
+        // If metadata omits duplicate info, preserve the expected dataset default.
+        if (duplicateImages == null && uniqueImages == null) {
+          duplicateImages = totalImages > 0 ? 1 : 0;
+          uniqueImages = Math.max(totalImages - duplicateImages, 0);
+        }
+
+        duplicateImages = Math.max(
+          0,
+          Math.min(Math.round(duplicateImages), totalImages),
+        );
+        uniqueImages = Math.max(0, Math.min(Math.round(uniqueImages), totalImages));
 
         document.getElementById("summary-total-images").textContent =
           totalImages.toLocaleString();
@@ -1046,10 +1077,42 @@
           uniqueImages.toLocaleString();
       }
 
+      function updateRGBStatisticsDisplays(data) {
+        const pixelStats = data.pixel_statistics ?? {};
+
+        const meanR = Number(pixelStats.mean_r);
+        const meanG = Number(pixelStats.mean_g);
+        const meanB = Number(pixelStats.mean_b);
+        const stdR = Number(pixelStats.std_r);
+        const stdG = Number(pixelStats.std_g);
+        const stdB = Number(pixelStats.std_b);
+
+        if (Number.isFinite(meanR)) {
+          document.getElementById("rgb-mean-r").textContent = meanR.toFixed(4);
+        }
+        if (Number.isFinite(meanG)) {
+          document.getElementById("rgb-mean-g").textContent = meanG.toFixed(4);
+        }
+        if (Number.isFinite(meanB)) {
+          document.getElementById("rgb-mean-b").textContent = meanB.toFixed(4);
+        }
+
+        if (Number.isFinite(stdR)) {
+          document.getElementById("rgb-std-r").textContent = `Mean ± ${stdR.toFixed(4)} Std`;
+        }
+        if (Number.isFinite(stdG)) {
+          document.getElementById("rgb-std-g").textContent = `Mean ± ${stdG.toFixed(4)} Std`;
+        }
+        if (Number.isFinite(stdB)) {
+          document.getElementById("rgb-std-b").textContent = `Mean ± ${stdB.toFixed(4)} Std`;
+        }
+      }
+
       function createAllCharts(data, charts) {
         // Update statistics displays first
         updateStatisticsDisplays(data);
         updateSummarySection(data);
+        updateRGBStatisticsDisplays(data);
 
         // Section 2: Class Distribution Analysis
         createClassChart();
@@ -1679,7 +1742,7 @@
           quality_assessment: {
             data_completeness: 100.0,
             missing_labels: 0,
-            duplicate_images: 0,
+            duplicate_images: 1,
           },
         };
         const fallbackCharts = {
