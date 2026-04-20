@@ -31,8 +31,8 @@ Generated for P4AI-DS Dashboard
    • Saved to: plotly_data/sample_images/
 
 📈 DASHBOARD FILES:
-   • Main Data: plotly_data/eda_svhn_data.json
-   • Chart Data: plotly_data/eda_svhn_charts.json
+   • Main Data: plotly_data/eda_image_data.json
+   • Chart Data: plotly_data/eda_image_charts.json
    • Sample Images: plotly_data/sample_images/
 
 ======================================================================
