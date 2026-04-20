@@ -42,7 +42,7 @@ KEY POINTS TO EMPHASIZE:
 Project Structure:
 - Repository contains 4 Jupyter notebooks (one per modality)
 - Each notebook performs comprehensive EDA and generates interactive dashboards
-- All visualizations and statistics exported to plots_data/ directory
+- All visualizations and statistics exported to plotly_data/ directory
 - Web dashboards built with HTML/CSS/JavaScript for easy navigation
 
 Why Traditional ML Pipeline?
@@ -748,7 +748,7 @@ VISUALIZATION FRAMEWORK:
 
 REPOSITORY STRUCTURE:
 notebooks/         → Jupyter notebooks (EDA code)
-plots_data/        → Generated statistics and charts
+plotly_data/        → Generated statistics and charts
   ├── eda_tabular_data.json
   ├── eda_text_data.json
   ├── eda_image_data.json

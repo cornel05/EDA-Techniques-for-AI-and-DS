@@ -1,0 +1,217 @@
+{
+  "classChart": {
+    "chart_id": "classChart",
+    "type": "bar",
+    "labels": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "data": [
+      6692,
+      18960,
+      14734,
+      11379,
+      9981,
+      9266,
+      7704,
+      7614,
+      6705,
+      6254
+    ],
+    "colors": [
+      "#0a7ea4",
+      "#0ea5b5",
+      "#22c1c3",
+      "#2ec4b6",
+      "#76c893",
+      "#a7c957",
+      "#f4a261",
+      "#f59e0b",
+      "#e76f51",
+      "#d62828"
+    ],
+    "title": "SVHN Class Distribution"
+  },
+  "trainChart": {
+    "chart_id": "trainChart",
+    "type": "bar",
+    "labels": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "data": [
+      6.75430334302524,
+      18.921058738414075,
+      14.449131141051366,
+      11.59889157350151,
+      10.18059707604734,
+      9.394324091895655,
+      7.817682951799829,
+      7.637495392931734,
+      6.886713897648006,
+      6.359801793685245
+    ],
+    "colors": [
+      "#1e40af",
+      "#1d4ed8",
+      "#1e3a8a",
+      "#1e3a8a",
+      "#1e3a8a",
+      "#1e3a8a",
+      "#1e3a8a",
+      "#1e3a8a",
+      "#1e3a8a",
+      "#1e3a8a"
+    ],
+    "title": "Training Set Distribution (N=73,257)"
+  },
+  "testChart": {
+    "chart_id": "testChart",
+    "type": "bar",
+    "labels": [
+      "0",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "data": [
+      6.699446834665028,
+      19.587430854333128,
+      15.938076213890595,
+      11.07098955132145,
+      9.691917639827905,
+      9.157959434542102,
+      7.594499078057774,
+      7.755838967424708,
+      6.376767055931162,
+      6.127074370006146
+    ],
+    "colors": [
+      "#dc2626",
+      "#ef4444",
+      "#b91c1c",
+      "#b91c1c",
+      "#b91c1c",
+      "#b91c1c",
+      "#b91c1c",
+      "#b91c1c",
+      "#b91c1c",
+      "#b91c1c"
+    ],
+    "title": "Test Set Distribution (N=26,032)"
+  },
+  "balanceChart": {
+    "chart_id": "balanceChart",
+    "type": "doughnut",
+    "labels": [
+      "Well Balanced",
+      "Moderately Imbalanced"
+    ],
+    "data": [
+      70,
+      30
+    ],
+    "colors": [
+      "#22c55e",
+      "#f59e0b"
+    ],
+    "title": "Class Balance Overview"
+  },
+  "dimChart": {
+    "chart_id": "dimChart",
+    "type": "bar",
+    "labels": [
+      "Width",
+      "Height",
+      "Channels"
+    ],
+    "data": [
+      32,
+      32,
+      3
+    ],
+    "colors": [
+      "#6366f1"
+    ],
+    "title": "SVHN Image Dimensions"
+  },
+  "meanChart": {
+    "chart_id": "meanChart",
+    "type": "bar",
+    "labels": [
+      "R",
+      "G",
+      "B"
+    ],
+    "data": [
+      0.4415509104728699,
+      0.44605568051338196,
+      0.4717999994754791
+    ],
+    "colors": [
+      "#ef4444",
+      "#22c55e",
+      "#3b82f6"
+    ],
+    "title": "RGB Channel Means (Normalized)"
+  },
+  "stdChart": {
+    "chart_id": "stdChart",
+    "type": "bar",
+    "labels": [
+      "R",
+      "G",
+      "B"
+    ],
+    "data": [
+      0.203962504863739,
+      0.20805400609970093,
+      0.2057601809501648
+    ],
+    "colors": [
+      "#ef4444",
+      "#22c55e",
+      "#3b82f6"
+    ],
+    "title": "RGB Channel Standard Deviations"
+  },
+  "validationChart": {
+    "chart_id": "validationChart",
+    "type": "pie",
+    "labels": [
+      "Valid Dimensions",
+      "Invalid Dimensions"
+    ],
+    "data": [
+      100,
+      0
+    ],
+    "colors": [
+      "#22c55e",
+      "#ef4444"
+    ],
+    "title": "Dimension Validation Status"
+  }
+}

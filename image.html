@@ -788,8 +788,9 @@
             digit forms, lighting conditions, and backgrounds.
           </p>
 
+          <p class="text-xs text-slate-400 italic">5 representative samples per digit class — showing intra-class variation in lighting, background, and digit style.</p>
           <div
-            class="grid grid-cols-5 lg:grid-cols-10 gap-4"
+            class="flex flex-col gap-3"
             id="sampleGallery"
           >
             <!-- Sample images will be loaded here -->
@@ -960,8 +961,8 @@
       async function loadSVHNData() {
         try {
           const [dataResponse, chartsResponse] = await Promise.all([
-            fetch("./plots_data/eda_svhn_data.json"),
-            fetch("./plots_data/eda_image_charts.json"),
+            fetch("./plotly_data/eda_svhn_data.json"),
+            fetch("./plotly_data/eda_image_charts.json"),
           ]);
 
           if (dataResponse.ok && chartsResponse.ok) {
@@ -1702,20 +1703,32 @@
         const gallery = document.getElementById("sampleGallery");
 
         for (let i = 0; i < 10; i++) {
-          const sampleItem = document.createElement("div");
-          sampleItem.className = "text-center";
+          const row = document.createElement("div");
+          row.className = "flex items-center gap-3";
 
-          sampleItem.innerHTML = `
-                    <div class="panel p-3">
-                        <img src="./plots_data/sample_images/digit_${i}_sample.png" 
-                             alt="Digit ${i} sample"
-                             class="w-full h-16 object-cover rounded-lg mb-2"
-                             onerror="this.style.display='none'">
-                        <div class="text-sm font-semibold text-slate-700">Digit ${i}</div>
-                    </div>
-                `;
+          // Digit label
+          const label = document.createElement("div");
+          label.className = "w-14 flex-shrink-0 text-sm font-bold text-slate-700 text-right";
+          label.textContent = `Digit ${i}`;
+          row.appendChild(label);
 
-          gallery.appendChild(sampleItem);
+          // 5 thumbnails per digit
+          for (let j = 0; j < 5; j++) {
+            const thumb = document.createElement("div");
+            thumb.className = "panel flex-1";
+            // Square container with object-contain so the full digit is always visible
+            thumb.innerHTML = `
+              <div style="aspect-ratio:1/1; background:#f8fafc; border-radius:6px; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                <img src="./plotly_data/sample_images/digit_${i}_sample_${j}.png"
+                     alt="Digit ${i} sample ${j + 1}"
+                     style="width:100%; height:100%; object-fit:contain; image-rendering:pixelated;"
+                     onerror="this.parentElement.innerHTML='<span style=\'font-size:11px;color:#94a3b8\'>N/A</span>'">
+              </div>
+            `;
+            row.appendChild(thumb);
+          }
+
+          gallery.appendChild(row);
         }
       }
 
