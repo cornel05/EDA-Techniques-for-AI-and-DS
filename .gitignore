@@ -1,5 +1,6 @@
 .DS_Store
-notebooks/data/
 __pycache__/
+notebooks/data/
+notebooks/features/
 notebooks/.ipynb_checkpoints/
 notebooks/image_ML_explained.ipynb
