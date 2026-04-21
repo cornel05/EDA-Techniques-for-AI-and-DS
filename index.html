@@ -32,213 +32,134 @@
       body {
         font-family: "Space Grotesk", sans-serif;
         color: var(--ink);
-        background:
-          radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
-          radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
-          linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
-        min-height: 100vh;
+        background-color: var(--bg-a);
       }
-
-      h1,
-      h2,
-      h3,
-      h4 {
+      .font-sora {
         font-family: "Sora", sans-serif;
-        letter-spacing: -0.02em;
-      }
-
-      .panel {
-        background: rgba(255, 255, 255, 0.88);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
-        backdrop-filter: blur(10px);
-      }
-
-      .metric-card {
-        border-radius: 16px;
-        border: 1px solid var(--line);
-        background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
-        padding: 1rem;
       }
     </style>
   </head>
-  <body class="text-slate-900">
-    <!-- Navigation -->
-    <nav
-      class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200"
-    >
-      <div
-        class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"
-      >
-        <div class="flex items-center gap-3">
-          <div
-            class="w-9 h-9 bg-teal-700 rounded-lg flex items-center justify-center text-white font-bold"
-          >
-            H
+  <body class="min-h-screen flex flex-col selection:bg-teal-100 selection:text-teal-900">
+    
+    <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+          <div class="flex items-center gap-4">
+            <a href="index.html" class="font-sora text-xl font-bold tracking-tight text-teal-700">
+              P4AI-DS <span class="text-slate-900">Project</span>
+            </a>
           </div>
-          <div>
-            <p class="font-extrabold tracking-tight text-lg">
-              HCMUT EDA Studio
-            </p>
-            <p class="text-xs text-slate-500">
-              Traditional ML Pipeline Analysis
-            </p>
+
+          <div class="flex items-center space-x-8 font-medium text-slate-600">
+            <a href="index.html" class="text-teal-600 transition">Home</a>
+            
+            <div class="group relative py-4">
+              <button class="flex items-center gap-1 hover:text-teal-600 transition">
+                Assignment 1 (EDA) <i class="fa-solid fa-chevron-down text-[10px]"></i>
+              </button>
+              <div class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+                <a href="tabular.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Tabular EDA</a>
+                <a href="text.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Text EDA</a>
+                <a href="image.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Image EDA</a>
+                <a href="multimodal.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Multimodal EDA</a>
+              </div>
+            </div>
+
+            <a href="image_ml.html" class="rounded-full bg-teal-700 px-4 py-2 text-white hover:bg-teal-800 transition shadow-sm">
+              Assignment 2 (ML)
+            </a>
           </div>
-        </div>
-        <div class="hidden lg:flex gap-6 font-medium text-slate-600">
-          <a href="index.html" class="text-teal-700 font-bold">Home</a>
-          <a href="tabular.html" class="hover:text-teal-700 transition"
-            >Tabular</a
-          >
-          <a href="text.html" class="hover:text-teal-700 transition">Text</a>
-          <a href="image.html" class="hover:text-teal-700 transition">Image</a>
-          <a href="multimodal.html" class="hover:text-teal-700 transition"
-            >Multimodal</a
-          >
         </div>
       </div>
     </nav>
 
-    <!-- Header Section -->
-    <header class="panel mx-4 sm:mx-6 lg:mx-8 mt-8 mb-8">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <h2 class="text-teal-600 font-semibold uppercase tracking-widest mb-4">
-          Course: P4AIDS (CO3135) | Semester II, 2025-2026
-        </h2>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-6">
-          Traditional Pipeline Analysis across Four Data Domains
-        </h1>
-        <p class="text-xl text-slate-600 mb-8 max-w-3xl mx-auto italic">
-          Instructor:
-          <span class="text-slate-900 font-bold">Dr. Thanh-Sach LE</span>
-        </p>
-
-        <div class="flex justify-center gap-4 flex-wrap">
-          <!-- <a
-            href="#"
-            class="bg-teal-700 text-white px-4 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-teal-800 transition text-sm"
-          >
-            <i class="fab fa-github"></i> GitHub Repo
-          </a>
-          <a
-            href="#"
-            class="bg-slate-900 text-white px-4 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-black transition text-sm"
-          >
-            <i class="fas fa-file-pdf"></i> Download PDF Report
-          </a>
-          <a
-            href="#"
-            class="border border-slate-300 px-4 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-slate-50 transition text-sm"
-          >
-            <i class="fas fa-code"></i> View Colab
-          </a> -->
+    <main class="flex-grow">
+      <header class="bg-white border-b border-slate-200 py-16 sm:py-24 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(#0f766e 1px, transparent 1px); background-size: 24px 24px;"></div>
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <div class="inline-flex items-center rounded-full bg-teal-50 px-3 py-1 text-sm font-semibold text-teal-600 ring-1 ring-inset ring-teal-600/20 mb-6">
+            CO3135 • Academic Year 2025-2026
+          </div>
+          <h1 class="font-sora text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6">
+            Data Science & <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-blue-600">Machine Learning Portfolio</span>
+          </h1>
+          <p class="mx-auto max-w-2xl text-lg text-slate-600">
+            A comprehensive pipeline from Exploratory Data Analysis (EDA) to deep transfer learning, applied across multiple data modalities.
+          </p>
         </div>
-      </div>
-    </header>
+      </header>
 
-    <!-- Project Summary & Repo Structure -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 space-y-6">
-      <!-- Summary -->
-      <section class="panel p-6">
-        <h3 class="text-2xl font-bold mb-4 border-l-4 border-teal-600 pl-4">
-          Project Summary
-        </h3>
-        <p class="text-slate-600 leading-relaxed mb-6">
-          This project implements a comprehensive Traditional Machine Learning
-          Pipeline. We investigate four distinct data types, focusing on feature
-          engineering and classical classification models rather than end-to-end
-          deep learning architectures.
-        </p>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="metric-card hover:shadow-md transition">
-            <a href="tabular.html">
-              <span class="block font-bold text-teal-700 text-lg">Tabular</span>
-              <span class="text-sm text-slate-500 italic"
-                >Statistical Features</span
-              >
-            </a>
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+        
+        <section class="mb-20">
+          <div class="flex items-center gap-3 mb-8">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-100 text-teal-700">
+              <i class="fas fa-chart-pie text-lg"></i>
+            </div>
+            <h2 class="text-3xl font-sora font-bold text-slate-900">
+              Assignment 1: Exploratory Data Analysis
+            </h2>
           </div>
-          <div class="metric-card hover:shadow-md transition">
-            <a href="text.html">
-              <span class="block font-bold text-teal-700 text-lg">Text</span>
-              <span class="text-sm text-slate-500 italic"
-                >BoW vs. Embeddings</span
-              >
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            <a href="tabular.html" class="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all hover:-translate-y-1 hover:shadow-md hover:ring-blue-500">
+              <div>
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                  <i class="fas fa-table text-xl"></i>
+                </div>
+                <h3 class="font-sora text-xl font-bold text-slate-900 mb-2">Tabular Data</h3>
+                <p class="text-slate-600">Advertisement Click Prediction dataset. Analysis of feature distributions, missing values, and target correlations.</p>
+              </div>
+              <div class="mt-6 flex items-center text-sm font-semibold text-blue-600">
+                View Report <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+              </div>
             </a>
-          </div>
-          <div class="metric-card hover:shadow-md transition">
-            <a href="image.html">
-              <span class="block font-bold text-teal-700 text-lg">Image</span>
-              <span class="text-sm text-slate-500 italic"
-                >Pretrained Features</span
-              >
-            </a>
-          </div>
-          <div class="metric-card hover:shadow-md transition">
-            <a href="multimodal.html">
-              <span class="block font-bold text-teal-700 text-lg"
-                >Multimodal</span
-              >
-              <span class="text-sm text-slate-500 italic">Feature Fusion</span>
-            </a>
-          </div>
-        </div>
-      </section>
 
-      <!-- Repo Structure -->
-      <section class="panel p-6">
-        <h3 class="text-2xl font-bold mb-4 border-l-4 border-teal-600 pl-4">
-          Repository Structure
-        </h3>
-        <div
-          class="bg-slate-900 rounded-lg p-6 text-blue-400 font-mono text-sm"
-        >
-          <div class="mb-2">
-            <i class="fas fa-folder-open mr-2 text-yellow-500"></i>
-            project_root/
-          </div>
-          <div
-            class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
-          >
-            <i class="fas fa-folder mr-2 text-yellow-500"></i>
-            <span class="font-bold">notebooks/</span>
-            <span class="text-slate-500"># Detailed experiments</span>
-          </div>
-          <div
-            class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
-          >
-            <i class="fas fa-folder mr-2 text-yellow-500"></i>
-            <span class="font-bold">plotly_data/</span>
-            <span class="text-slate-500"># Generated plotly & Data</span>
-          </div>
-          <div
-            class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
-          >
-            <i class="fas fa-folder mr-2 text-yellow-500"></i>
-            <span class="font-bold">reports/</span>
-            <span class="text-slate-500"># Documentation & Figures</span>
-          </div>
-          <div
-            class="ml-4 mb-1 text-slate-300 cursor-pointer hover:text-white transition"
-          >
-            <i class="fas fa-folder mr-2 text-yellow-500"></i>
-            <span class="font-bold">sample_images/</span>
-            <span class="text-slate-500"># Sample Images for Testing</span>
-          </div>
-        </div>
-      </section>
-    </main>
+            <a href="text.html" class="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all hover:-translate-y-1 hover:shadow-md hover:ring-amber-500">
+              <div>
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                  <i class="fas fa-file-lines text-xl"></i>
+                </div>
+                <h3 class="font-sora text-xl font-bold text-slate-900 mb-2">Text Data</h3>
+                <p class="text-slate-600">Stanford SQuAD 1.1 dataset. NLP analysis including tokenization metrics, n-grams, and category distributions.</p>
+              </div>
+              <div class="mt-6 flex items-center text-sm font-semibold text-amber-600">
+                View Report <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+              </div>
+            </a>
 
-    <footer class="bg-white border-t border-slate-200 py-6 mt-16">
-      <div
-        class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-slate-500"
-      >
-        <p>
-          © 2026 HCMUT P4AIDS Team | Built with Traditional ML Pipeline |
-          Generated with Chart.js
-        </p>
-      </div>
-    </footer>
-  </body>
-</html>
+            <a href="image.html" class="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all hover:-translate-y-1 hover:shadow-md hover:ring-emerald-500">
+              <div>
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                  <i class="fas fa-image text-xl"></i>
+                </div>
+                <h3 class="font-sora text-xl font-bold text-slate-900 mb-2">Image Data</h3>
+                <p class="text-slate-600">SVHN (Street View House Numbers). Geometric analysis, RGB channel distributions, and class imbalance metrics.</p>
+              </div>
+              <div class="mt-6 flex items-center text-sm font-semibold text-emerald-600">
+                View Report <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+              </div>
+            </a>
+
+            <a href="multimodal.html" class="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200 transition-all hover:-translate-y-1 hover:shadow-md hover:ring-purple-500">
+              <div>
+                <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                  <i class="fas fa-photo-film text-xl"></i>
+                </div>
+                <h3 class="font-sora text-xl font-bold text-slate-900 mb-2">Multimodal Data</h3>
+                <p class="text-slate-600">Flickr8k dataset. Cross-modal analysis linking image attributes (brightness/contrast) with caption linguistic features.</p>
+              </div>
+              <div class="mt-6 flex items-center text-sm font-semibold text-purple-600">
+                View Report <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <section>
+          <div class="flex items-center gap-3 mb-8">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-100 text-teal-700">
+              <i class="fas fa-robot text-lg"></i>
+            </div>
+            <h2 class="text-3xl font-sora font-bold text-slate-900">
+              Assignment 2
