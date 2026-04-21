@@ -1,4 +1,5 @@
 .DS_Store
 notebooks/data/
+notebooks/features/
 __pycache__/
 notebooks/.ipynb_checkpoints/
