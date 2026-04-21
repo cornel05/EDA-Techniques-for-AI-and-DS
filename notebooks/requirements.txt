@@ -1,0 +1,25 @@
+# Core data stack
+pandas>=2.0
+numpy>=1.24
+
+# scikit-learn 1.3+ is required for sklearn.preprocessing.TargetEncoder
+# (used to encode the high-cardinality `Country` column inside the pipeline).
+scikit-learn>=1.3
+
+# Plotting
+matplotlib>=3.7
+seaborn>=0.13
+
+# Model explainability
+# shap 0.44+ plays nicely with sklearn>=1.3 and the new TreeExplainer API.
+shap>=0.44
+
+# Serialization
+joblib>=1.3
+
+# Parquet I/O for train/test splits (used by the modeling + evaluation notebooks)
+pyarrow>=14.0
+
+# OPTIONAL — gradient boosting alternative to HistGradientBoostingClassifier.
+# Uncomment if you want to swap in XGBoost in modeling_tabular.ipynb.
+# xgboost>=2.0
