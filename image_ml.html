@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVHN ML Analysis | P4AI-DS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .font-sora {
+            font-family: "Sora", sans-serif;
+        }
+
+        .cm-cell {
+            transition: all 0.2s;
+        }
+
+        .cm-cell:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="font-sora text-xl font-bold tracking-tight text-teal-700">
+                        P4AI-DS <span class="text-slate-900">Project</span>
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-8 font-medium text-slate-600">
+                    <a href="index.html" class="hover:text-teal-600 transition">Home</a>
+
+                    <div class="group relative py-4">
+                        <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
+                            Assignment 1 (EDA) <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <div
+                            class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+                            <a href="tabular.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Tabular
+                                EDA</a>
+                            <a href="text.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Text
+                                EDA</a>
+                            <a href="image.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Image
+                                EDA</a>
+                            <a href="multimodal.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Multimodal
+                                EDA</a>
+                        </div>
+                    </div>
+
+                    <div class="group relative py-4">
+                        <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
+                            Assignment 2 (ML) <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <div
+                            class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+                            <a href="tabular_ml.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Tabular
+                                ML</a>
+                            <a href="text_ml.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Text
+                                ML</a>
+                            <a href="image_ml.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Image
+                                ML</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-slate-900 text-white py-16">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="font-sora text-4xl sm:text-5xl font-extrabold mb-4">SVHN Image Classification</h1>
+            <p class="text-xl text-teal-400 font-medium mb-8">Building on EDA insights to apply transfer learning and
+                classical ML</p>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                    <div class="text-3xl font-bold text-white mb-1">99,289</div>
+                    <div class="text-sm text-slate-400">Total Images</div>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                    <div class="text-3xl font-bold text-white mb-1">10</div>
+                    <div class="text-sm text-slate-400">Digit Classes</div>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                    <div class="text-3xl font-bold text-teal-400 mb-1">96.4%</div>
+                    <div class="text-sm text-slate-400">Best Accuracy</div>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                    <div class="text-3xl font-bold text-white mb-1">3</div>
+                    <div class="text-sm text-slate-400">Approaches Compared</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+        <div id="errorBanner" class="hidden bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-8" role="alert">
+            <p class="font-bold">Error Loading Data</p>
+            <p id="errorText"></p>
+        </div>
+
+        <section>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 inline-block">1.
+                The EDA-to-ML Connection</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <table class="min-w-full text-left text-sm">
+                    <thead class="bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th class="px-6 py-4 font-semibold text-slate-900 w-1/2">EDA Finding (Assignment 1)</th>
+                            <th class="px-6 py-4 font-semibold text-slate-900 w-1/2">ML Decision Made (Assignment 2)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr>
+                            <td class="px-6 py-4 text-slate-600">Channel means [0.4416, 0.4461, 0.4718]</td>
+                            <td class="px-6 py-4 font-medium text-teal-700">Used as Normalization values in all
+                                transforms</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-slate-600">Blue channel bias detected</td>
+                            <td class="px-6 py-4 font-medium text-teal-700">Channel-wise normalization required to
+                                center data</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-slate-600">Class imbalance 3.03× (Digit 1=19.1%, Digit 9=6.3%)
+                            </td>
+                            <td class="px-6 py-4 font-medium text-teal-700">Applied <code>class_weight='balanced'</code>
+                                & weighted CrossEntropyLoss</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-slate-600">Low contrast (std ≈0.20) & cluttered backgrounds</td>
+                            <td class="px-6 py-4 font-medium text-teal-700">Implemented <code>ColorJitter</code> +
+                                <code>RandomCrop</code> augmentation
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 text-slate-600">6/9 and 2/5 shape ambiguity</td>
+                            <td class="px-6 py-4 font-medium text-teal-700"><code>HorizontalFlip</code> deliberately
+                                excluded from pipeline</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 inline-block">2.
+                The Domain Gap Analysis</h2>
+            <p class="text-slate-600 mb-6">Initial tests extracted features using a frozen ResNet-18 pretrained on
+                ImageNet. We compared performance using native SVHN resolution (32x32) vs. ResNet's expected resolution
+                (224x224).</p>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="h-80">
+                    <canvas id="domainGapChart"></canvas>
+                </div>
+                <div class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+                    <strong>Insight:</strong> Resizing to 224x224 improved baseline accuracy by ~15-20%. However,
+                    peaking at ~62% proves a severe domain gap exists between ImageNet (natural objects) and SVHN
+                    (street digits).
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 inline-block">3.
+                Pipeline Comparison Tournament</h2>
+            <p class="text-slate-600 mb-6">A systematic comparison of feature extractors (ResNet-18 vs MobileNetV2 vs
+                Raw Pixels) combined with dimensionality reduction (PCA) and classical classifiers.</p>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <table class="min-w-full text-left text-sm whitespace-nowrap">
+                    <thead class="bg-slate-900 text-white">
+                        <tr>
+                            <th class="px-6 py-4 font-semibold">Rank</th>
+                            <th class="px-6 py-4 font-semibold">Pipeline Configuration</th>
+                            <th class="px-6 py-4 font-semibold">Accuracy</th>
+                            <th class="px-6 py-4 font-semibold">Macro F1</th>
+                            <th class="px-6 py-4 font-semibold">Train Time (s)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pipelineTableBody" class="divide-y divide-slate-200">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 inline-block">4.
+                Deep Transfer Learning (Fine-Tuning)</h2>
+            <p class="text-slate-600 mb-6">To overcome the domain gap, the ResNet-18 architecture was fully unfreezed
+                and fine-tuned for 10 epochs using Cosine Annealing learning rate scheduling.</p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="font-bold text-slate-900 mb-4 text-center">Accuracy & Loss Curves</h3>
+                    <div class="h-64 mb-4"><canvas id="learningCurvesChart"></canvas></div>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800">
+                        <strong>Overfitting Note:</strong> Training accuracy hit 100% at epoch 9 while validation
+                        plateaued at ~96.4%. Best weights (epoch 10) were saved. Future mitigation: Early stopping.
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="font-bold text-slate-900 mb-4 text-center">Per-Class F1 Score</h3>
+                    <div class="h-64"><canvas id="perClassF1Chart"></canvas></div>
+                    <p class="text-xs text-slate-500 mt-4 text-center">Maintained >94% F1 even on minority classes
+                        (e.g., Digit 9) thanks to balanced class weights.</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-3xl mx-auto">
+                <h3 class="font-bold text-slate-900 mb-4 text-center">Final Confusion Matrix (ResNet-18 Fine-Tuned)</h3>
+                <div class="flex">
+                    <div
+                        class="flex flex-col justify-center pr-4 text-xs font-bold text-slate-500 -rotate-90 origin-center tracking-widest uppercase">
+                        Actual Class</div>
+                    <div class="flex-grow">
+                        <div id="cmGrid" class="grid grid-cols-10 gap-1 bg-slate-100 p-1 rounded-lg">
+                        </div>
+                        <div class="text-center mt-4 text-xs font-bold text-slate-500 tracking-widest uppercase">
+                            Predicted Class (0-9)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 inline-block">5.
+                Conclusion & The 3-Act Story</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="h-72 w-full max-w-3xl mx-auto mb-6">
+                    <canvas id="summaryChart"></canvas>
+                </div>
+                <div class="bg-teal-50 border border-teal-200 rounded-lg p-6 text-center">
+                    <p class="text-teal-900 text-lg">
+                        End-to-end fine-tuning achieved a <strong>34-point improvement</strong> over the best frozen
+                        pipeline (62.5% → 96.4%). This confirms that while ImageNet features provide a solid
+                        mathematical foundation, <strong>adapting pretrained weights to the target domain</strong> is
+                        absolutely essential for cross-domain digit classification tasks.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm text-slate-500">
+            <p>&copy; 2026 P4AI-DS Group Assignment.</p>
+            <p>Built for Ho Chi Minh City University of Technology (HCMUT)</p>
+        </div>
+    </footer>
+
+    <script>
+        // Configuration
+        const PATHS = {
+            baseline32: 'plotly_data/ml_section1_results_32.json',
+            baseline224: 'plotly_data/ml_section1_results_224.json',
+            pipelines: 'plotly_data/ml_section2_pipelines.json',
+            finetune: 'plotly_data/ml_section3_finetune.json'
+        };
+
+        // Helper: Show Error
+        function showError(msg) {
+            const banner = document.getElementById('errorBanner');
+            banner.classList.remove('hidden');
+            document.getElementById('errorText').innerText = msg;
+            console.error(msg);
+        }
+
+        // Main initialization
+        async function loadDashboard() {
+            try {
+                const [res32, res224, resPipe, resFt] = await Promise.all([
+                    fetch(PATHS.baseline32), fetch(PATHS.baseline224),
+                    fetch(PATHS.pipelines), fetch(PATHS.finetune)
+                ]);
+
+                if (!res32.ok || !res224.ok || !resPipe.ok || !resFt.ok) throw new Error("Failed to load one or more JSON files. Ensure they are in plotly_data/");
+
+                const data32 = await res32.json();
+                const data224 = await res224.json();
+                const dataPipe = await resPipe.json();
+                const dataFt = await resFt.json();
+
+                renderDomainGap(data32, data224);
+                renderPipelineTable(dataPipe);
+                renderTransferLearning(dataFt);
+                renderSummaryChart(data224, dataFt);
+
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Chart 1: Domain Gap
+        function renderDomainGap(d32, d224) {
+            // Find matching models
+            const labels = d224.map(m => m.model_name);
+            const acc224 = d224.map(m => m.accuracy * 100);
+            const acc32 = labels.map(label => {
+                const found = d32.find(m => m.model_name === label);
+                return found ? (found.accuracy * 100) : 0;
+            });
+
+            new Chart(document.getElementById('domainGapChart'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Raw 32x32 Features', data: acc32, backgroundColor: '#94a3b8' },
+                        { label: 'Resized 224x224 Features', data: acc224, backgroundColor: '#0f766e' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { title: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Accuracy (%)' } } }
+                }
+            });
+        }
+
+        // Table: Pipeline Tournament
+        function renderPipelineTable(data) {
+            const tbody = document.getElementById('pipelineTableBody');
+            // Sort by accuracy descending
+            data.sort((a, b) => b.accuracy - a.accuracy);
+
+            data.forEach((p, index) => {
+                const isTop3 = index < 3;
+                const rowClass = isTop3 ? 'bg-teal-50/50' : 'hover:bg-slate-50';
+                const rankBadge = isTop3 ? `<span class="bg-teal-100 text-teal-800 text-xs font-bold px-2 py-1 rounded-full">#${index + 1}</span>` : `#${index + 1}`;
+
+                tbody.innerHTML += `
+          <tr class="${rowClass} transition-colors">
+            <td class="px-6 py-4">${rankBadge}</td>
+            <td class="px-6 py-4 font-medium text-slate-900">${p.pipeline}</td>
+            <td class="px-6 py-4 font-bold ${isTop3 ? 'text-teal-600' : 'text-slate-600'}">${(p.accuracy * 100).toFixed(2)}%</td>
+            <td class="px-6 py-4">${(p.macro_f1 * 100).toFixed(2)}%</td>
+            <td class="px-6 py-4">${p.train_time_s.toFixed(2)}s</td>
+          </tr>
+        `;
+            });
+        }
+
+        // Charts: Transfer Learning
+        function renderTransferLearning(data) {
+            const hist = data.history;
+            const epochs = Array.from({ length: data.epochs }, (_, i) => `Ep ${i + 1}`);
+
+            // 1. Learning Curves
+            new Chart(document.getElementById('learningCurvesChart'), {
+                type: 'line',
+                data: {
+                    labels: epochs,
+                    datasets: [
+                        { label: 'Train Acc', data: hist.train_acc.map(x => x * 100), borderColor: '#cbd5e1', borderDash: [5, 5], tension: 0.3 },
+                        { label: 'Val Acc', data: hist.val_acc.map(x => x * 100), borderColor: '#0f766e', borderWidth: 3, tension: 0.3 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // 2. Per-Class F1
+            const classLabels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            new Chart(document.getElementById('perClassF1Chart'), {
+                type: 'bar',
+                data: {
+                    labels: classLabels,
+                    datasets: [{
+                        label: 'F1 Score (%)',
+                        data: data.per_class_f1.map(x => x * 100),
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { min: 90, max: 100 } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // 3. HTML Confusion Matrix
+            const cmGrid = document.getElementById('cmGrid');
+            const maxVal = Math.max(...data.confusion_matrix.flat().filter((_, i) => i % 11 !== 0)); // Max error value for scaling
+
+            data.confusion_matrix.forEach((row, i) => {
+                row.forEach((val, j) => {
+                    const isDiagonal = i === j;
+                    let bgColor, textColor, title;
+
+                    if (isDiagonal) {
+                        bgColor = '#0f766e'; // Teal for correct
+                        textColor = 'text-white font-bold';
+                        title = `Actual ${i}, Pred ${j} (Correct)`;
+                    } else {
+                        // Calculate error intensity (red scale) based on value
+                        const intensity = val === 0 ? 0 : Math.max(0.1, val / maxVal);
+                        bgColor = val === 0 ? '#ffffff' : `rgba(220, 38, 38, ${intensity})`; // Red for errors
+                        textColor = intensity > 0.5 ? 'text-white' : 'text-slate-600';
+                        title = `Actual ${i}, Pred ${j} (Error: ${val})`;
+                    }
+
+                    cmGrid.innerHTML += `
+            <div class="aspect-square flex items-center justify-center rounded-sm text-xs ${textColor} cm-cell" 
+                 style="background-color: ${bgColor}" title="${title}">
+              ${val > 0 ? val : ''}
+            </div>
+          `;
+                });
+            });
+        }
+
+        // Chart: Final Summary (3-Act)
+        function renderSummaryChart(data224, dataFt) {
+            // Find best 224 model
+            const best224 = Math.max(...data224.map(m => m.accuracy));
+            // User's previous output for 32x32 baseline max was ~47.01% (MLP)
+            const best32 = 0.4701;
+
+            new Chart(document.getElementById('summaryChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Frozen ResNet (32x32)', 'Frozen ResNet (224x224)', 'Fine-Tuned ResNet-18'],
+                    datasets: [{
+                        data: [best32 * 100, best224 * 100, dataFt.final_accuracy * 100],
+                        backgroundColor: ['#94a3b8', '#3b82f6', '#0f766e'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Accuracy (%)' } } }
+                }
+            });
+        }
+
+        // Boot
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+
+</html>

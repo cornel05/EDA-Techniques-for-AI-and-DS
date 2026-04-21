@@ -1,0 +1,58 @@
+[
+  {
+    "rank": 0,
+    "pipeline": "ResNet18 -> None -> LR",
+    "accuracy": 0.6248079287031346,
+    "macro_f1": 0.6127202502504745,
+    "train_time_s": 45.21004605293274
+  },
+  {
+    "rank": 0,
+    "pipeline": "ResNet18 -> PCA-128 -> LR",
+    "accuracy": 0.5665334972341733,
+    "macro_f1": 0.5545342991719332,
+    "train_time_s": 1.4625370502471924
+  },
+  {
+    "rank": 0,
+    "pipeline": "ResNet18 -> PCA-128 -> SVM",
+    "accuracy": 0.5701060233558697,
+    "macro_f1": 0.551231145149099,
+    "train_time_s": 24.581136226654053
+  },
+  {
+    "rank": 0,
+    "pipeline": "ResNet18 -> PCA-128 -> RF",
+    "accuracy": 0.4489090350338045,
+    "macro_f1": 0.39131463224872043,
+    "train_time_s": 8.264143228530884
+  },
+  {
+    "rank": 0,
+    "pipeline": "MobileNetV2 -> None -> LR",
+    "accuracy": 0.5792102028272895,
+    "macro_f1": 0.5599908866655792,
+    "train_time_s": 62.82771825790405
+  },
+  {
+    "rank": 0,
+    "pipeline": "MobileNetV2 -> PCA-256 -> LR",
+    "accuracy": 0.5368776889981561,
+    "macro_f1": 0.5185456629410805,
+    "train_time_s": 3.4635519981384277
+  },
+  {
+    "rank": 0,
+    "pipeline": "Raw Pixels -> PCA-128 -> LR",
+    "accuracy": 0.16813921327596804,
+    "macro_f1": 0.15477687731608897,
+    "train_time_s": 4.65892481803894
+  },
+  {
+    "rank": 0,
+    "pipeline": "Raw Pixels -> PCA-128 -> SVM",
+    "accuracy": 0.19330055316533498,
+    "macro_f1": 0.16358275249239648,
+    "train_time_s": 38.82054114341736
+  }
+]

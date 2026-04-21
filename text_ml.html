@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text ML Analysis | P4AI-DS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .font-sora {
+            font-family: "Sora", sans-serif;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+    <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="font-sora text-xl font-bold tracking-tight text-teal-700">
+                        P4AI-DS <span class="text-slate-900">Project</span>
+                    </a>
+                </div>
+
+                <div class="flex items-center space-x-8 font-medium text-slate-600">
+                    <a href="index.html" class="hover:text-teal-600 transition">Home</a>
+
+                    <div class="group relative py-4">
+                        <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
+                            Assignment 1 (EDA) <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <div
+                            class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+                            <a href="tabular.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Tabular
+                                EDA</a>
+                            <a href="text.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Text
+                                EDA</a>
+                            <a href="image.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Image
+                                EDA</a>
+                            <a href="multimodal.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Multimodal
+                                EDA</a>
+                        </div>
+                    </div>
+
+                    <div class="group relative py-4">
+                        <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
+                            Assignment 2 (ML) <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <div
+                            class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+                            <a href="tabular_ml.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Tabular
+                                ML</a>
+                            <a href="text_ml.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Text
+                                ML</a>
+                            <a href="image_ml.html"
+                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Image
+                                ML</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <header class="bg-slate-900 text-white py-16">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="font-sora text-4xl sm:text-5xl font-extrabold mb-4">Text Classification</h1>
+            <p class="text-xl text-amber-400 font-medium mb-8">Stanford SQuAD Question Classification & NLP Pipelines
+            </p>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                    <div class="text-3xl font-bold text-white mb-1" id="statDocs">--</div>
+                    <div class="text-sm text-slate-400">Total Documents</div>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                    <div class="text-3xl font-bold text-white mb-1" id="statClasses">--</div>
+                    <div class="text-sm text-slate-400">Categories</div>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                    <div class="text-3xl font-bold text-amber-400 mb-1" id="statAccuracy">--%</div>
+                    <div class="text-sm text-slate-400">Best Accuracy</div>
+                </div>
+                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                    <div class="text-3xl font-bold text-white mb-1" id="statPipelines">--</div>
+                    <div class="text-sm text-slate-400">Pipelines Tested</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+        <section>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">
+                1. Feature Extraction Comparison</h2>
+            <div
+                class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-80 flex items-center justify-center">
+                <p class="text-slate-400">Teammate: Add a chart comparing TF-IDF vs. Bag of Words vs. Word Embeddings.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">
+                2. Transformer Fine-Tuning (Optional)</h2>
+            <div
+                class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-80 flex items-center justify-center">
+                <p class="text-slate-400">Teammate: If you fine-tuned BERT/DistilBERT, add the loss curves or
+                    performance metrics here.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">
+                3. Error Analysis & Confusion Matrix</h2>
+            <div
+                class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col items-center justify-center">
+                <p class="text-slate-400 mb-4">Teammate: Build out the HTML confusion matrix grid here, similar to the
+                    one in image_ml.html.</p>
+                <div id="cmGrid"
+                    class="w-full max-w-lg aspect-square bg-slate-50 border border-dashed border-slate-300 rounded-lg flex items-center justify-center">
+                    <span class="text-slate-400 text-sm">Matrix Placeholder</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm text-slate-500">
+            <p>&copy; 2026 P4AI-DS Group Assignment.</p>
+            <p>Built for Ho Chi Minh City University of Technology (HCMUT)</p>
+        </div>
+    </footer>
+
+    <script>
+        // Teammate: Add your fetch() logic here to load your JSON files and initialize Chart.js
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log("Text ML page loaded. Ready to fetch data.");
+        });
+    </script>
+</body>
+
+</html>

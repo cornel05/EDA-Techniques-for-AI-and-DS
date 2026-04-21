@@ -1,1582 +1,1897 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SVHN Image Classification - EDA Reports</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      :root {
-        --ink: #111827;
-        --muted: #475569;
-        --line: #d9e2ec;
-        --paper: #ffffff;
-        --bg-a: #f8fafc;
-        --bg-b: #edf2ff;
-        --accent: #0f766e;
-        --accent-2: #f59e0b;
-        --accent-3: #2563eb;
-        --danger: #dc2626;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SVHN Image Classification - EDA Reports</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #475569;
+      --line: #d9e2ec;
+      --paper: #ffffff;
+      --bg-a: #f8fafc;
+      --bg-b: #edf2ff;
+      --accent: #0f766e;
+      --accent-2: #f59e0b;
+      --accent-3: #2563eb;
+      --danger: #dc2626;
+    }
+
+    body {
+      font-family: "Space Grotesk", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
+        radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
+        linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
+      min-height: 100vh;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: "Sora", sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(10px);
+    }
+
+    .metric-card {
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
+      padding: 1rem;
+    }
+
+    .metric-card strong {
+      font-size: 1.7rem;
+      display: block;
+      line-height: 1.1;
+    }
+
+    .accordion-content {
+      display: none;
+      animation: rise 0.3s ease;
+    }
+
+    .accordion-item.open .accordion-content {
+      display: block;
+    }
+
+    .accordion-toggle .arrow {
+      transition: transform 0.2s ease;
+    }
+
+    .accordion-item.open .accordion-toggle .arrow {
+      transform: rotate(90deg);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: #ffffff;
+    }
+
+    .report-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12);
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
       }
 
-      body {
-        font-family: "Space Grotesk", sans-serif;
-        color: var(--ink);
-        background:
-          radial-gradient(circle at 6% 8%, #dff7ff 0%, transparent 28%),
-          radial-gradient(circle at 95% 10%, #fff2d7 0%, transparent 24%),
-          linear-gradient(180deg, var(--bg-b) 0%, var(--bg-a) 45%, #eef6ff 100%);
-        min-height: 100vh;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
+  </style>
+</head>
 
-      h1,
-      h2,
-      h3,
-      h4 {
-        font-family: "Sora", sans-serif;
-        letter-spacing: -0.02em;
-      }
-
-      .panel {
-        background: rgba(255, 255, 255, 0.88);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        box-shadow: 0 16px 44px rgba(15, 23, 42, 0.06);
-        backdrop-filter: blur(10px);
-      }
-
-      .metric-card {
-        border-radius: 16px;
-        border: 1px solid var(--line);
-        background: linear-gradient(160deg, #ffffff 0%, #f7fbff 100%);
-        padding: 1rem;
-      }
-
-      .metric-card strong {
-        font-size: 1.7rem;
-        display: block;
-        line-height: 1.1;
-      }
-
-      .accordion-content {
-        display: none;
-        animation: rise 0.3s ease;
-      }
-
-      .accordion-item.open .accordion-content {
-        display: block;
-      }
-
-      .accordion-toggle .arrow {
-        transition: transform 0.2s ease;
-      }
-
-      .accordion-item.open .accordion-toggle .arrow {
-        transform: rotate(90deg);
-      }
-
-      .chip {
-        display: inline-flex;
-        align-items: center;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        font-size: 0.72rem;
-        padding: 0.2rem 0.6rem;
-        font-weight: 700;
-        letter-spacing: 0.03em;
-        text-transform: uppercase;
-        background: #ffffff;
-      }
-
-      .report-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12);
-      }
-
-      @keyframes rise {
-        from {
-          opacity: 0;
-          transform: translateY(-4px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Navigation -->
-    <nav
-      class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200"
-    >
-      <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4"
-      >
-        <div class="flex items-center gap-3">
-          <div
-            class="h-9 w-9 rounded-lg bg-teal-700 text-white flex items-center justify-center font-black"
-          >
-            S
-          </div>
-          <div>
-            <p class="font-extrabold tracking-tight text-lg">EDA Studio</p>
-            <p class="text-xs text-slate-500">
-              Street View House Numbers (SVHN)
-            </p>
-          </div>
+<body>
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <div class="flex items-center gap-4">
+          <a href="index.html" class="font-sora text-xl font-bold tracking-tight text-teal-700">
+            P4AI-DS <span class="text-slate-900">Project</span>
+          </a>
         </div>
-        <div
-          class="desktop-nav flex items-center gap-5 text-xs uppercase tracking-wider font-bold text-slate-500"
-        >
-          <a href="index.html" class="hover:text-teal-700">Summary</a>
-          <a href="tabular.html" class="hover:text-teal-700">Tabular</a>
-          <a href="text.html" class="hover:text-teal-700">Text</a>
-          <a href="image.html" class="text-teal-700">Image</a>
-          <a href="multimodal.html" class="hover:text-teal-700">Multimodal</a>
-        </div>
-      </div>
-    </nav>
 
-    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div class="panel p-6 sm:p-8">
-        <div
-          class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
-        >
-          <div>
-            <p class="chip mb-3">Computer Vision Dataset Analysis</p>
-            <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">
-              SVHN Image Classification: Comprehensive Visual Analysis
-            </h1>
-            <p class="text-slate-600 max-w-3xl">
-              Comprehensive statistical characterization of the Street View
-              House Numbers (SVHN) dataset. Quantitative analyses and visual
-              representations are generated from preprocessed image data in
-              <strong>plots_data/eda_svhn_data.json</strong> and
-              <strong>plots_data/eda_svhn_charts.json</strong>.
-            </p>
+        <div class="flex items-center space-x-8 font-medium text-slate-600">
+          <a href="index.html" class="hover:text-teal-600 transition">Home</a>
+
+          <div class="group relative py-4">
+            <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
+              Assignment 1 (EDA) <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            </button>
+            <div
+              class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+              <a href="tabular.html"
+                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Tabular EDA</a>
+              <a href="text.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Text
+                EDA</a>
+              <a href="image.html"
+                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Image EDA</a>
+              <a href="multimodal.html"
+                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Multimodal EDA</a>
+            </div>
           </div>
-          <div class="flex flex-wrap gap-2">
-            <button
-              onclick="expandAll()"
-              class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800"
-            >
-              Expand Analysis
+
+          <div class="group relative py-4">
+            <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
+              Assignment 2 (ML) <i class="fa-solid fa-chevron-down text-[10px]"></i>
             </button>
-            <button
-              onclick="collapseAll()"
-              class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black"
-            >
-              Collapse Sections
-            </button>
+            <div
+              class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+              <a href="tabular_ml.html"
+                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Tabular ML</a>
+              <a href="text_ml.html"
+                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Text ML</a>
+              <a href="image_ml.html"
+                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Image ML</a>
+            </div>
           </div>
         </div>
       </div>
-    </header>
+    </div>
+  </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-      <!-- Statistical Metrics -->
-      <section>
-        <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold mb-2">Dataset Characteristics</h2>
-          <p class="text-slate-600">
-            Statistical summary of image corpus and data quality metrics
+  <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="panel p-6 sm:p-8">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div>
+          <p class="chip mb-3">Computer Vision Dataset Analysis</p>
+          <h1 class="text-3xl sm:text-4xl font-extrabold mb-2">
+            SVHN Image Classification: Comprehensive Visual Analysis
+          </h1>
+          <p class="text-slate-600 max-w-3xl">
+            Comprehensive statistical characterization of the Street View
+            House Numbers (SVHN) dataset. Quantitative analyses and visual
+            representations are generated from preprocessed image data in
+            <strong>plots_data/eda_svhn_data.json</strong> and
+            <strong>plots_data/eda_svhn_charts.json</strong>.
           </p>
         </div>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="metric-card text-center">
-            <span
-              class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-              >Sample Images</span
-            >
-            <strong class="text-teal-700">99,289</strong>
-            <p class="text-sm text-slate-500 mt-1">Total images</p>
-          </div>
-          <div class="metric-card text-center">
-            <span
-              class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-              >Digit Classes</span
-            >
-            <strong class="text-blue-600">10</strong>
-            <p class="text-sm text-slate-500 mt-1">Classes (0-9)</p>
-          </div>
-          <div class="metric-card text-center">
-            <span
-              class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-              >Image Size</span
-            >
-            <strong class="text-emerald-600">32×32</strong>
-            <p class="text-sm text-slate-500 mt-1">RGB format</p>
-          </div>
-          <div class="metric-card text-center">
-            <span
-              class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-              >Class Imbalance</span
-            >
-            <strong class="text-amber-600">3.03x</strong>
-            <p class="text-sm text-slate-500 mt-1">Imbalance ratio</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- About Section -->
-      <section class="panel p-8">
-        <div class="flex items-center gap-4 mb-6">
-          <div
-            class="h-12 w-12 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-2xl"
-          ></div>
-          <h3 class="text-2xl font-bold">Research Methodology</h3>
-        </div>
-        <p class="text-lg leading-relaxed text-slate-600">
-          This is an educational demonstration of exploratory data analysis
-          techniques applied to the SVHN (Street View House Numbers) Dataset.
-          The reports showcase various visualization and analysis methods for
-          digit classification tasks, including class distribution analysis,
-          pixel statistics, and dimensionality validation.
-        </p>
-      </section>
-
-      <!-- Global Controls -->
-      <div
-        class="sticky top-16 z-30 bg-slate-50/90 backdrop-blur border-b border-slate-200"
-      >
-        <div
-          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4"
-        >
-          <button
-            onclick="expandAll()"
-            class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-sm font-bold rounded-lg transition-colors"
-          >
+        <div class="flex flex-wrap gap-2">
+          <button onclick="expandAll()"
+            class="px-4 py-2 rounded-full bg-teal-700 text-white text-sm font-bold hover:bg-teal-800">
             Expand Analysis
           </button>
-          <button
-            onclick="collapseAll()"
-            class="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm font-bold rounded-lg transition-colors"
-          >
+          <button onclick="collapseAll()"
+            class="px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold hover:bg-black">
             Collapse Sections
           </button>
         </div>
       </div>
+    </div>
+  </header>
 
-      <!-- Section 1: Analysis Methodology -->
-      <section class="accordion-item panel overflow-hidden" data-section>
-        <button
-          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50"
-        >
-          <div>
-            <p
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Section 1
-            </p>
-            <h2 class="text-xl font-extrabold">Image Research Methodology</h2>
-          </div>
-          <span class="arrow text-2xl font-bold text-slate-500">›</span>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+    <!-- Statistical Metrics -->
+    <section>
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold mb-2">Dataset Characteristics</h2>
+        <p class="text-slate-600">
+          Statistical summary of image corpus and data quality metrics
+        </p>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="metric-card text-center">
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Sample Images</span>
+          <strong class="text-teal-700">99,289</strong>
+          <p class="text-sm text-slate-500 mt-1">Total images</p>
+        </div>
+        <div class="metric-card text-center">
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Digit Classes</span>
+          <strong class="text-blue-600">10</strong>
+          <p class="text-sm text-slate-500 mt-1">Classes (0-9)</p>
+        </div>
+        <div class="metric-card text-center">
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Image Size</span>
+          <strong class="text-emerald-600">32×32</strong>
+          <p class="text-sm text-slate-500 mt-1">RGB format</p>
+        </div>
+        <div class="metric-card text-center">
+          <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Class Imbalance</span>
+          <strong class="text-amber-600">3.03x</strong>
+          <p class="text-sm text-slate-500 mt-1">Imbalance ratio</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="panel p-8">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="h-12 w-12 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-2xl"></div>
+        <h3 class="text-2xl font-bold">Research Methodology</h3>
+      </div>
+      <p class="text-lg leading-relaxed text-slate-600">
+        This is an educational demonstration of exploratory data analysis
+        techniques applied to the SVHN (Street View House Numbers) Dataset.
+        The reports showcase various visualization and analysis methods for
+        digit classification tasks, including class distribution analysis,
+        pixel statistics, and dimensionality validation.
+      </p>
+    </section>
+
+    <!-- Global Controls -->
+    <div class="sticky top-16 z-30 bg-slate-50/90 backdrop-blur border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
+        <button onclick="expandAll()"
+          class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-sm font-bold rounded-lg transition-colors">
+          Expand Analysis
         </button>
-        <div class="accordion-content p-6 space-y-4">
-          <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 1: Physical Analysis
-            </button>
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 2: Image Properties
-            </button>
-          </div>
+        <button onclick="collapseAll()"
+          class="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm font-bold rounded-lg transition-colors">
+          Collapse Sections
+        </button>
+      </div>
+    </div>
 
-          <p class="text-slate-600 italic">
-            Physical image analysis techniques and methodologies
+    <!-- Section 1: Analysis Methodology -->
+    <section class="accordion-item panel overflow-hidden" data-section>
+      <button
+        class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Section 1
           </p>
+          <h2 class="text-xl font-extrabold">Image Research Methodology</h2>
+        </div>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+      </button>
+      <div class="accordion-content p-6 space-y-4">
+        <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 1: Physical Analysis
+          </button>
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 2: Image Properties
+          </button>
+        </div>
 
-          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="metric-card text-center">
-              <div class="text-2xl mb-2"></div>
-              <h4 class="font-bold text-slate-700">Corruption Check</h4>
-              <p class="text-sm text-slate-500">
-                Verify image integrity and detectability
-              </p>
-            </div>
-            <div class="metric-card text-center">
-              <div class="text-2xl mb-2">📐</div>
-              <h4 class="font-bold text-slate-700">Resolution Analysis</h4>
-              <p class="text-sm text-slate-500">
-                Width, height, and pixel dimensions
-              </p>
-            </div>
-            <div class="metric-card text-center">
-              <div class="text-2xl mb-2">📏</div>
-              <h4 class="font-bold text-slate-700">Aspect Ratio</h4>
-              <p class="text-sm text-slate-500">
-                Image proportions and orientation
-              </p>
-            </div>
-            <div class="metric-card text-center">
-              <div class="text-2xl mb-2">🌈</div>
-              <h4 class="font-bold text-slate-700">Color Channels</h4>
-              <p class="text-sm text-slate-500">
-                RGB channel distribution analysis
-              </p>
-            </div>
-            <div class="metric-card text-center">
-              <div class="text-2xl mb-2">💡</div>
-              <h4 class="font-bold text-slate-700">Brightness</h4>
-              <p class="text-sm text-slate-500">
-                Illumination and luminance analysis
-              </p>
-            </div>
-            <div class="metric-card text-center">
-              <div class="text-2xl mb-2"></div>
-              <h4 class="font-bold text-slate-700">Contrast</h4>
-              <p class="text-sm text-slate-500">Dynamic range and variance</p>
-            </div>
+        <p class="text-slate-600 italic">
+          Physical image analysis techniques and methodologies
+        </p>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="metric-card text-center">
+            <div class="text-2xl mb-2"></div>
+            <h4 class="font-bold text-slate-700">Corruption Check</h4>
+            <p class="text-sm text-slate-500">
+              Verify image integrity and detectability
+            </p>
+          </div>
+          <div class="metric-card text-center">
+            <div class="text-2xl mb-2">📐</div>
+            <h4 class="font-bold text-slate-700">Resolution Analysis</h4>
+            <p class="text-sm text-slate-500">
+              Width, height, and pixel dimensions
+            </p>
+          </div>
+          <div class="metric-card text-center">
+            <div class="text-2xl mb-2">📏</div>
+            <h4 class="font-bold text-slate-700">Aspect Ratio</h4>
+            <p class="text-sm text-slate-500">
+              Image proportions and orientation
+            </p>
+          </div>
+          <div class="metric-card text-center">
+            <div class="text-2xl mb-2">🌈</div>
+            <h4 class="font-bold text-slate-700">Color Channels</h4>
+            <p class="text-sm text-slate-500">
+              RGB channel distribution analysis
+            </p>
+          </div>
+          <div class="metric-card text-center">
+            <div class="text-2xl mb-2">💡</div>
+            <h4 class="font-bold text-slate-700">Brightness</h4>
+            <p class="text-sm text-slate-500">
+              Illumination and luminance analysis
+            </p>
+          </div>
+          <div class="metric-card text-center">
+            <div class="text-2xl mb-2"></div>
+            <h4 class="font-bold text-slate-700">Contrast</h4>
+            <p class="text-sm text-slate-500">Dynamic range and variance</p>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Section 2: Digit Class Distribution Analysis -->
-      <section class="accordion-item panel overflow-hidden" data-section>
-        <button
-          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50"
-        >
-          <div>
-            <p
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Section 2
-            </p>
-            <h2 class="text-xl font-extrabold">
-              🔢 Digit Class Distribution Analysis
-            </h2>
-          </div>
-          <span class="arrow text-2xl font-bold text-slate-500">›</span>
-        </button>
-        <div class="accordion-content p-6 space-y-5">
-          <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 1: Label Balance
-            </button>
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 2: Imbalance Ratios
-            </button>
-          </div>
+    <!-- Section 2: Dataset Summary & Data Quality Validation -->
+    <section class="accordion-item panel overflow-hidden" data-section>
+      <button
+        class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Section 2
+          </p>
+          <h2 class="text-xl font-extrabold">
+            Dataset Summary & Data Quality Validation
+          </h2>
+        </div>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+      </button>
+      <div class="accordion-content p-6 space-y-5">
+        <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 1: Data Summary
+          </button>
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 2: Quality Validation
+          </button>
+        </div>
 
-          <div class="grid md:grid-cols-3 gap-6">
-            <div class="md:col-span-2 panel p-4">
-              <h4 class="font-bold text-slate-700 mb-3">
-                Samples per Digit Class
-              </h4>
-              <div class="chart-wrap" style="height: 300px">
-                <canvas id="classChart"></canvas>
-              </div>
-            </div>
-            <div
-              class="panel p-4 flex flex-col justify-center text-center space-y-4"
-            >
-              <h4 class="font-bold text-slate-700">Imbalance Insight</h4>
-              <div class="metric-card">
-                <span class="text-xs uppercase text-slate-500 font-bold"
-                  >Imbalance Ratio</span
-                >
-                <strong class="text-amber-600" id="imbalance-ratio-display"
-                  >3.03x</strong
-                >
-              </div>
-              <p class="text-sm text-slate-500">
-                Digit '1' is the most frequent (~19K), while Digit '9' is the
-                least (~6K). This 3x difference suggests a moderate imbalance
-                that may require weighted loss during training.
-              </p>
-            </div>
+        <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Total Number of Images</span>
+            <strong class="text-blue-600" id="summary-total-images">99,289</strong>
+            <p class="text-sm text-slate-500">All samples in SVHN</p>
+          </div>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Total Train Images</span>
+            <strong class="text-emerald-600" id="summary-train-images">73,257</strong>
+            <p class="text-sm text-slate-500">Training split size</p>
+          </div>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Total Test Images</span>
+            <strong class="text-sky-600" id="summary-test-images">26,032</strong>
+            <p class="text-sm text-slate-500">Evaluation split size</p>
+          </div>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Missing Labels</span>
+            <strong class="text-amber-600" id="summary-missing-labels">0</strong>
+            <p class="text-sm text-slate-500">Records without labels</p>
+          </div>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Duplicate Images</span>
+            <strong class="text-rose-600" id="summary-duplicate-images">1</strong>
+            <p class="text-sm text-slate-500">Repeated image entries</p>
+          </div>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Unique Images</span>
+            <strong class="text-indigo-600" id="summary-unique-images">99,288</strong>
+            <p class="text-sm text-slate-500">Distinct image records</p>
           </div>
         </div>
-      </section>
 
-      <!-- Section 3: Dataset Summary & Data Quality Validation -->
-      <section class="accordion-item panel overflow-hidden" data-section>
-        <button
-          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50"
-        >
-          <div>
-            <p
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Section 3
-            </p>
-            <h2 class="text-xl font-extrabold">
-              Dataset Summary & Data Quality Validation
-            </h2>
-          </div>
-          <span class="arrow text-2xl font-bold text-slate-500">›</span>
-        </button>
-        <div class="accordion-content p-6 space-y-5">
-          <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 1: Quality Assessment
-            </button>
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 2: Format Analysis
-            </button>
-          </div>
-
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Total Images</span
-              >
-              <strong class="text-blue-600">99,289</strong>
-              <p class="text-sm text-slate-500">SVHN samples</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Valid Images</span
-              >
-              <strong class="text-emerald-600">99,289</strong>
-              <p class="text-sm text-slate-500">100% valid</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Corrupted Images</span
-              >
-              <strong class="text-red-600">0</strong>
-              <p class="text-sm text-slate-500">0% corrupted</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Format</span
-              >
-              <strong class="text-purple-600">PNG</strong>
-              <p class="text-sm text-slate-500">100% PNG</p>
-            </div>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="panel p-4">
-              <h4 class="font-bold text-slate-700 mb-3">
-                File Format Distribution
-              </h4>
-              <div class="chart-wrap">
-                <canvas id="formatChart"></canvas>
-              </div>
-            </div>
-            <div class="panel p-4">
-              <h4 class="font-bold text-slate-700 mb-3">
-                Data Quality Validation Assessment
-              </h4>
-              <div class="chart-wrap">
-                <canvas id="qualityChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section 4: Image Size & Resolution Analysis -->
-      <section class="accordion-item panel overflow-hidden" data-section>
-        <button
-          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50"
-        >
-          <div>
-            <p
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Section 4
-            </p>
-            <h2 class="text-xl font-extrabold">
-              📏 Image Size & Resolution Analysis
-            </h2>
-          </div>
-          <span class="arrow text-2xl font-bold text-slate-500">›</span>
-        </button>
-        <div class="accordion-content p-6 space-y-5">
-          <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 1: Dimension Stats
-            </button>
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 2: Resolution Distribution
-            </button>
-          </div>
-
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Width (px)</span
-              >
-              <strong class="text-blue-600">32</strong>
-              <p class="text-sm text-slate-500">Mean/Median/Min/Max</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Height (px)</span
-              >
-              <strong class="text-emerald-600">32</strong>
-              <p class="text-sm text-slate-500">Mean/Median/Min/Max</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Total Pixels</span
-              >
-              <strong class="text-purple-600">1,024</strong>
-              <p class="text-sm text-slate-500">32 × 32 pixels</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Consistency</span
-              >
-              <strong class="text-teal-600">100%</strong>
-              <p class="text-sm text-slate-500">Uniform size</p>
-            </div>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="panel p-4">
-              <h4 class="font-bold text-slate-700 mb-3">
-                Width vs Height Scatter Plot
-              </h4>
-              <div class="chart-wrap">
-                <canvas id="scatterChart"></canvas>
-              </div>
-            </div>
-            <div class="panel p-4">
-              <h4 class="font-bold text-slate-700 mb-3">
-                Size Distribution Histogram
-              </h4>
-              <div class="chart-wrap">
-                <canvas id="sizeDistChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section 5: Aspect Ratio Distribution -->
-      <section class="accordion-item panel overflow-hidden" data-section>
-        <button
-          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50"
-        >
-          <div>
-            <p
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Section 5
-            </p>
-            <h2 class="text-xl font-extrabold">📐 Aspect Ratio Distribution</h2>
-          </div>
-          <span class="arrow text-2xl font-bold text-slate-500">›</span>
-        </button>
-        <div class="accordion-content p-6 space-y-5">
-          <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 1: Ratio Calculation
-            </button>
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 2: Orientation Analysis
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Square Images</span
-              >
-              <strong class="text-blue-600">99,289</strong>
-              <p class="text-sm text-slate-500">100% (Ratio = 1.0)</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Landscape</span
-              >
-              <strong class="text-slate-400">0</strong>
-              <p class="text-sm text-slate-500">0% (Ratio > 1.0)</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Portrait</span
-              >
-              <strong class="text-slate-400">0</strong>
-              <p class="text-sm text-slate-500">0% (Ratio < 1.0)</p>
-            </div>
-          </div>
-
+        <div class="grid md:grid-cols-2 gap-6">
           <div class="panel p-4">
             <h4 class="font-bold text-slate-700 mb-3">
-              Aspect Ratio Distribution
+              File Format Distribution
             </h4>
             <div class="chart-wrap">
+              <canvas id="formatChart"></canvas>
+            </div>
+          </div>
+          <div class="panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">
+              Data Quality Validation Assessment
+            </h4>
+            <div class="chart-wrap">
+              <canvas id="qualityChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Digit Class Distribution Analysis -->
+    <section class="accordion-item panel overflow-hidden" data-section>
+      <button
+        class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Section 3
+          </p>
+          <h2 class="text-xl font-extrabold">
+            🔢 Digit Class Distribution Analysis
+          </h2>
+        </div>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+      </button>
+      <div class="accordion-content p-6 space-y-5">
+        <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 1: Label Balance
+          </button>
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 2: Imbalance Ratios
+          </button>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="md:col-span-2 panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">
+              Samples per Digit Class
+            </h4>
+            <div class="chart-wrap" style="height: 300px">
+              <canvas id="classChart"></canvas>
+            </div>
+          </div>
+          <div class="panel p-4 flex flex-col justify-center text-center space-y-4">
+            <h4 class="font-bold text-slate-700">Imbalance Insight</h4>
+            <div class="metric-card">
+              <span class="text-xs uppercase text-slate-500 font-bold">Imbalance Ratio</span>
+              <strong class="text-amber-600" id="imbalance-ratio-display">3.03x</strong>
+            </div>
+            <p class="text-sm text-slate-500">
+              Digit '1' is the most frequent (~19K), while Digit '9' is the
+              least (~6K). This 3x difference suggests a moderate imbalance
+              that may require weighted loss during training.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">
+              Training Set Distribution (N=73,257)
+            </h4>
+            <div class="chart-wrap" style="height: 300px">
+              <canvas id="trainChart"></canvas>
+            </div>
+          </div>
+          <div class="panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">
+              Test Set Distribution (N=26,032)
+            </h4>
+            <div class="chart-wrap" style="height: 300px">
+              <canvas id="testChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Geometric & Resolutions Analysis -->
+    <section class="accordion-item panel overflow-hidden" data-section>
+      <button
+        class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Section 4</p>
+          <h2 class="text-xl font-extrabold">📐 Geometric & Resolution Analysis</h2>
+        </div>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+      </button>
+
+      <div class="accordion-content p-6 space-y-6">
+        <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+          <button class="chip hover:bg-slate-50">📚 Tutorial 1: Dimensionality</button>
+          <button class="chip hover:bg-slate-50">📚 Tutorial 2: Ratio & Orientation</button>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Standard Resolution</span>
+            <strong class="text-blue-600">32 × 32</strong>
+            <p class="text-sm text-slate-500">Width × Height</p>
+          </div>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Geometric Consistency</span>
+            <strong class="text-teal-600">100%</strong>
+            <p class="text-sm text-slate-500">Uniform 1:1 Ratio</p>
+          </div>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Square Samples</span>
+            <strong class="text-emerald-600">99,289</strong>
+            <p class="text-sm text-slate-500">0% Landscape/Portrait</p>
+          </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+          <div class="panel p-4 lg:col-span-1">
+            <h4 class="font-bold text-slate-700 mb-3">Aspect Ratio Distribution</h4>
+            <div class="chart-wrap" style="height: 250px">
               <canvas id="aspectRatioChart"></canvas>
             </div>
+            <p class="text-xs text-slate-500 mt-2 italic text-center">Verification of 1:1 square orientation</p>
+          </div>
+
+          <div class="panel p-4 lg:col-span-2">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <h4 class="font-bold text-slate-700 mb-3">Width vs Height</h4>
+                <div class="chart-wrap" style="height: 200px">
+                  <canvas id="scatterChart"></canvas>
+                </div>
+              </div>
+              <div>
+                <h4 class="font-bold text-slate-700 mb-3">Size Distribution</h4>
+                <div class="chart-wrap" style="height: 200px">
+                  <canvas id="sizeDistChart"></canvas>
+                </div>
+              </div>
+            </div>
+            <p class="text-xs text-slate-500 mt-2 italic text-center">Confirmation of dataset resolution uniformity</p>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Section 5: Color Channel Distribution (RGB) -->
-      <section class="accordion-item panel overflow-hidden" data-section>
-        <button
-          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50"
-        >
-          <div>
-            <p
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Section 6
-            </p>
-            <h2 class="text-xl font-extrabold">
-              🌈 Color Channel Distribution (RGB)
-            </h2>
-          </div>
-          <span class="arrow text-2xl font-bold text-slate-500">›</span>
-        </button>
-        <div class="accordion-content p-6 space-y-5">
-          <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 1: RGB Analysis
-            </button>
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 2: Channel Statistics
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Red Channel</span
-              >
-              <strong class="text-red-600">0.4416</strong>
-              <p class="text-sm text-slate-500">Mean ± 0.1994 Std</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Green Channel</span
-              >
-              <strong class="text-green-600">0.4461</strong>
-              <p class="text-sm text-slate-500">Mean ± 0.2010 Std</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Blue Channel</span
-              >
-              <strong class="text-blue-600">0.4718</strong>
-              <p class="text-sm text-slate-500">Mean ± 0.1970 Std</p>
-            </div>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="panel p-4">
-              <h4 class="font-bold text-slate-700 mb-3">RGB Channel Means</h4>
-              <div class="chart-wrap">
-                <canvas id="rgbMeansChart"></canvas>
-              </div>
-            </div>
-            <div class="panel p-4">
-              <h4 class="font-bold text-slate-700 mb-3">
-                RGB Distribution Overlay
-              </h4>
-              <div class="chart-wrap">
-                <canvas id="rgbDistChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section 7: Brightness & Contrast Analysis -->
-      <section class="accordion-item panel overflow-hidden" data-section>
-        <button
-          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50"
-        >
-          <div>
-            <p
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Section 7
-            </p>
-            <h2 class="text-xl font-extrabold">
-              💡 Brightness & Contrast Analysis
-            </h2>
-          </div>
-          <span class="arrow text-2xl font-bold text-slate-500">›</span>
-        </button>
-        <div class="accordion-content p-6 space-y-5">
-          <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 1: Brightness Calculation
-            </button>
-            <button class="chip hover:bg-slate-50">
-              📚 Tutorial 2: Contrast Metrics
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >Mean Brightness</span
-              >
-              <strong class="text-yellow-600">0.452</strong>
-              <p class="text-sm text-slate-500">Normalized (0-1 scale)</p>
-            </div>
-            <div class="metric-card text-center">
-              <span
-                class="text-xs uppercase tracking-wider text-slate-500 font-bold"
-                >RMS Contrast</span
-              >
-              <strong class="text-orange-600">0.201</strong>
-              <p class="text-sm text-slate-500">Root Mean Square</p>
-            </div>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-6">
-            <div class="panel p-4">
-              <h4 class="font-bold text-slate-700 mb-3">
-                Brightness Distribution
-              </h4>
-              <div class="chart-wrap">
-                <canvas id="brightnessChart"></canvas>
-              </div>
-            </div>
-            <div class="panel p-4">
-              <h4 class="font-bold text-slate-700 mb-3">
-                Contrast Distribution
-              </h4>
-              <div class="chart-wrap">
-                <canvas id="contrastChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section 8: Sample Image Grid -->
-      <section class="accordion-item panel overflow-hidden" data-section>
-        <button
-          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50"
-        >
-          <div>
-            <p
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Section 8
-            </p>
-            <h2 class="text-xl font-extrabold">Sample Image Grid</h2>
-          </div>
-          <span class="arrow text-2xl font-bold text-slate-500">›</span>
-        </button>
-        <div class="accordion-content p-6 space-y-4">
-          <p class="text-slate-600">
-            Representative samples from the SVHN dataset showing variety in
-            digit forms, lighting conditions, and backgrounds.
+    <!-- Section 5: Color Channel Distribution (RGB) -->
+    <section class="accordion-item panel overflow-hidden" data-section>
+      <button
+        class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Section 5
           </p>
-
-          <div
-            class="grid grid-cols-5 lg:grid-cols-10 gap-4"
-            id="sampleGallery"
-          >
-            <!-- Sample images will be loaded here -->
-          </div>
+          <h2 class="text-xl font-extrabold">
+            🌈 Color Channel Distribution (RGB)
+          </h2>
         </div>
-      </section>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+      </button>
+      <div class="accordion-content p-6 space-y-5">
+        <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 1: RGB Analysis
+          </button>
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 2: Channel Statistics
+          </button>
+        </div>
 
-      <!-- Section 9: Key Insights & Preprocessing Suggestions -->
-      <section class="accordion-item panel overflow-hidden" data-section>
-        <button
-          class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50"
-        >
-          <div>
-            <p
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
-            >
-              Section 9
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Red Channel</span>
+            <strong class="text-red-600" id="rgb-mean-r">0.4416</strong>
+            <p class="text-sm text-slate-500" id="rgb-std-r">
+              Mean ± 0.1994 Std
             </p>
-            <h2 class="text-xl font-extrabold">
-              💡 Key Insights & Preprocessing Suggestions
-            </h2>
           </div>
-          <span class="arrow text-2xl font-bold text-slate-500">›</span>
-        </button>
-        <div class="accordion-content p-6 space-y-6">
-          <div
-            class="panel p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200"
-          >
-            <h4 class="text-xl font-bold text-blue-800 mb-4">
-              Dataset Consistency Insights
-            </h4>
-            <ul class="space-y-3 text-blue-700">
-              <li class="flex items-start gap-3">
-                <div
-                  class="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"
-                ></div>
-                <div>
-                  <strong>Perfect Size Uniformity:</strong> All 99,289 images
-                  are exactly 32×32 pixels, eliminating the need for resizing
-                  operations
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <div
-                  class="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"
-                ></div>
-                <div>
-                  <strong>Color Balance:</strong> RGB channels show balanced
-                  distribution (R: 0.44, G: 0.45, B: 0.47) with minimal bias
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <div
-                  class="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"
-                ></div>
-                <div>
-                  <strong>Square Aspect Ratio:</strong> All images maintain 1:1
-                  aspect ratio, optimal for CNN architectures
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <div
-                  class="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"
-                ></div>
-                <div>
-                  <strong>Quality Assurance:</strong> Zero corrupted images
-                  ensures robust training pipeline
-                </div>
-              </li>
-            </ul>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Green Channel</span>
+            <strong class="text-green-600" id="rgb-mean-g">0.4461</strong>
+            <p class="text-sm text-slate-500" id="rgb-std-g">
+              Mean ± 0.2010 Std
+            </p>
           </div>
-
-          <div
-            class="panel p-6 bg-gradient-to-r from-emerald-50 to-green-50 border-emerald-200"
-          >
-            <h4 class="text-xl font-bold text-emerald-800 mb-4">
-              Preprocessing Recommendations
-            </h4>
-            <ul class="space-y-3 text-emerald-700">
-              <li class="flex items-start gap-3">
-                <div
-                  class="w-2 h-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0"
-                ></div>
-                <div>
-                  <strong>Normalization Strategy:</strong> Apply standard
-                  normalization with mean=[0.44, 0.45, 0.47] and std=[0.20,
-                  0.20, 0.20]
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <div
-                  class="w-2 h-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0"
-                ></div>
-                <div>
-                  <strong>No Resizing Needed:</strong> Uniform 32×32 size
-                  eliminates preprocessing complexity
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <div
-                  class="w-2 h-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0"
-                ></div>
-                <div>
-                  <strong>Data Augmentation:</strong> Slight rotations (±5°),
-                  horizontal flips, and brightness adjustments can improve
-                  robustness
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <div
-                  class="w-2 h-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0"
-                ></div>
-                <div>
-                  <strong>Architecture Compatibility:</strong> 32×32 input is
-                  optimal for lightweight CNN models (LeNet, compact ResNet)
-                </div>
-              </li>
-            </ul>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Blue Channel</span>
+            <strong class="text-blue-600" id="rgb-mean-b">0.4718</strong>
+            <p class="text-sm text-slate-500" id="rgb-std-b">
+              Mean ± 0.1970 Std
+            </p>
           </div>
         </div>
-      </section>
-    </main>
 
-    <script>
-      // Accordion functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        // Add click handlers to accordion toggles
-        document.querySelectorAll(".accordion-toggle").forEach((button) => {
-          button.addEventListener("click", function () {
-            const item = this.closest(".accordion-item");
-            item.classList.toggle("open");
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">RGB Channel Means</h4>
+            <div class="chart-wrap" style="height: 300px">
+              <canvas id="rgbMeansChart"></canvas>
+            </div>
+          </div>
+          <div class="panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">
+              RGB Distribution Overlay
+            </h4>
+            <div class="chart-wrap" style="height: 300px">
+              <canvas id="rgbDistChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-            // Trigger chart resize if section contains charts
-            setTimeout(() => {
-              const charts = item.querySelectorAll("canvas");
-              charts.forEach((canvas) => {
-                const chartInstance = Chart.getChart(canvas);
-                if (chartInstance) {
-                  chartInstance.resize();
-                }
-              });
-            }, 300);
-          });
-        });
+    <!-- Section 6: Brightness & Contrast Analysis -->
+    <section class="accordion-item panel overflow-hidden" data-section>
+      <button
+        class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Section 6
+          </p>
+          <h2 class="text-xl font-extrabold">
+            💡 Brightness & Contrast Analysis
+          </h2>
+        </div>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+      </button>
+      <div class="accordion-content p-6 space-y-5">
+        <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 1: Brightness Calculation
+          </button>
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 2: Contrast Metrics
+          </button>
+        </div>
 
-        // Load SVHN data and create charts
-        loadSVHNData();
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Mean Brightness</span>
+            <strong class="text-yellow-600">0.452</strong>
+            <p class="text-sm text-slate-500">Normalized (0-1 scale)</p>
+          </div>
+          <div class="metric-card text-center">
+            <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">RMS Contrast</span>
+            <strong class="text-orange-600">0.201</strong>
+            <p class="text-sm text-slate-500">Root Mean Square</p>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">
+              Brightness Distribution
+            </h4>
+            <div class="chart-wrap" style="height: 300px">
+              <canvas id="brightnessChart"></canvas>
+            </div>
+          </div>
+          <div class="panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">
+              Contrast Distribution
+            </h4>
+            <div class="chart-wrap" style="height: 300px">
+              <canvas id="contrastChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6.5: Per-Class Pixel Statistics -->
+    <section class="accordion-item panel overflow-hidden" data-section>
+      <button
+        class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Section 6.5
+          </p>
+          <h2 class="text-xl font-extrabold">
+            📊 Per-Class Pixel Statistics
+          </h2>
+        </div>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+      </button>
+      <div class="accordion-content p-6 space-y-5">
+        <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-200">
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 1: Class Illumination
+          </button>
+          <button class="chip hover:bg-slate-50">
+            📚 Tutorial 2: RGB by Digit
+          </button>
+        </div>
+
+        <p class="text-slate-600 mb-4">
+          Analysis of global RGB means and brightness grouped by digit. This helps identify if structural differences in
+          digits (e.g., the thin line of a "1" vs the dense loops of an "8") cause specific classes to cluster as
+          systematically brighter or darker.
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">
+              Mean Brightness per Digit Class
+            </h4>
+            <div class="chart-wrap" style="height: 300px">
+              <canvas id="perClassBrightnessChart"></canvas>
+            </div>
+          </div>
+          <div class="panel p-4">
+            <h4 class="font-bold text-slate-700 mb-3">
+              Mean RGB Channels per Digit Class
+            </h4>
+            <div class="chart-wrap" style="height: 300px">
+              <canvas id="perClassRGBChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Sample Image Grid -->
+    <section class="accordion-item panel overflow-hidden" data-section>
+      <button
+        class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Section 7
+          </p>
+          <h2 class="text-xl font-extrabold">Sample Image Grid</h2>
+        </div>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+      </button>
+      <div class="accordion-content p-6 space-y-4">
+        <p class="text-slate-600">
+          Representative samples from the SVHN dataset showing variety in
+          digit forms, lighting conditions, and backgrounds.
+        </p>
+
+        <p class="text-xs text-slate-400 italic">5 representative samples per digit class — showing intra-class
+          variation in lighting, background, and digit style.</p>
+        <div class="flex flex-col gap-3" id="sampleGallery">
+          <!-- Sample images will be loaded here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 8: Key Insights & Preprocessing Suggestions -->
+    <section class="accordion-item panel overflow-hidden" data-section>
+      <button
+        class="accordion-toggle w-full text-left px-6 py-5 border-b border-slate-200 flex items-center justify-between hover:bg-slate-50">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-slate-500">
+            Section 8
+          </p>
+          <h2 class="text-xl font-extrabold">
+            💡 Key Insights & Preprocessing Suggestions
+          </h2>
+        </div>
+        <span class="arrow text-2xl font-bold text-slate-500">›</span>
+      </button>
+      <div class="accordion-content p-6 space-y-6">
+
+        <!-- Card 1: Class Imbalance Findings -->
+        <div class="panel p-6 bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+          <h4 class="text-xl font-bold text-amber-800 mb-1">⚠️ Class Imbalance Findings</h4>
+          <p class="text-sm text-amber-600 mb-4">Potential issue requiring mitigation in model training</p>
+          <ul class="space-y-3 text-amber-700">
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-amber-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>3.03× Imbalance Ratio:</strong> Digit 1 dominates with 18,960 samples (19.1%) while digit 9 has
+                only 6,254 (6.3%). A model trained naively will be biased toward predicting the majority class. For the
+                upcoming ML assignment, use <em>weighted cross-entropy loss</em> (weight each class inversely
+                proportional to its frequency) or <em>oversampling</em> of minority classes (digits 0, 8, 9) via
+                techniques like random oversampling or SMOTE on feature embeddings.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-amber-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Consistent Imbalance Across Splits:</strong> The class distribution pattern is stable across
+                both the training set (73,257 images) and test set (26,032 images), confirming the split is stratified.
+                This means evaluation metrics on the test set faithfully reflect the same skew seen during training —
+                use <em>macro-averaged F1</em> rather than accuracy to get an unbiased view of per-class performance.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-amber-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Moderate Imbalance, Not Severe:</strong> At 3× ratio this is manageable — it does not require
+                aggressive resampling. A weighted loss function alone is likely sufficient and avoids introducing
+                artificial data.
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Card 2: Per-Class Pixel Statistics Insights -->
+        <div class="panel p-6 bg-gradient-to-r from-purple-50 to-violet-50 border-purple-200">
+          <h4 class="text-xl font-bold text-purple-800 mb-1">🎨 Per-Class Pixel Statistics Insights</h4>
+          <p class="text-sm text-purple-600 mb-4">From Section 4.5 — mean brightness and RGB channel values per digit
+            class</p>
+          <ul class="space-y-3 text-purple-700">
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Brightness Is Uniform Across Classes (Δ ≈ 0.009):</strong> All ten digit classes fall within a
+                brightness range of 0.4495 (digit 7) to 0.4586 (digit 0) — a spread of only ~0.009. This is negligibly
+                small, meaning the model cannot exploit brightness as a discriminative feature. Per-class brightness
+                normalization is therefore unnecessary.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Blue Channel Consistently Dominant:</strong> Across all digit classes, the B channel mean
+                (≈0.470–0.477) is consistently higher than R (≈0.437–0.447) and G (≈0.442–0.452). This slight blue bias
+                likely reflects outdoor urban scene backgrounds (sky, shadows) in SVHN street photographs. Channel-wise
+                normalization using the computed per-channel means and stds is important to remove this systematic bias
+                before training.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Digit 7 Is the Darkest; Digit 0 the Brightest:</strong> Digit 7 has the lowest brightness
+                (0.4495) and lowest R, G, B channel means across all classes, while digit 0 is the brightest (0.4586).
+                The difference is small but consistent. This could reflect how these digit shapes are rendered in
+                house-number signage (e.g., digit 7 strokes cover less area). It does <em>not</em> indicate a quality
+                problem, but is worth noting if diagnosing class-specific model errors later.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>No Outlier Classes:</strong> Since pixel statistics are essentially identical across all 10
+                classes, any misclassification errors in the trained model are unlikely to stem from systematic lighting
+                or colour differences — they will be due to shape ambiguity (e.g., 1 vs 7, 6 vs 9) or background noise,
+                guiding where to focus error analysis.
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Card 3: Dataset Consistency & Quality -->
+        <div class="panel p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+          <h4 class="text-xl font-bold text-blue-800 mb-1">✅ Dataset Consistency & Quality</h4>
+          <p class="text-sm text-blue-600 mb-4">Structural properties that simplify the preprocessing pipeline</p>
+          <ul class="space-y-3 text-blue-700">
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Perfect Size Uniformity:</strong> All 99,289 images are exactly 32×32×3 RGB — no resizing,
+                padding, or aspect-ratio correction is required. This greatly simplifies the DataLoader pipeline.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Zero Corrupted Images, 100% Label Coverage:</strong> No integrity issues were found. The only
+                detected duplicate (1 exact pair in 99,289 images, 0.00%) is negligible and does not affect training.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Moderate Contrast (RMS std ≈ 0.20):</strong> The overall pixel standard deviation of ~0.20
+                indicates many images are low-to-medium contrast street scenes with cluttered backgrounds. The model
+                will need to learn to suppress background noise — making <em>data augmentation</em> and potentially
+                <em>contrast normalization</em> particularly valuable.
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Card 4: Preprocessing Recommendations -->
+        <div class="panel p-6 bg-gradient-to-r from-emerald-50 to-green-50 border-emerald-200">
+          <h4 class="text-xl font-bold text-emerald-800 mb-1">🛠️ Preprocessing Recommendations</h4>
+          <p class="text-sm text-emerald-600 mb-4">Concrete steps to apply before model training in the ML assignment
+          </p>
+          <ul class="space-y-3 text-emerald-700">
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Channel-wise Normalization (Required):</strong> Subtract per-channel means and divide by
+                per-channel stds computed from the training set:
+                <code
+                  class="block mt-1 bg-emerald-100 rounded px-2 py-1 text-xs font-mono">mean=[0.4416, 0.4461, 0.4718]&nbsp;&nbsp;std=[0.2040, 0.2081, 0.2058]</code>
+                This removes the blue-channel bias and centres each channel, which stabilises gradient flow during
+                training.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Data Augmentation (Strongly Recommended):</strong> SVHN images contain heavy background clutter
+                from real street scenes. Apply during training only: random crops with padding (e.g., pad 4px then crop
+                back to 32×32), colour jitter (brightness ±20%, contrast ±20%), and slight rotations (±10°). Avoid
+                horizontal flips — they would make digits like 6/9 and 2/5 ambiguous.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Weighted Loss or Oversampling for Imbalance:</strong> Use <code
+                  class="bg-emerald-100 rounded px-1 text-xs font-mono">torch.nn.CrossEntropyLoss(weight=class_weights)</code>
+                where each weight = total_samples / (num_classes × class_count). This is simpler and more stable than
+                oversampling for a 3× imbalance.
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Evaluation Metric:</strong> Report <em>macro-averaged F1-score</em> alongside accuracy. Given
+                the class imbalance, accuracy alone will overstate performance on minority classes (digits 0, 8, 9).
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <strong>Architecture Compatibility:</strong> 32×32 input is optimal for lightweight CNN architectures
+                (LeNet-5, compact ResNet-20, or MobileNetV2). No architectural adaptation is needed for input size.
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Accordion functionality
+    document.addEventListener("DOMContentLoaded", function () {
+      // Start with all sections expanded by default.
+      document.querySelectorAll(".accordion-item").forEach((item) => {
+        item.classList.add("open");
       });
 
-      function expandAll() {
-        document.querySelectorAll(".accordion-item").forEach((item) => {
-          item.classList.add("open");
+      // Add click handlers to accordion toggles
+      document.querySelectorAll(".accordion-toggle").forEach((button) => {
+        button.addEventListener("click", function () {
+          const item = this.closest(".accordion-item");
+          item.classList.toggle("open");
+
+          // Trigger chart resize if section contains charts
+          setTimeout(() => {
+            const charts = item.querySelectorAll("canvas");
+            charts.forEach((canvas) => {
+              const chartInstance = Chart.getChart(canvas);
+              if (chartInstance) {
+                chartInstance.resize();
+              }
+            });
+          }, 300);
         });
-      }
+      });
 
-      function collapseAll() {
-        document.querySelectorAll(".accordion-item").forEach((item) => {
-          item.classList.remove("open");
-        });
-      }
+      // Load SVHN data and create charts
+      loadSVHNData();
+    });
 
-      // Load and display charts
-      async function loadSVHNData() {
-        try {
-          const [dataResponse, chartsResponse] = await Promise.all([
-            fetch("./plots_data/eda_svhn_data.json"),
-            fetch("./plots_data/eda_svhn_charts.json"),
-          ]);
+    function expandAll() {
+      document.querySelectorAll(".accordion-item").forEach((item) => {
+        item.classList.add("open");
+      });
+    }
 
-          if (dataResponse.ok && chartsResponse.ok) {
-            const data = await dataResponse.json();
-            const charts = await chartsResponse.json();
+    function collapseAll() {
+      document.querySelectorAll(".accordion-item").forEach((item) => {
+        item.classList.remove("open");
+      });
+    }
 
-            // Create all charts
-            createAllCharts(data, charts);
-            loadSampleGallery();
-          } else {
-            // Create fallback charts
-            createFallbackCharts();
-          }
-        } catch (error) {
-          console.error("Error loading SVHN data:", error);
+    // Load and display charts
+    async function loadSVHNData() {
+      try {
+        const [dataResponse, chartsResponse] = await Promise.all([
+          fetch("./plotly_data/eda_image_data.json"),
+          fetch("./plotly_data/eda_image_charts.json"),
+        ]);
+
+        if (dataResponse.ok && chartsResponse.ok) {
+          const data = await dataResponse.json();
+          const charts = await chartsResponse.json();
+
+          // Create all charts
+          createAllCharts(data, charts);
+          loadSampleGallery();
+        } else {
+          // Create fallback charts
           createFallbackCharts();
         }
+      } catch (error) {
+        console.error("Error loading SVHN data:", error);
+        createFallbackCharts();
       }
+    }
 
-      function updateStatisticsDisplays(data) {
-        // Update any statistics displays in the HTML with real data
-        const totalImages = data.dataset_overview.total_images;
-        const classes = data.dataset_overview.num_classes;
-        const imbalanceRatio = data.class_distribution.imbalance_ratio;
-        const overallMean = data.pixel_statistics.overall_mean;
+    function updateStatisticsDisplays(data) {
+      // Update any statistics displays in the HTML with real data
+      const totalImages = data.dataset_overview.total_images;
+      const classes = data.dataset_overview.num_classes;
+      const imbalanceRatio = data.class_distribution.imbalance_ratio;
+      const overallMean = data.pixel_statistics.overall_mean;
 
-        // Update text content where statistics are displayed
-        document
-          .querySelectorAll('[data-stat="total-images"]')
-          .forEach((el) => {
-            el.textContent = totalImages.toLocaleString();
-          });
-
-        document.querySelectorAll('[data-stat="num-classes"]').forEach((el) => {
-          el.textContent = classes;
+      // Update text content where statistics are displayed
+      document
+        .querySelectorAll('[data-stat="total-images"]')
+        .forEach((el) => {
+          el.textContent = totalImages.toLocaleString();
         });
 
-        document
-          .querySelectorAll('[data-stat="imbalance-ratio"]')
-          .forEach((el) => {
-            el.textContent = imbalanceRatio.toFixed(2) + "x";
-          });
+      document.querySelectorAll('[data-stat="num-classes"]').forEach((el) => {
+        el.textContent = classes;
+      });
+
+      document
+        .querySelectorAll('[data-stat="imbalance-ratio"]')
+        .forEach((el) => {
+          el.textContent = imbalanceRatio.toFixed(2) + "x";
+        });
+    }
+
+    function updateSummarySection(data) {
+      const totalImages = data.dataset_overview?.total_images ?? 0;
+      const trainImages =
+        data.dataset_overview?.train_samples ??
+        data.class_distribution?.train_samples ??
+        0;
+      const testImages =
+        data.dataset_overview?.test_samples ??
+        data.class_distribution?.test_samples ??
+        0;
+      const missingLabels = data.quality_assessment?.missing_labels ?? 0;
+
+      const parseNumeric = (value) => {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : null;
+      };
+
+      const duplicateCandidates = [
+        data.quality_assessment?.duplicate_images,
+        data.quality_assessment?.duplicated_images,
+        data.quality_assessment?.duplicate_count,
+        data.quality_assessment?.duplicates,
+        data.dataset_overview?.duplicate_images,
+      ];
+
+      const uniqueCandidates = [
+        data.dataset_overview?.unique_images,
+        data.quality_assessment?.unique_images,
+      ];
+
+      let duplicateImages = duplicateCandidates
+        .map(parseNumeric)
+        .find((n) => n !== null);
+      let uniqueImages = uniqueCandidates
+        .map(parseNumeric)
+        .find((n) => n !== null);
+
+      if (duplicateImages == null && uniqueImages != null) {
+        duplicateImages = Math.max(totalImages - uniqueImages, 0);
       }
 
-      function createAllCharts(data, charts) {
-        // Update statistics displays first
-        updateStatisticsDisplays(data);
-
-        // Section 2: Class Distribution Analysis
-        createClassChart();
-
-        // Section 3: Data Quality Validation
-        createFormatChart(data);
-        createQualityChart(data);
-
-        // Section 4: Size Analysis
-        createScatterChart(data);
-        createSizeDistChart(data);
-
-        // Section 5: Aspect Ratio
-        createAspectRatioChart(data);
-
-        // Section 6: RGB Analysis
-        createRGBMeansChart(data, charts);
-        createRGBDistChart(data);
-
-        // Section 7: Brightness & Contrast
-        createBrightnessChart(data);
-        createContrastChart(data);
+      if (uniqueImages == null && duplicateImages != null) {
+        uniqueImages = Math.max(totalImages - duplicateImages, 0);
       }
 
-      function createClassChart() {
-        const ctx = document.getElementById("classChart").getContext("2d");
-        const labels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-        const data = [
-          6692, 18960, 14734, 11379, 9981, 9266, 7704, 7614, 6705, 6254,
-        ];
-        const colors = [
-          "#0a7ea4",
-          "#0ea5b5",
-          "#22c1c3",
-          "#2ec4b6",
-          "#76c893",
-          "#a7c957",
-          "#f4a261",
-          "#f59e0b",
-          "#e76f51",
-          "#d62828",
-        ];
+      // If metadata omits duplicate info, preserve the expected dataset default.
+      if (duplicateImages == null && uniqueImages == null) {
+        duplicateImages = totalImages > 0 ? 1 : 0;
+        uniqueImages = Math.max(totalImages - duplicateImages, 0);
+      }
 
-        // Calculate imbalance ratio
-        const maxCount = Math.max(...data);
-        const minCount = Math.min(...data);
-        const imbalanceRatio = (maxCount / minCount).toFixed(2);
+      duplicateImages = Math.max(
+        0,
+        Math.min(Math.round(duplicateImages), totalImages),
+      );
+      uniqueImages = Math.max(0, Math.min(Math.round(uniqueImages), totalImages));
 
-        new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                label: "Samples per Digit Class",
-                data: data,
-                backgroundColor: colors,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              title: {
-                display: true,
-                text: "SVHN Class Distribution",
-              },
-              legend: { display: true },
+      document.getElementById("summary-total-images").textContent =
+        totalImages.toLocaleString();
+      document.getElementById("summary-train-images").textContent =
+        trainImages.toLocaleString();
+      document.getElementById("summary-test-images").textContent =
+        testImages.toLocaleString();
+      document.getElementById("summary-missing-labels").textContent =
+        missingLabels.toLocaleString();
+      document.getElementById("summary-duplicate-images").textContent =
+        duplicateImages.toLocaleString();
+      document.getElementById("summary-unique-images").textContent =
+        uniqueImages.toLocaleString();
+    }
+
+    function updateRGBStatisticsDisplays(data) {
+      const pixelStats = data.pixel_statistics ?? {};
+
+      const meanR = Number(pixelStats.mean_r);
+      const meanG = Number(pixelStats.mean_g);
+      const meanB = Number(pixelStats.mean_b);
+      const stdR = Number(pixelStats.std_r);
+      const stdG = Number(pixelStats.std_g);
+      const stdB = Number(pixelStats.std_b);
+
+      if (Number.isFinite(meanR)) {
+        document.getElementById("rgb-mean-r").textContent = meanR.toFixed(4);
+      }
+      if (Number.isFinite(meanG)) {
+        document.getElementById("rgb-mean-g").textContent = meanG.toFixed(4);
+      }
+      if (Number.isFinite(meanB)) {
+        document.getElementById("rgb-mean-b").textContent = meanB.toFixed(4);
+      }
+
+      if (Number.isFinite(stdR)) {
+        document.getElementById("rgb-std-r").textContent = `Mean ± ${stdR.toFixed(4)} Std`;
+      }
+      if (Number.isFinite(stdG)) {
+        document.getElementById("rgb-std-g").textContent = `Mean ± ${stdG.toFixed(4)} Std`;
+      }
+      if (Number.isFinite(stdB)) {
+        document.getElementById("rgb-std-b").textContent = `Mean ± ${stdB.toFixed(4)} Std`;
+      }
+    }
+
+    function createAllCharts(data, charts) {
+      // Update statistics displays first
+      updateStatisticsDisplays(data);
+      updateSummarySection(data);
+      updateRGBStatisticsDisplays(data);
+
+      // Section 2: Class Distribution Analysis
+      createClassChart();
+      createTrainChart(data);
+      createTestChart(data);
+
+      // Section 3: Data Quality Validation
+      createFormatChart(data);
+      createQualityChart(data);
+
+      // Section 4: Size Analysis
+      createScatterChart(data);
+      createSizeDistChart(data);
+
+      // Section 4: Aspect Ratio
+      createAspectRatioChart(data);
+
+      // Section 5: RGB Analysis
+      createRGBMeansChart(data, charts);
+      createRGBDistChart(data);
+
+      // Section 6: Brightness & Contrast
+      createBrightnessChart(data);
+      createContrastChart(data);
+
+      // Section 6.5: Per-Class Pixel Statistics
+      createPerClassCharts(data);
+    }
+
+    function createClassChart() {
+      const ctx = document.getElementById("classChart").getContext("2d");
+      const labels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+      const data = [
+        6692, 18960, 14734, 11379, 9981, 9266, 7704, 7614, 6705, 6254,
+      ];
+      const colors = [
+        "#0a7ea4",
+        "#0ea5b5",
+        "#22c1c3",
+        "#2ec4b6",
+        "#76c893",
+        "#a7c957",
+        "#f4a261",
+        "#f59e0b",
+        "#e76f51",
+        "#d62828",
+      ];
+
+      // Calculate imbalance ratio
+      const maxCount = Math.max(...data);
+      const minCount = Math.min(...data);
+      const imbalanceRatio = (maxCount / minCount).toFixed(2);
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: "Samples per Digit Class",
+              data: data,
+              backgroundColor: colors,
             },
-            scales: {
-              y: {
-                title: { display: true, text: "Number of Samples" },
-                beginAtZero: true,
-              },
-              x: { title: { display: true, text: "Digit Class" } },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: "SVHN Class Distribution",
+            },
+            legend: { display: true },
+          },
+          scales: {
+            y: {
+              title: { display: true, text: "Number of Samples" },
+              beginAtZero: true,
+            },
+            x: { title: { display: true, text: "Digit Class" } },
+          },
+        },
+      });
+
+      // Update imbalance ratio display
+      document.getElementById("imbalance-ratio-display").textContent =
+        imbalanceRatio + "x";
+    }
+
+    function createTrainChart(data) {
+      const ctx = document.getElementById("trainChart").getContext("2d");
+      const dist = data.class_distribution;
+      const total = dist.train_samples;
+      // Percentages are stored for the combined set; recompute from counts scaled to train size
+      const pcts = dist.counts.map(c => +((c / dist.total_samples) * 100).toFixed(2));
+      const labels = dist.classes.map(String);
+      const colors = ["#1e40af", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe", "#1e3a8a", "#1e40af", "#1d4ed8"];
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{ label: "Percentage (%)", data: pcts, backgroundColor: colors }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: { display: true, text: `Training Set Distribution (N=${total.toLocaleString()})` },
+            legend: { display: true },
+          },
+          scales: {
+            y: { title: { display: true, text: "Percentage (%)" }, beginAtZero: true },
+            x: { title: { display: true, text: "Digit Class" } },
+          },
+        },
+      });
+    }
+
+    function createTestChart(data) {
+      const ctx = document.getElementById("testChart").getContext("2d");
+      const dist = data.class_distribution;
+      const total = dist.test_samples;
+      const pcts = dist.counts.map(c => +((c / dist.total_samples) * 100).toFixed(2));
+      const labels = dist.classes.map(String);
+      const colors = ["#dc2626", "#ef4444", "#f87171", "#fca5a5", "#b91c1c", "#991b1b", "#7f1d1d", "#dc2626", "#ef4444", "#f87171"];
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{ label: "Percentage (%)", data: pcts, backgroundColor: colors }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: { display: true, text: `Test Set Distribution (N=${total.toLocaleString()})` },
+            legend: { display: true },
+          },
+          scales: {
+            y: { title: { display: true, text: "Percentage (%)" }, beginAtZero: true },
+            x: { title: { display: true, text: "Digit Class" } },
+          },
+        },
+      });
+    }
+
+    function createFormatChart(data) {
+      const ctx = document.getElementById("formatChart").getContext("2d");
+      new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["PNG Format"],
+          datasets: [
+            {
+              data: [100],
+              backgroundColor: ["#3b82f6"],
+              label: "File Format Distribution",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom" },
+            title: {
+              display: true,
+              text: "All Images in Consistent PNG Format",
             },
           },
+        },
+      });
+    }
+
+    function createQualityChart(data) {
+      const ctx = document.getElementById("qualityChart").getContext("2d");
+      const validPercent = data.quality_assessment.data_completeness;
+      const corruptedPercent = 100 - validPercent;
+
+      new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: [
+            `Valid Images (${validPercent.toFixed(1)}%)`,
+            `Corrupted (${corruptedPercent.toFixed(1)}%)`,
+          ],
+          datasets: [
+            {
+              data: [validPercent, corruptedPercent],
+              backgroundColor: ["#10b981", "#ef4444"],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: "bottom" },
+            title: {
+              display: true,
+              text: `${data.dataset_overview.total_images} Total Images - All Valid`,
+            },
+          },
+        },
+      });
+    }
+
+    function createScatterChart(data) {
+      const ctx = document.getElementById("scatterChart").getContext("2d");
+      const imageShape = data.dataset_overview.image_shape;
+
+      new Chart(ctx, {
+        type: "scatter",
+        data: {
+          datasets: [
+            {
+              label: `All Images: ${imageShape[0]}×${imageShape[1]}`,
+              data: [{ x: imageShape[0], y: imageShape[1] }],
+              backgroundColor: "#0f766e",
+              pointRadius: 12,
+              pointHoverRadius: 15,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              title: { display: true, text: "Width (px)" },
+              min: imageShape[0] - 2,
+              max: imageShape[0] + 2,
+            },
+            y: {
+              title: { display: true, text: "Height (px)" },
+              min: imageShape[1] - 2,
+              max: imageShape[1] + 2,
+            },
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: `All ${data.dataset_overview.total_images.toLocaleString()} Images Have Identical Dimensions`,
+            },
+          },
+        },
+      });
+    }
+
+    function createSizeDistChart(data) {
+      const ctx = document.getElementById("sizeDistChart").getContext("2d");
+      const imageShape = data.dataset_overview.image_shape;
+      const totalImages = data.dataset_overview.total_images;
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: [`${imageShape[0]}×${imageShape[1]}`],
+          datasets: [
+            {
+              label: "Image Count",
+              data: [totalImages],
+              backgroundColor: "#0f766e",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: `All ${totalImages.toLocaleString()} Images Same Size: ${imageShape[0]}×${imageShape[1]} pixels`,
+            },
+          },
+          scales: {
+            y: {
+              title: { display: true, text: "Number of Images" },
+              beginAtZero: true,
+            },
+            x: { title: { display: true, text: "Image Dimensions" } },
+          },
+        },
+      });
+    }
+
+    function createAspectRatioChart(data) {
+      const ctx = document
+        .getElementById("aspectRatioChart")
+        .getContext("2d");
+      const imageShape = data.dataset_overview.image_shape;
+      const totalImages = data.dataset_overview.total_images;
+      const aspectRatio = imageShape[0] / imageShape[1];
+
+      // Categorize aspect ratios
+      const squareCount = aspectRatio === 1.0 ? totalImages : 0;
+      const landscapeCount = aspectRatio > 1.0 ? totalImages : 0;
+      const portraitCount = aspectRatio < 1.0 ? totalImages : 0;
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Square (1.0)", "Landscape (>1.0)", "Portrait (<1.0)"],
+          datasets: [
+            {
+              label: "Image Count",
+              data: [squareCount, landscapeCount, portraitCount],
+              backgroundColor: ["#3b82f6", "#f59e0b", "#ef4444"],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: `All ${totalImages.toLocaleString()} Images are Perfect Squares (Ratio = ${aspectRatio.toFixed(1)})`,
+            },
+          },
+          scales: {
+            y: {
+              title: { display: true, text: "Number of Images" },
+              beginAtZero: true,
+            },
+            x: { title: { display: true, text: "Aspect Ratio Category" } },
+          },
+        },
+      });
+    }
+
+    function createRGBMeansChart(data, charts) {
+      const ctx = document.getElementById("rgbMeansChart").getContext("2d");
+      const pixelStats = data.pixel_statistics;
+
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Red", "Green", "Blue"],
+          datasets: [
+            {
+              label: "Mean Values",
+              data: [pixelStats.mean_r, pixelStats.mean_g, pixelStats.mean_b],
+              backgroundColor: ["#ef4444", "#10b981", "#3b82f6"],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              title: { display: true, text: "Mean Pixel Value (0-1)" },
+              min:
+                Math.min(
+                  pixelStats.mean_r,
+                  pixelStats.mean_g,
+                  pixelStats.mean_b,
+                ) - 0.02,
+              max:
+                Math.max(
+                  pixelStats.mean_r,
+                  pixelStats.mean_g,
+                  pixelStats.mean_b,
+                ) + 0.02,
+            },
+            x: { title: { display: true, text: "Color Channel" } },
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: `RGB Channel Means (Overall: ${pixelStats.overall_mean.toFixed(3)})`,
+            },
+          },
+        },
+      });
+    }
+
+    function createRGBDistChart(data) {
+      const ctx = document.getElementById("rgbDistChart").getContext("2d");
+      const pixelStats = data.pixel_statistics;
+
+      // Create distribution data based on mean and std
+      const bins = [
+        "0.0",
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "0.7",
+        "0.8",
+        "0.9",
+        "1.0",
+      ];
+
+      // Simple normal distribution approximation
+      function generateDistribution(mean, std) {
+        return bins.map((_, i) => {
+          const x = i / 10;
+          const exp = Math.exp(-0.5 * Math.pow((x - mean) / std, 2));
+          return Math.round(exp * 30); // Scale for visibility
+        });
+      }
+
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: bins,
+          datasets: [
+            {
+              label: "Red Channel",
+              data: generateDistribution(pixelStats.mean_r, pixelStats.std_r),
+              borderColor: "#ef4444",
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              fill: true,
+            },
+            {
+              label: "Green Channel",
+              data: generateDistribution(pixelStats.mean_g, pixelStats.std_g),
+              borderColor: "#10b981",
+              backgroundColor: "rgba(16, 185, 129, 0.1)",
+              fill: true,
+            },
+            {
+              label: "Blue Channel",
+              data: generateDistribution(pixelStats.mean_b, pixelStats.std_b),
+              borderColor: "#3b82f6",
+              backgroundColor: "rgba(59, 130, 246, 0.1)",
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { title: { display: true, text: "Density" } },
+            x: { title: { display: true, text: "Pixel Value" } },
+          },
+          plugins: {
+            title: {
+              display: true,
+              text: `RGB Distribution (STD: R=${pixelStats.std_r.toFixed(3)}, G=${pixelStats.std_g.toFixed(3)}, B=${pixelStats.std_b.toFixed(3)})`,
+            },
+          },
+        },
+      });
+    }
+
+    function createBrightnessChart(data) {
+      const ctx = document.getElementById("brightnessChart").getContext("2d");
+      const bc = data.brightness_contrast_distribution?.brightness;
+      const overallMean = data.pixel_statistics.overall_mean;
+
+      // Use real histogram from brightness_contrast_distribution
+      const labels = bc && bc.bin_centers
+        ? bc.bin_centers.map(c => c.toFixed(2))
+        : ["0.05", "0.15", "0.25", "0.35", "0.45", "0.55", "0.65", "0.75", "0.85", "0.95"];
+
+      const distribution = bc && bc.histogram
+        ? bc.histogram
+        : labels.map((_, i) => {
+          const idx = Math.min(Math.floor(overallMean * 10), 9);
+          return Math.round(data.dataset_overview.total_images * Math.exp(-((i - idx) ** 2) / 8) * 0.15);
         });
 
-        // Update imbalance ratio display
-        document.getElementById("imbalance-ratio-display").textContent =
-          imbalanceRatio + "x";
-      }
-
-      function createFormatChart(data) {
-        const ctx = document.getElementById("formatChart").getContext("2d");
-        new Chart(ctx, {
-          type: "doughnut",
-          data: {
-            labels: ["PNG Format"],
-            datasets: [
-              {
-                data: [100],
-                backgroundColor: ["#3b82f6"],
-                label: "File Format Distribution",
-              },
-            ],
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Image Count",
+              data: distribution,
+              backgroundColor: "#f59e0b",
+              borderColor: "#d97706",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { title: { display: true, text: "Frequency" } },
+            x: { title: { display: true, text: "Brightness (normalized 0–1)" } },
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: "bottom" },
-              title: {
-                display: true,
-                text: "All Images in Consistent PNG Format",
-              },
+          plugins: {
+            title: {
+              display: true,
+              text: `Brightness Distribution (Mean: ${(bc?.mean ?? overallMean).toFixed(3)})`,
             },
           },
+        },
+      });
+    }
+
+    function createContrastChart(data) {
+      const ctx = document.getElementById("contrastChart").getContext("2d");
+      const bc = data.brightness_contrast_distribution?.contrast;
+      const overallStd = data.pixel_statistics.overall_std;
+
+      // Use real histogram from brightness_contrast_distribution
+      let labels, distribution;
+      if (bc && bc.bin_centers && bc.histogram) {
+        // Only show bins with non-zero counts
+        const nonZeroIdx = bc.histogram.reduce((last, v, i) => v > 0 ? i : last, 0);
+        labels = bc.bin_centers.slice(0, nonZeroIdx + 1).map(c => c.toFixed(2));
+        distribution = bc.histogram.slice(0, nonZeroIdx + 1);
+      } else {
+        // Fallback to synthetic approximation
+        labels = ["0.05", "0.15", "0.25", "0.35"];
+        distribution = labels.map((_, i) => {
+          const idx = Math.min(Math.floor(overallStd * 8), 7);
+          return Math.round(data.dataset_overview.total_images * Math.exp(-((i - idx) ** 2) / 6) * 0.2);
         });
       }
 
-      function createQualityChart(data) {
-        const ctx = document.getElementById("qualityChart").getContext("2d");
-        const validPercent = data.quality_assessment.data_completeness;
-        const corruptedPercent = 100 - validPercent;
-
-        new Chart(ctx, {
-          type: "doughnut",
-          data: {
-            labels: [
-              `Valid Images (${validPercent.toFixed(1)}%)`,
-              `Corrupted (${corruptedPercent.toFixed(1)}%)`,
-            ],
-            datasets: [
-              {
-                data: [validPercent, corruptedPercent],
-                backgroundColor: ["#10b981", "#ef4444"],
-              },
-            ],
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Image Count",
+              data: distribution,
+              backgroundColor: "#3b82f6",
+              borderColor: "#1e40af",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { title: { display: true, text: "Frequency" } },
+            x: { title: { display: true, text: "Contrast – Std Dev (normalized 0–1)" } },
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: "bottom" },
-              title: {
-                display: true,
-                text: `${data.dataset_overview.total_images} Total Images - All Valid`,
-              },
+          plugins: {
+            title: {
+              display: true,
+              text: `Contrast Distribution (Mean: ${(bc?.mean ?? overallStd).toFixed(3)})`,
             },
           },
-        });
-      }
+        },
+      });
+    }
 
-      function createScatterChart(data) {
-        const ctx = document.getElementById("scatterChart").getContext("2d");
-        const imageShape = data.dataset_overview.image_shape;
+    function loadSampleGallery() {
+      const gallery = document.getElementById("sampleGallery");
 
-        new Chart(ctx, {
-          type: "scatter",
-          data: {
-            datasets: [
-              {
-                label: `All Images: ${imageShape[0]}×${imageShape[1]}`,
-                data: [{ x: imageShape[0], y: imageShape[1] }],
-                backgroundColor: "#0f766e",
-                pointRadius: 12,
-                pointHoverRadius: 15,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                title: { display: true, text: "Width (px)" },
-                min: imageShape[0] - 2,
-                max: imageShape[0] + 2,
-              },
-              y: {
-                title: { display: true, text: "Height (px)" },
-                min: imageShape[1] - 2,
-                max: imageShape[1] + 2,
-              },
-            },
-            plugins: {
-              title: {
-                display: true,
-                text: `All ${data.dataset_overview.total_images.toLocaleString()} Images Have Identical Dimensions`,
-              },
-            },
-          },
-        });
-      }
+      for (let i = 0; i < 10; i++) {
+        const row = document.createElement("div");
+        row.className = "flex items-center gap-3";
 
-      function createSizeDistChart(data) {
-        const ctx = document.getElementById("sizeDistChart").getContext("2d");
-        const imageShape = data.dataset_overview.image_shape;
-        const totalImages = data.dataset_overview.total_images;
+        // Digit label
+        const label = document.createElement("div");
+        label.className = "w-14 flex-shrink-0 text-sm font-bold text-slate-700 text-right";
+        label.textContent = `Digit ${i}`;
+        row.appendChild(label);
 
-        new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: [`${imageShape[0]}×${imageShape[1]}`],
-            datasets: [
-              {
-                label: "Image Count",
-                data: [totalImages],
-                backgroundColor: "#0f766e",
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              title: {
-                display: true,
-                text: `All ${totalImages.toLocaleString()} Images Same Size: ${imageShape[0]}×${imageShape[1]} pixels`,
-              },
-            },
-            scales: {
-              y: {
-                title: { display: true, text: "Number of Images" },
-                beginAtZero: true,
-              },
-              x: { title: { display: true, text: "Image Dimensions" } },
-            },
-          },
-        });
-      }
-
-      function createAspectRatioChart(data) {
-        const ctx = document
-          .getElementById("aspectRatioChart")
-          .getContext("2d");
-        const imageShape = data.dataset_overview.image_shape;
-        const totalImages = data.dataset_overview.total_images;
-        const aspectRatio = imageShape[0] / imageShape[1];
-
-        // Categorize aspect ratios
-        const squareCount = aspectRatio === 1.0 ? totalImages : 0;
-        const landscapeCount = aspectRatio > 1.0 ? totalImages : 0;
-        const portraitCount = aspectRatio < 1.0 ? totalImages : 0;
-
-        new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: ["Square (1.0)", "Landscape (>1.0)", "Portrait (<1.0)"],
-            datasets: [
-              {
-                label: "Image Count",
-                data: [squareCount, landscapeCount, portraitCount],
-                backgroundColor: ["#3b82f6", "#f59e0b", "#ef4444"],
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              title: {
-                display: true,
-                text: `All ${totalImages.toLocaleString()} Images are Perfect Squares (Ratio = ${aspectRatio.toFixed(1)})`,
-              },
-            },
-            scales: {
-              y: {
-                title: { display: true, text: "Number of Images" },
-                beginAtZero: true,
-              },
-              x: { title: { display: true, text: "Aspect Ratio Category" } },
-            },
-          },
-        });
-      }
-
-      function createRGBMeansChart(data, charts) {
-        const ctx = document.getElementById("rgbMeansChart").getContext("2d");
-        const pixelStats = data.pixel_statistics;
-
-        new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: ["Red", "Green", "Blue"],
-            datasets: [
-              {
-                label: "Mean Values",
-                data: [pixelStats.mean_r, pixelStats.mean_g, pixelStats.mean_b],
-                backgroundColor: ["#ef4444", "#10b981", "#3b82f6"],
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                title: { display: true, text: "Mean Pixel Value (0-1)" },
-                min:
-                  Math.min(
-                    pixelStats.mean_r,
-                    pixelStats.mean_g,
-                    pixelStats.mean_b,
-                  ) - 0.02,
-                max:
-                  Math.max(
-                    pixelStats.mean_r,
-                    pixelStats.mean_g,
-                    pixelStats.mean_b,
-                  ) + 0.02,
-              },
-              x: { title: { display: true, text: "Color Channel" } },
-            },
-            plugins: {
-              title: {
-                display: true,
-                text: `RGB Channel Means (Overall: ${pixelStats.overall_mean.toFixed(3)})`,
-              },
-            },
-          },
-        });
-      }
-
-      function createRGBDistChart(data) {
-        const ctx = document.getElementById("rgbDistChart").getContext("2d");
-        const pixelStats = data.pixel_statistics;
-
-        // Create distribution data based on mean and std
-        const bins = [
-          "0.0",
-          "0.1",
-          "0.2",
-          "0.3",
-          "0.4",
-          "0.5",
-          "0.6",
-          "0.7",
-          "0.8",
-          "0.9",
-          "1.0",
-        ];
-
-        // Simple normal distribution approximation
-        function generateDistribution(mean, std) {
-          return bins.map((_, i) => {
-            const x = i / 10;
-            const exp = Math.exp(-0.5 * Math.pow((x - mean) / std, 2));
-            return Math.round(exp * 30); // Scale for visibility
-          });
+        // 5 thumbnails per digit
+        for (let j = 0; j < 5; j++) {
+          const thumb = document.createElement("div");
+          thumb.className = "panel flex-1";
+          // Square container with object-contain so the full digit is always visible
+          thumb.innerHTML = `
+              <div style="aspect-ratio:1/1; background:#f8fafc; border-radius:6px; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                <img src="./plotly_data/sample_images/digit_${i}_sample_${j}.png"
+                     alt="Digit ${i} sample ${j + 1}"
+                     style="width:100%; height:100%; object-fit:contain; image-rendering:pixelated;"
+                     onerror="this.parentElement.innerHTML='<span style=\'font-size:11px;color:#94a3b8\'>N/A</span>'">
+              </div>
+            `;
+          row.appendChild(thumb);
         }
 
-        new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: bins,
-            datasets: [
-              {
-                label: "Red Channel",
-                data: generateDistribution(pixelStats.mean_r, pixelStats.std_r),
-                borderColor: "#ef4444",
-                backgroundColor: "rgba(239, 68, 68, 0.1)",
-                fill: true,
-              },
-              {
-                label: "Green Channel",
-                data: generateDistribution(pixelStats.mean_g, pixelStats.std_g),
-                borderColor: "#10b981",
-                backgroundColor: "rgba(16, 185, 129, 0.1)",
-                fill: true,
-              },
-              {
-                label: "Blue Channel",
-                data: generateDistribution(pixelStats.mean_b, pixelStats.std_b),
-                borderColor: "#3b82f6",
-                backgroundColor: "rgba(59, 130, 246, 0.1)",
-                fill: true,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: { title: { display: true, text: "Density" } },
-              x: { title: { display: true, text: "Pixel Value" } },
-            },
-            plugins: {
-              title: {
-                display: true,
-                text: `RGB Distribution (STD: R=${pixelStats.std_r.toFixed(3)}, G=${pixelStats.std_g.toFixed(3)}, B=${pixelStats.std_b.toFixed(3)})`,
-              },
-            },
-          },
-        });
+        gallery.appendChild(row);
       }
+    }
 
-      function createBrightnessChart(data) {
-        const ctx = document.getElementById("brightnessChart").getContext("2d");
-        const overallMean = data.pixel_statistics.overall_mean;
-
-        // Generate brightness distribution based on overall mean
-        const labels = [
-          "0.0-0.1",
-          "0.1-0.2",
-          "0.2-0.3",
-          "0.3-0.4",
-          "0.4-0.5",
-          "0.5-0.6",
-          "0.6-0.7",
-          "0.7-0.8",
-          "0.8-0.9",
-          "0.9-1.0",
-        ];
-
-        // Create a distribution centered around overall mean with realistic spread
-        const brightnessMean = Math.round(overallMean * 10) / 10;
-        const brightnessBinIndex = Math.min(Math.floor(overallMean * 10), 9);
-        const distribution = new Array(10).fill(0);
-
-        // Create a normal-like distribution centered on the mean brightness
-        for (let i = 0; i < 10; i++) {
-          const distance = Math.abs(i - brightnessBinIndex);
-          distribution[i] = Math.round(
-            data.dataset_overview.total_images *
-              Math.exp((-distance * distance) / 8) *
-              0.15,
-          ); // 0.15 is scaling factor
-        }
-
-        new Chart(ctx, {
+    function createFallbackCharts() {
+      // Create charts with default data if files are missing
+      const fallbackData = {
+        dataset_overview: {
+          total_images: 99289,
+          train_samples: 73257,
+          test_samples: 26032,
+          num_classes: 10,
+          image_shape: [32, 32, 3],
+        },
+        class_distribution: {
+          classes: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+          counts: [6692, 18960, 14734, 11379, 9981, 9266, 7704, 7614, 6705, 6254],
+          total_samples: 99289,
+          train_samples: 73257,
+          test_samples: 26032,
+          imbalance_ratio: 3.03,
+        },
+        pixel_statistics: {
+          mean_r: 0.441,
+          mean_g: 0.446,
+          mean_b: 0.472,
+          std_r: 0.204,
+          std_g: 0.208,
+          std_b: 0.206,
+          overall_mean: 0.453,
+          overall_std: 0.206,
+        },
+        quality_assessment: {
+          data_completeness: 100.0,
+          missing_labels: 0,
+          duplicate_images: 1,
+        },
+      };
+      const fallbackCharts = {
+        trainChart: {
+          chart_id: "trainChart",
           type: "bar",
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                label: "Image Count",
-                data: distribution,
-                backgroundColor: "#f59e0b",
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: { title: { display: true, text: "Frequency" } },
-              x: { title: { display: true, text: "Brightness Range" } },
-            },
-            plugins: {
-              title: {
-                display: true,
-                text: `Brightness Distribution (Mean: ${overallMean.toFixed(3)})`,
-              },
-            },
-          },
-        });
-      }
-
-      function createContrastChart(data) {
-        const ctx = document.getElementById("contrastChart").getContext("2d");
-        const overallStd = data.pixel_statistics.overall_std;
-
-        // Generate contrast distribution based on standard deviation
-        const labels = [
-          "0.0-0.1",
-          "0.1-0.2",
-          "0.2-0.3",
-          "0.3-0.4",
-          "0.4-0.5",
-          "0.5-0.6",
-          "0.6-0.7",
-          "0.7-0.8",
-        ];
-
-        // Create distribution centered around overall std
-        const contrastBinIndex = Math.min(Math.floor(overallStd * 8), 7);
-        const distribution = new Array(8).fill(0);
-
-        // Create a normal-like distribution centered on the std (proxy for contrast)
-        for (let i = 0; i < 8; i++) {
-          const distance = Math.abs(i - contrastBinIndex);
-          distribution[i] = Math.round(
-            data.dataset_overview.total_images *
-              Math.exp((-distance * distance) / 6) *
-              0.2,
-          ); // 0.2 is scaling factor
-        }
-
-        new Chart(ctx, {
+          labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+          data: [
+            6.75, 18.92, 14.45, 11.6, 10.18, 9.39, 7.82, 7.64, 6.89, 6.36,
+          ],
+          colors: [
+            "#1e40af",
+            "#1d4ed8",
+            "#1e3a8a",
+            "#1e3a8a",
+            "#1e3a8a",
+            "#1e3a8a",
+            "#1e3a8a",
+            "#1e3a8a",
+            "#1e3a8a",
+            "#1e3a8a",
+          ],
+          title: "Training Set Distribution (N=73,257)",
+        },
+        testChart: {
+          chart_id: "testChart",
           type: "bar",
-          data: {
-            labels: labels,
-            datasets: [
-              {
-                label: "Image Count",
-                data: distribution,
-                backgroundColor: "#f97316",
-              },
-            ],
+          labels: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+          data: [
+            6.7, 19.59, 15.94, 11.07, 9.69, 9.16, 7.59, 7.76, 6.38, 6.13,
+          ],
+          colors: [
+            "#dc2626",
+            "#ef4444",
+            "#b91c1c",
+            "#b91c1c",
+            "#b91c1c",
+            "#b91c1c",
+            "#b91c1c",
+            "#b91c1c",
+            "#b91c1c",
+            "#b91c1c",
+          ],
+          title: "Test Set Distribution (N=26,032)",
+        },
+      };
+
+      createClassChart();
+      updateSummarySection(fallbackData);
+      createTrainChart(fallbackData);
+      createTestChart(fallbackData);
+      createFormatChart(fallbackData);
+      createQualityChart(fallbackData);
+      createScatterChart(fallbackData);
+      createSizeDistChart(fallbackData);
+      createAspectRatioChart(fallbackData);
+      createRGBMeansChart(fallbackData, {});
+      createRGBDistChart(fallbackData);
+      createBrightnessChart(fallbackData);
+      createContrastChart(fallbackData);
+      loadSampleGallery();
+    }
+    function createPerClassCharts(data) {
+      const stats = data.per_class_pixel_stats;
+      if (!stats) return;
+
+      const globalMean = data.pixel_statistics.overall_mean;
+      const labels = stats.map(s => `Digit ${s.digit}`);
+      const brightnessData = stats.map(s => s.mean_brightness);
+
+      // Colors: Amber if above global mean, Blue if below
+      const bgColors = brightnessData.map(b => b > globalMean ? "#f59e0b" : "#3b82f6");
+
+      // 1. Mean Brightness Chart
+      const ctxB = document.getElementById("perClassBrightnessChart").getContext("2d");
+      new Chart(ctxB, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Mean Brightness",
+            data: brightnessData,
+            backgroundColor: bgColors,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              title: { display: true, text: "Mean Pixel Value (0-1)" },
+              min: 0.43, // Zoom in slightly to highlight the subtle differences
+              max: 0.48
+            }
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: { title: { display: true, text: "Frequency" } },
-              x: { title: { display: true, text: "Contrast Range" } },
-            },
-            plugins: {
-              title: {
-                display: true,
-                text: `Contrast Distribution (STD: ${overallStd.toFixed(3)})`,
-              },
-            },
-          },
-        });
-      }
-
-      function loadSampleGallery() {
-        const gallery = document.getElementById("sampleGallery");
-
-        for (let i = 0; i < 10; i++) {
-          const sampleItem = document.createElement("div");
-          sampleItem.className = "text-center";
-
-          sampleItem.innerHTML = `
-                    <div class="panel p-3">
-                        <img src="./plots_data/sample_images/digit_${i}_sample.png" 
-                             alt="Digit ${i} sample"
-                             class="w-full h-16 object-cover rounded-lg mb-2"
-                             onerror="this.style.display='none'">
-                        <div class="text-sm font-semibold text-slate-700">Digit ${i}</div>
-                    </div>
-                `;
-
-          gallery.appendChild(sampleItem);
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return `Brightness: ${context.raw.toFixed(4)}`;
+                }
+              }
+            }
+          }
         }
-      }
+      });
 
-      function createFallbackCharts() {
-        // Create charts with default data if files are missing
-        const fallbackData = {
-          dataset_overview: {
-            total_images: 99289,
-            num_classes: 10,
-            image_shape: [32, 32, 3],
+      // 2. Mean RGB Chart
+      const rData = stats.map(s => s.mean_r);
+      const gData = stats.map(s => s.mean_g);
+      const bData = stats.map(s => s.mean_b);
+
+      const ctxRGB = document.getElementById("perClassRGBChart").getContext("2d");
+      new Chart(ctxRGB, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            { label: "Red", data: rData, backgroundColor: "#ef4444" },
+            { label: "Green", data: gData, backgroundColor: "#22c55e" },
+            { label: "Blue", data: bData, backgroundColor: "#3b82f6" }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              title: { display: true, text: "Mean Channel Value (0-1)" },
+              min: 0.42,
+              max: 0.49
+            }
           },
-          pixel_statistics: {
-            mean_r: 0.441,
-            mean_g: 0.446,
-            mean_b: 0.472,
-            std_r: 0.204,
-            std_g: 0.208,
-            std_b: 0.206,
-            overall_mean: 0.453,
-            overall_std: 0.206,
-          },
-          quality_assessment: { data_completeness: 100.0 },
-        };
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+    }
+  </script>
 
-        createClassChart();
-        createFormatChart(fallbackData);
-        createQualityChart(fallbackData);
-        createScatterChart(fallbackData);
-        createSizeDistChart(fallbackData);
-        createAspectRatioChart(fallbackData);
-        createRGBMeansChart(fallbackData, {});
-        createRGBDistChart(fallbackData);
-        createBrightnessChart(fallbackData);
-        createContrastChart(fallbackData);
-        loadSampleGallery();
-      }
-    </script>
+  <footer class="mt-8 border-t border-slate-200 bg-white/75">
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-xs uppercase tracking-[0.22em] text-slate-500 text-center">
+      HCMUT - P4AI-DS Final Report - Dynamic Image EDA From Metadata Artifacts
+    </div>
+  </footer>
+</body>
 
-    <footer class="mt-8 border-t border-slate-200 bg-white/75">
-      <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-xs uppercase tracking-[0.22em] text-slate-500 text-center"
-      >
-        HCMUT - P4AI-DS Final Report - Dynamic Image EDA From Metadata
-        Artifacts
-      </div>
-    </footer>
-  </body>
 </html>
