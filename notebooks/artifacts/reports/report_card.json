@@ -1,0 +1,49 @@
+{
+  "model": "RandomForest",
+  "best_params": {
+    "clf__max_depth": null,
+    "clf__max_features": 0.5,
+    "clf__min_samples_leaf": 2,
+    "clf__n_estimators": 587
+  },
+  "train_test_split": "stratified 80/20, random_state=42",
+  "test_rows": 200,
+  "headline_metric": {
+    "name": "ROC-AUC (production model, test)",
+    "value": 0.9884999999999999,
+    "ci_95_bootstrap": [
+      0.9718149221849253,
+      0.9995921021722736
+    ]
+  },
+  "secondary_metrics_at_tuned_threshold": {
+    "threshold": 0.73,
+    "accuracy": 0.975,
+    "precision": 0.9797979797979798,
+    "recall": 0.97,
+    "f1": 0.9748743718592965,
+    "roc_auc": 0.9884999999999999,
+    "pr_auc": 0.9912265397354683,
+    "log_loss": 0.10560968433351368,
+    "brier": 0.02607032749583358
+  },
+  "calibration": {
+    "uncalibrated_brier": 0.029158308473086265,
+    "isotonic_brier": 0.02607032749583358,
+    "adopted_calibrated": true
+  },
+  "top_5_drivers_by_permutation": [
+    "Daily Internet Usage",
+    "Daily Time Spent on Site",
+    "Area Income",
+    "Age",
+    "Timestamp"
+  ],
+  "known_weaknesses": "none exceeded -0.05 AUC gap",
+  "next_steps": [
+    "Collect more data if learning curve still climbing.",
+    "Add interaction features (e.g., Age x Area Income).",
+    "Run an A/B test against current rule-based targeting.",
+    "Re-audit calibration monthly in production."
+  ]
+}

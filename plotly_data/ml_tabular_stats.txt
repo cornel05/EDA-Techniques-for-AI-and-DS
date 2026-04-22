@@ -1,0 +1,16 @@
+======================================================================
+ML TABULAR STATS — Advertisement Click on Ad
+======================================================================
+
+Winner: RandomForest
+Best CV ROC-AUC:        0.991531
+Test ROC-AUC:           0.9885  [95% CI: 0.9718, 0.9996]
+Best accuracy @ t=0.73: 0.9750
+Best F1       @ t=0.73: 0.9749
+PR-AUC:                 0.9927
+Brier uncalibrated:     0.0292
+Brier isotonic:         0.0261  <-- adopted
+Top 5 drivers:          Daily Internet Usage, Daily Time Spent on Site, Area Income, Age, Timestamp
+Flagged slices:         0
+
+Hero stats: {'n_rows_total': 1000, 'n_features_used': 11, 'best_accuracy_pct': 97.5, 'n_models_tested': 3}

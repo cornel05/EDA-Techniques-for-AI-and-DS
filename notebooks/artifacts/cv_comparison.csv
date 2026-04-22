@@ -1,0 +1,4 @@
+model,roc_auc (val),pr_auc (val),accuracy (val),f1 (val),log_loss (val),train_roc_auc,overfit_gap_auc
+LogisticRegression,0.9883 ± 0.0043,0.9918 ± 0.0023,0.9662 ± 0.0140,0.9658 ± 0.0143,0.1059,0.9924,+0.0041
+RandomForest,0.9911 ± 0.0048,0.9929 ± 0.0034,0.9575 ± 0.0203,0.9580 ± 0.0192,0.1387,0.9998,+0.0087
+HistGradientBoosting,0.9888 ± 0.0043,0.9913 ± 0.0031,0.9563 ± 0.0112,0.9561 ± 0.0114,0.1311,0.9992,+0.0103

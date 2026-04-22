@@ -1,0 +1,60 @@
+{
+  "winner": "RandomForest",
+  "best_params": {
+    "clf__max_depth": null,
+    "clf__max_features": 0.5,
+    "clf__min_samples_leaf": 2,
+    "clf__n_estimators": 587
+  },
+  "best_cv_roc_auc": 0.9915312500000001,
+  "cv_comparison": {
+    "LogisticRegression": {
+      "roc_auc (val)": "0.9883 \u00b1 0.0043",
+      "pr_auc (val)": "0.9918 \u00b1 0.0023",
+      "accuracy (val)": "0.9662 \u00b1 0.0140",
+      "f1 (val)": "0.9658 \u00b1 0.0143",
+      "log_loss (val)": "0.1059",
+      "train_roc_auc": "0.9924",
+      "overfit_gap_auc": "+0.0041"
+    },
+    "RandomForest": {
+      "roc_auc (val)": "0.9911 \u00b1 0.0048",
+      "pr_auc (val)": "0.9929 \u00b1 0.0034",
+      "accuracy (val)": "0.9575 \u00b1 0.0203",
+      "f1 (val)": "0.9580 \u00b1 0.0192",
+      "log_loss (val)": "0.1387",
+      "train_roc_auc": "0.9998",
+      "overfit_gap_auc": "+0.0087"
+    },
+    "HistGradientBoosting": {
+      "roc_auc (val)": "0.9888 \u00b1 0.0043",
+      "pr_auc (val)": "0.9913 \u00b1 0.0031",
+      "accuracy (val)": "0.9563 \u00b1 0.0112",
+      "f1 (val)": "0.9561 \u00b1 0.0114",
+      "log_loss (val)": "0.1311",
+      "train_roc_auc": "0.9992",
+      "overfit_gap_auc": "+0.0103"
+    }
+  },
+  "random_state": 42,
+  "sklearn_version": "1.8.0",
+  "feature_columns": {
+    "numeric": [
+      "Daily Time Spent on Site",
+      "Age",
+      "Area Income",
+      "Daily Internet Usage"
+    ],
+    "binary": [
+      "Male"
+    ],
+    "categorical_mid": [
+      "Country"
+    ],
+    "timestamp": "Timestamp",
+    "dropped": [
+      "Ad Topic Line",
+      "City"
+    ]
+  }
+}

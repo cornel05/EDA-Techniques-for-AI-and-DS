@@ -2,157 +2,980 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tabular ML Analysis | P4AI-DS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
-        rel="stylesheet" />
-    <style>
-        body {
-            font-family: "Space Grotesk", sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
-
-        .font-sora {
-            font-family: "Sora", sans-serif;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tabular ML Analysis | P4AI-DS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: "Space Grotesk", sans-serif; background-color: #f8fafc; color: #1e293b; }
+    .font-sora { font-family: "Sora", sans-serif; }
+    .ml-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); padding: 1.25rem; }
+    .ml-chip { display: inline-flex; align-items: center; padding: 0.2rem 0.65rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .chart-wrap { position: relative; min-height: 320px; height: 320px; }
+    .chart-wrap canvas { width: 100% !important; height: 100% !important; }
+    .section-card { background: #fff; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,.06); border: 1px solid #e2e8f0; padding: 1.5rem; }
+    .gap-ok { color: #15803d; font-weight: 700; }
+    .gap-warn { color: #b45309; font-weight: 700; }
+    .gap-bad  { color: #b91c1c; font-weight: 700; }
+    .flag-row { background: #fef2f2 !important; }
+    table.data-table { width: 100%; font-size: 0.84rem; border-collapse: collapse; }
+    table.data-table th { background: #f8fafc; border-bottom: 2px solid #e2e8f0; text-align: left; padding: 0.6rem 0.9rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: .06em; color: #64748b; }
+    table.data-table td { padding: 0.55rem 0.9rem; border-bottom: 1px solid #f1f5f9; }
+    table.data-table tr:last-child td { border-bottom: none; }
+    .plotly-div { min-height: 320px; }
+  </style>
 </head>
 
 <body class="min-h-screen flex flex-col">
-    <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex h-16 items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <a href="index.html" class="font-sora text-xl font-bold tracking-tight text-teal-700">
-                        P4AI-DS <span class="text-slate-900">Project</span>
-                    </a>
-                </div>
 
-                <div class="flex items-center space-x-8 font-medium text-slate-600">
-                    <a href="index.html" class="hover:text-teal-600 transition">Home</a>
-
-                    <div class="group relative py-4">
-                        <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
-                            Assignment 1 (EDA) <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                        </button>
-                        <div
-                            class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
-                            <a href="tabular.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Tabular
-                                EDA</a>
-                            <a href="text.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Text
-                                EDA</a>
-                            <a href="image.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Image
-                                EDA</a>
-                            <a href="multimodal.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Multimodal
-                                EDA</a>
-                        </div>
-                    </div>
-
-                    <div class="group relative py-4">
-                        <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
-                            Assignment 2 (ML) <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                        </button>
-                        <div
-                            class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
-                            <a href="tabular_ml.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Tabular
-                                ML</a>
-                            <a href="text_ml.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Text
-                                ML</a>
-                            <a href="image_ml.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Image
-                                ML</a>
-                        </div>
-                    </div>
-                </div>
+  <!-- NAV -->
+  <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <a href="index.html" class="font-sora text-xl font-bold tracking-tight text-teal-700">
+          P4AI-DS <span class="text-slate-900">Project</span>
+        </a>
+        <div class="flex items-center space-x-8 font-medium text-slate-600">
+          <a href="index.html" class="hover:text-teal-600 transition">Home</a>
+          <div class="group relative py-4">
+            <button class="flex items-center gap-1 hover:text-teal-700 transition">Assignment 1 (EDA) <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
+            <div class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block">
+              <a href="tabular.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Tabular EDA</a>
+              <a href="text.html"    class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Text EDA</a>
+              <a href="image.html"   class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Image EDA</a>
+              <a href="multimodal.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Multimodal EDA</a>
             </div>
+          </div>
+          <div class="group relative py-4">
+            <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">Assignment 2 (ML) <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
+            <div class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block">
+              <a href="tabular_ml.html" class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Tabular ML</a>
+              <a href="text_ml.html"    class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Text ML</a>
+              <a href="image_ml.html"   class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Image ML</a>
+            </div>
+          </div>
         </div>
-    </nav>
-    <header class="bg-slate-900 text-white py-16">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="font-sora text-4xl sm:text-5xl font-extrabold mb-4">Tabular Data Prediction</h1>
-            <p class="text-xl text-blue-400 font-medium mb-8">Advertisement Click Prediction using Machine Learning</p>
+      </div>
+    </div>
+  </nav>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                    <div class="text-3xl font-bold text-white mb-1" id="statRows">--</div>
-                    <div class="text-sm text-slate-400">Total Rows</div>
-                </div>
-                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                    <div class="text-3xl font-bold text-white mb-1" id="statFeatures">--</div>
-                    <div class="text-sm text-slate-400">Features</div>
-                </div>
-                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                    <div class="text-3xl font-bold text-blue-400 mb-1" id="statAccuracy">--%</div>
-                    <div class="text-sm text-slate-400">Best Accuracy</div>
-                </div>
-                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                    <div class="text-3xl font-bold text-white mb-1" id="statModels">--</div>
-                    <div class="text-sm text-slate-400">Models Tested</div>
-                </div>
-            </div>
+  <!-- HERO -->
+  <header class="bg-slate-900 text-white py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="font-sora text-4xl sm:text-5xl font-extrabold mb-4">Tabular Data Prediction</h1>
+      <p class="text-xl text-blue-400 font-medium mb-8">Advertisement Click Prediction using Machine Learning</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+          <div class="text-3xl font-bold text-white mb-1" id="statRows">--</div>
+          <div class="text-sm text-slate-400">Total Rows</div>
         </div>
-    </header>
-
-    <main class="flex-grow mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-20">
-
-        <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">1.
-                EDA-to-ML Preprocessing</h2>
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <p class="text-slate-600 italic">Teammate: Add a table or list here showing how you handled missing
-                    values, encoding, and scaling based on your Assignment 1 EDA findings.</p>
-            </div>
-        </section>
-
-        <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">2.
-                Model Comparison</h2>
-            <div
-                class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-80 flex items-center justify-center">
-                <p class="text-slate-400">Teammate: Add your Chart.js Bar Chart here comparing Logistic Regression,
-                    Random Forest, XGBoost, etc.</p>
-            </div>
-        </section>
-
-        <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">3.
-                Feature Importance Analysis</h2>
-            <div
-                class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-80 flex items-center justify-center">
-                <p class="text-slate-400">Teammate: Add a horizontal bar chart showing the top predictive features from
-                    your best Tree-based model.</p>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm text-slate-500">
-            <p>&copy; 2026 P4AI-DS Group Assignment.</p>
-            <p>Built for Ho Chi Minh City University of Technology (HCMUT)</p>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+          <div class="text-3xl font-bold text-white mb-1" id="statFeatures">--</div>
+          <div class="text-sm text-slate-400">Features Used</div>
         </div>
-    </footer>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+          <div class="text-3xl font-bold text-blue-400 mb-1" id="statAccuracy">--%</div>
+          <div class="text-sm text-slate-400">Best Accuracy</div>
+        </div>
+        <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
+          <div class="text-3xl font-bold text-white mb-1" id="statModels">--</div>
+          <div class="text-sm text-slate-400">Models Tested</div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <script>
-        // Teammate: Add your fetch() logic here to load your JSON files and initialize Chart.js
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log("Tabular ML page loaded. Ready to fetch data.");
+  <!-- ERROR BANNER -->
+  <div id="errorBanner" class="hidden mx-auto max-w-7xl px-4 mt-6 w-full">
+    <div class="bg-red-50 border border-red-300 text-red-700 rounded-xl p-4 font-semibold" id="errorMsg"></div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="flex-grow mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+    <!-- S1: EDA-to-ML Preprocessing -->
+    <section id="sec-preprocessing">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">1. EDA-to-ML Preprocessing</h2>
+      <div class="section-card space-y-6">
+        <div class="grid lg:grid-cols-2 gap-8">
+          <div>
+            <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-magnifying-glass text-blue-500"></i> EDA Findings → ML Actions</h3>
+            <ul id="edaToMlList" class="space-y-2 text-sm text-slate-700"></ul>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-diagram-project text-teal-500"></i> Linear / SVM Pipeline</h3>
+              <div id="linearPipeline" class="space-y-1"></div>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2"><i class="fa-solid fa-tree text-green-500"></i> Tree / Boosting Pipeline</h3>
+              <div id="treePipeline" class="space-y-1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S2: Model Comparison -->
+    <section id="sec-cv">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">2. Model Comparison (5-Fold CV)</h2>
+      <div class="section-card space-y-6">
+        <div class="chart-wrap"><canvas id="cvCompareChart"></canvas></div>
+        <p class="text-xs text-slate-500 italic">Error bars not shown in Chart.js grouped mode — see std values in table below.</p>
+        <div class="overflow-auto rounded-lg border border-slate-200">
+          <table class="data-table" id="cvTable">
+            <thead><tr>
+              <th>Model</th><th>ROC-AUC</th><th>PR-AUC</th><th>Accuracy</th><th>F1</th><th>Log Loss</th><th>Train AUC</th><th>Overfit Gap</th>
+            </tr></thead>
+            <tbody id="cvTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- S3: Feature Importance (Permutation) -->
+    <section id="sec-perm">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">3. Feature Importance Analysis</h2>
+      <div class="section-card space-y-4">
+        <p class="text-sm text-slate-600">Permutation importance: mean drop in test ROC-AUC when each feature is randomly shuffled 20 times. Positive = helpful; negative = marginally harmful due to noise.</p>
+        <div class="chart-wrap"><canvas id="permImportanceChart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- S4: Methodology -->
+    <section id="sec-methodology">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">4. Analysis Methodology</h2>
+      <div class="section-card">
+        <ul id="methodologyList" class="space-y-3 text-sm text-slate-700"></ul>
+      </div>
+    </section>
+
+    <!-- S5: Dataset & Split Summary -->
+    <section id="sec-split">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">5. Dataset &amp; Split Summary</h2>
+      <div class="section-card space-y-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="splitCards"></div>
+        <div>
+          <h3 class="font-bold text-slate-700 mb-2 text-sm uppercase tracking-wide">Feature Columns by Family</h3>
+          <div id="featureChips" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S6: Hyperparameter Search -->
+    <section id="sec-hps">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">6. Hyperparameter Search — Top 10</h2>
+      <div class="section-card space-y-6">
+        <div class="chart-wrap"><canvas id="hpsChart"></canvas></div>
+        <div class="overflow-auto rounded-lg border border-slate-200">
+          <table class="data-table">
+            <thead><tr><th>Rank</th><th>CV AUC</th><th>±Std</th><th>Train AUC</th><th>Parameters</th></tr></thead>
+            <tbody id="hpsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- S7: Winner -->
+    <section id="sec-winner">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">7. Winner &amp; Best Parameters</h2>
+      <div class="section-card space-y-6">
+        <div class="grid md:grid-cols-2 gap-4" id="winnerCards"></div>
+        <div>
+          <h3 class="font-bold text-slate-700 mb-3">Best Hyperparameters</h3>
+          <div id="bestParamsGrid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S8: Held-out Metrics -->
+    <section id="sec-metrics">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">8. Held-out Metrics (Train vs Test)</h2>
+      <div class="section-card space-y-6">
+        <div class="chart-wrap"><canvas id="metricsChart"></canvas></div>
+        <div class="overflow-auto rounded-lg border border-slate-200">
+          <table class="data-table">
+            <thead><tr><th>Metric</th><th>Train</th><th>Test</th><th>Gap (Train − Test)</th></tr></thead>
+            <tbody id="metricsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- S9: Confusion Matrix -->
+    <section id="sec-cm">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">9. Confusion Matrix</h2>
+      <div class="section-card space-y-6">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="plotly-div" id="cmPlot"></div>
+          <div class="space-y-3 text-sm text-slate-700">
+            <p class="font-bold text-slate-800">Business Cost Framing</p>
+            <div class="grid grid-cols-2 gap-3" id="cmCards"></div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800 mt-2">
+              Threshold fixed at 0.5 for this matrix. See Section 12 for threshold tuning to the F1-optimal cutoff.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S10: ROC & PR Curves -->
+    <section id="sec-roc">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">10. ROC &amp; PR Curves</h2>
+      <div class="section-card">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="plotly-div" id="rocPlot"></div>
+          <div class="plotly-div" id="prPlot"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S11: Calibration -->
+    <section id="sec-cal">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">11. Calibration</h2>
+      <div class="section-card space-y-6">
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div class="plotly-div" id="calPlot"></div>
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4" id="calCards"></div>
+            <div id="calAdoptBanner" class="rounded-lg p-3 text-sm font-semibold"></div>
+            <p class="text-xs text-slate-500">Isotonic calibration was applied when its Brier score is ≥5% lower than the uncalibrated model. Lower Brier = better probability quality.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S12: Threshold Tuning -->
+    <section id="sec-threshold">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">12. Threshold Tuning</h2>
+      <div class="section-card space-y-6">
+        <div class="plotly-div" id="thresholdPlot"></div>
+        <div>
+          <h3 class="font-bold text-slate-700 mb-3">Metrics at Chosen Threshold</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="thresholdMetricCards"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S13: Learning Curve -->
+    <section id="sec-lc">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">13. Learning Curve</h2>
+      <div class="section-card space-y-4">
+        <p class="text-sm text-slate-600">Shaded bands show ±1 std across 5 folds. Converging curves with a small gap indicate the model is near its capacity ceiling — more data would give diminishing returns.</p>
+        <div class="plotly-div" id="lcPlot"></div>
+      </div>
+    </section>
+
+    <!-- S14: SHAP -->
+    <section id="sec-shap">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">14. SHAP Explanations</h2>
+      <div class="section-card space-y-8" id="shapSection">
+        <!-- Beeswarm -->
+        <div>
+          <h3 class="font-bold text-slate-800 mb-1">Global Beeswarm (SHAP Summary)</h3>
+          <p class="text-xs text-slate-500 mb-3">Each dot is one test sample. Position on x-axis = SHAP value (impact on model output). Colour = feature value (blue = low, red = high).</p>
+          <div class="plotly-div" id="shapBeeswarmPlot"></div>
+        </div>
+        <!-- Dependence -->
+        <div>
+          <h3 class="font-bold text-slate-800 mb-1">Dependence Plot — <span id="shapDepFeatureName"></span></h3>
+          <p class="text-xs text-slate-500 mb-3">x-axis = raw feature value; y-axis = SHAP value for that feature.</p>
+          <div class="plotly-div" id="shapDepPlot"></div>
+        </div>
+        <!-- Waterfalls -->
+        <div class="grid lg:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-bold text-slate-800 mb-1">Waterfall — Confident True Positive</h3>
+            <p class="text-xs text-slate-500 mb-3">A sample the model correctly predicted as a clicker with high confidence.</p>
+            <div class="chart-wrap" style="height:280px"><canvas id="shapWfTpChart"></canvas></div>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800 mb-1">Waterfall — Confident False Positive</h3>
+            <p class="text-xs text-slate-500 mb-3">A non-clicker the model wrongly labelled as a clicker.</p>
+            <div class="chart-wrap" style="height:280px"><canvas id="shapWfFpChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S15: Error Slices -->
+    <section id="sec-slices">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">15. Error Slice Analysis</h2>
+      <div class="section-card space-y-6">
+        <div class="flex flex-wrap items-center gap-4">
+          <label class="text-sm font-bold text-slate-700">Filter by slice type:</label>
+          <select id="sliceFilter" class="border border-slate-300 rounded-lg px-3 py-2 text-sm"></select>
+          <span class="text-xs text-slate-500">Red rows = AUC gap vs global &lt; −0.05 (flagged)</span>
+        </div>
+        <div class="chart-wrap" style="height:260px"><canvas id="sliceGapChart"></canvas></div>
+        <div class="overflow-auto rounded-lg border border-slate-200">
+          <table class="data-table">
+            <thead><tr><th>Slice</th><th>Value</th><th>N</th><th>Class Rate</th><th>Accuracy</th><th>ROC-AUC</th><th>AUC Gap vs Global</th></tr></thead>
+            <tbody id="sliceTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- S16: Report Card -->
+    <section id="sec-report">
+      <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-blue-500 pb-2 mb-6 inline-block">16. Final Report Card</h2>
+      <div class="section-card space-y-8">
+        <!-- Headline -->
+        <div class="bg-slate-900 rounded-xl p-6 text-white">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p class="text-slate-400 text-sm uppercase tracking-widest mb-1">Model</p>
+              <p class="text-2xl font-sora font-extrabold" id="rcModelName">--</p>
+            </div>
+            <div class="text-right">
+              <p class="text-slate-400 text-sm uppercase tracking-widest mb-1">ROC-AUC (Test)</p>
+              <p class="text-4xl font-sora font-extrabold text-blue-400" id="rcAuc">--</p>
+              <p class="text-xs text-slate-400 mt-1" id="rcAucCi"></p>
+            </div>
+          </div>
+          <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3" id="rcSecondaryCards"></div>
+        </div>
+        <!-- Top drivers -->
+        <div>
+          <h3 class="font-bold text-slate-800 mb-3">Top 5 Drivers (Permutation Importance)</h3>
+          <div id="rcDriverChips" class="flex flex-wrap gap-2"></div>
+        </div>
+        <!-- Weaknesses + Next steps -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-bold text-slate-800 mb-2">Known Weaknesses</h3>
+            <div id="rcWeaknesses" class="text-sm text-slate-700"></div>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-800 mb-2">Next Steps</h3>
+            <ul id="rcNextSteps" class="list-disc ml-5 space-y-1 text-sm text-slate-700"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm text-slate-500">
+      <p>&copy; 2026 P4AI-DS Group Assignment.</p>
+      <p>Built for Ho Chi Minh City University of Technology (HCMUT)</p>
+    </div>
+  </footer>
+
+  <script>
+    const DATA_PATH = "plotly_data/ml_tabular_data.json";
+    const chartRegistry = new Map();
+
+    // ---- Utilities --------------------------------------------------------
+    function fmt(v, d = 2) {
+      if (typeof v !== "number" || isNaN(v)) return String(v);
+      return v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+    }
+    function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+    function setHtml(id, v) { const el = document.getElementById(id); if (el) el.innerHTML = v; }
+    function gapClass(g) { const a = Math.abs(g); return a > 0.05 ? "gap-bad" : a > 0.02 ? "gap-warn" : "gap-ok"; }
+
+    function plotlyLine(divId, traces, layout) {
+      const el = document.getElementById(divId);
+      if (!el) return;
+      Plotly.newPlot(el, traces, Object.assign({
+        paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
+        margin: { t: 40, r: 20, b: 50, l: 55 },
+        font: { family: "Space Grotesk, sans-serif", size: 12 },
+      }, layout), { responsive: true, displayModeBar: false });
+    }
+
+    function makeBarChart(canvasId, labels, datasets, opts = {}) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      if (chartRegistry.has(canvasId)) chartRegistry.get(canvasId).destroy();
+      const chart = new Chart(canvas, {
+        type: "bar",
+        data: { labels, datasets },
+        options: Object.assign({
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: datasets.length > 1 } },
+          scales: {
+            x: { grid: { color: "rgba(148,163,184,.15)" } },
+            y: { grid: { color: "rgba(148,163,184,.15)" } },
+          },
+        }, opts),
+      });
+      chartRegistry.set(canvasId, chart);
+      return chart;
+    }
+
+    function makeHBarChart(canvasId, labels, values, colors, opts = {}) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      if (chartRegistry.has(canvasId)) chartRegistry.get(canvasId).destroy();
+      const chart = new Chart(canvas, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{ label: opts.label || "Value", data: values, backgroundColor: colors, borderRadius: 4 }],
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, title: opts.title ? { display: true, text: opts.title } : undefined },
+          scales: {
+            x: { grid: { color: "rgba(148,163,184,.15)" } },
+            y: { grid: { display: false }, ticks: { font: { size: 11 } } },
+          },
+        },
+      });
+      chartRegistry.set(canvasId, chart);
+      return chart;
+    }
+
+    // ---- Section renderers ------------------------------------------------
+
+    function renderHeroStats(data) {
+      const h = data.hero_stats || {};
+      setText("statRows",     fmt(h.n_rows_total || 0, 0));
+      setText("statFeatures", fmt(h.n_features_used || 0, 0));
+      setText("statAccuracy", fmt(h.best_accuracy_pct || 0, 1) + "%");
+      setText("statModels",   fmt(h.n_models_tested || 0, 0));
+    }
+
+    function renderEdaToMl(data) {
+      const pre = data.preprocessing || {};
+      const decisions = pre.eda_to_ml_decisions || [];
+      const list = document.getElementById("edaToMlList");
+      list.innerHTML = "";
+      decisions.forEach(d => {
+        const li = document.createElement("li");
+        li.className = "flex gap-2";
+        li.innerHTML = `<span class="text-blue-500 mt-0.5 flex-shrink-0">→</span>
+          <span><span class="font-semibold">${d.eda_finding}</span><br>
+          <span class="text-slate-500">${d.ml_action}</span></span>`;
+        list.appendChild(li);
+      });
+
+      function pipelineHtml(branch) {
+        return Object.entries(branch || {}).map(([col, steps]) =>
+          `<div class="ml-card py-2 px-3 flex justify-between items-start gap-2">
+            <span class="font-mono text-xs font-semibold text-slate-600 flex-shrink-0">${col}</span>
+            <span class="text-xs text-slate-500 text-right">${steps}</span>
+          </div>`
+        ).join("");
+      }
+      setHtml("linearPipeline", pipelineHtml(pre.linear_pipeline));
+      setHtml("treePipeline",   pipelineHtml(pre.tree_pipeline));
+    }
+
+    function renderCvComparison(data) {
+      const rows = data.cv_comparison || [];
+      const metrics = ["roc_auc", "pr_auc", "accuracy", "f1"];
+      const labels = metrics.map(m => m.toUpperCase().replace("_", "-"));
+      const colors = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"];
+
+      const datasets = rows.map((row, ri) => ({
+        label: row.model.replace("Classifier", "").replace("HistGradientBoosting", "HistGBT"),
+        data: metrics.map(m => row[`${m}_mean`]),
+        backgroundColor: ["rgba(59,130,246,.8)", "rgba(16,185,129,.8)", "rgba(239,68,68,.8)"][ri % 3],
+        borderRadius: 4,
+      }));
+
+      makeBarChart("cvCompareChart", labels, datasets, {
+        scales: {
+          y: { min: 0.9, max: 1.0, grid: { color: "rgba(148,163,184,.15)" } },
+          x: { grid: { display: false } },
+        },
+      });
+
+      const tbody = document.getElementById("cvTableBody");
+      tbody.innerHTML = "";
+      rows.forEach(row => {
+        const gap = parseFloat(row.overfit_gap) || 0;
+        const gapCls = Math.abs(gap) > 0.02 ? "gap-warn" : "gap-ok";
+        tbody.innerHTML += `<tr>
+          <td class="font-semibold">${row.model.replace("Classifier","").replace("HistGradientBoosting","HistGBT")}</td>
+          <td>${fmt(row.roc_auc_mean,4)} <span class="text-xs text-slate-400">±${fmt(row.roc_auc_std,4)}</span></td>
+          <td>${fmt(row.pr_auc_mean,4)}</td>
+          <td>${fmt(row.accuracy_mean,4)}</td>
+          <td>${fmt(row.f1_mean,4)}</td>
+          <td>${fmt(row.log_loss,4)}</td>
+          <td>${fmt(row.train_roc_auc,4)}</td>
+          <td class="${gapCls}">${row.overfit_gap}</td>
+        </tr>`;
+      });
+    }
+
+    function renderPermutationImportance(data) {
+      const pi = data.permutation_importance || [];
+      const labels  = pi.map(r => r.feature);
+      const values  = pi.map(r => r.importance);
+      const colors  = values.map(v => v >= 0 ? "rgba(15,118,110,.85)" : "rgba(220,38,38,.8)");
+      makeHBarChart("permImportanceChart", labels, values, colors, {
+        label: "Mean ROC-AUC drop",
+        title: "Permutation Importance (test set, 20 repeats)",
+      });
+    }
+
+    function renderMethodology(data) {
+      const steps = data.methodology_steps || [];
+      const list = document.getElementById("methodologyList");
+      list.innerHTML = "";
+      steps.forEach(s => {
+        const li = document.createElement("li");
+        const phaseColor = s.phase === "B" ? "bg-blue-100 text-blue-800" : "bg-teal-100 text-teal-800";
+        const typeColor  = s.type === "core" ? "bg-slate-800 text-white" : "bg-slate-200 text-slate-600";
+        li.innerHTML = `<div class="flex gap-3 items-start">
+          <span class="ml-chip ${phaseColor} flex-shrink-0">Phase ${s.phase}</span>
+          <span class="ml-chip ${typeColor} flex-shrink-0">${s.type}</span>
+          <div><strong>Step ${s.step}: ${s.name}</strong> — ${s.purpose}
+          <span class="block text-slate-500 text-xs mt-0.5">${s.insight}</span></div>
+        </div>`;
+        list.appendChild(li);
+      });
+    }
+
+    function renderSplitSummary(data) {
+      const ov = data.dataset_overview || {};
+      const cards = [
+        { label: "Train Rows", value: fmt(ov.n_train || 0, 0), sub: `Class 0: ${ov.class_balance_train ? ov.class_balance_train["0"] : "-"}  Class 1: ${ov.class_balance_train ? ov.class_balance_train["1"] : "-"}` },
+        { label: "Test Rows",  value: fmt(ov.n_test || 0, 0),  sub: `Class 0: ${ov.class_balance_test  ? ov.class_balance_test["0"]  : "-"}  Class 1: ${ov.class_balance_test  ? ov.class_balance_test["1"]  : "-"}` },
+        { label: "CV Folds",   value: fmt(ov.cv_folds || 5, 0), sub: "Stratified K-Fold" },
+        { label: "Split",      value: "80 / 20", sub: "stratified, seed=42" },
+      ];
+      const grid = document.getElementById("splitCards");
+      grid.innerHTML = cards.map(c => `
+        <div class="ml-card text-center">
+          <p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-1">${c.label}</p>
+          <p class="text-2xl font-sora font-extrabold text-slate-900">${c.value}</p>
+          <p class="text-xs text-slate-400 mt-1">${c.sub}</p>
+        </div>`).join("");
+
+      const fc = ov.feature_columns || {};
+      const chipsDiv = document.getElementById("featureChips");
+      chipsDiv.innerHTML = "";
+      const families = [
+        { key: "numeric", label: "Numeric", cls: "bg-blue-100 text-blue-800" },
+        { key: "binary",  label: "Binary",  cls: "bg-slate-100 text-slate-700" },
+        { key: "categorical_mid", label: "Categorical", cls: "bg-amber-100 text-amber-800" },
+        { key: "timestamp", label: "Timestamp", cls: "bg-purple-100 text-purple-800" },
+        { key: "engineered", label: "Engineered", cls: "bg-teal-100 text-teal-800" },
+        { key: "dropped", label: "Dropped", cls: "bg-red-100 text-red-700 line-through" },
+      ];
+      families.forEach(fam => {
+        const cols = fc[fam.key];
+        if (!cols) return;
+        const arr = Array.isArray(cols) ? cols : [cols];
+        arr.forEach(col => {
+          const span = document.createElement("span");
+          span.className = `ml-chip ${fam.cls}`;
+          span.title = fam.label;
+          span.textContent = col;
+          chipsDiv.appendChild(span);
         });
-    </script>
-</body>
+      });
+    }
 
+    function renderRandomSearch(data) {
+      const rows = data.random_search_top10 || [];
+      const labels = rows.map((_, i) => `#${i+1}`);
+      const values = rows.map(r => r.mean_test_score);
+      makeHBarChart("hpsChart", labels, values, values.map(() => "rgba(59,130,246,.8)"), {
+        label: "CV AUC", title: "Top-10 RandomizedSearchCV configs — CV ROC-AUC",
+      });
+
+      const tbody = document.getElementById("hpsTableBody");
+      tbody.innerHTML = "";
+      rows.forEach((row, i) => {
+        const paramsStr = Object.entries(row.params || {}).map(([k,v]) =>
+          `<span class="inline-block bg-slate-100 text-slate-700 rounded px-1.5 py-0.5 text-xs font-mono mr-1">${k.replace("clf__","")}: ${v}</span>`
+        ).join("");
+        tbody.innerHTML += `<tr>
+          <td class="font-bold">${i+1}</td>
+          <td class="font-semibold text-blue-700">${fmt(row.mean_test_score,6)}</td>
+          <td class="text-slate-500">±${fmt(row.std_test_score,6)}</td>
+          <td>${fmt(row.mean_train_score,6)}</td>
+          <td>${paramsStr}</td>
+        </tr>`;
+      });
+    }
+
+    function renderWinner(data) {
+      const w = data.winner || {};
+      const grid = document.getElementById("winnerCards");
+      grid.innerHTML = `
+        <div class="ml-card text-center">
+          <p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-1">Winner Model</p>
+          <p class="text-2xl font-sora font-extrabold text-slate-900">${(w.name||"--").replace("Classifier","").replace("HistGradientBoosting","HistGBT")}</p>
+        </div>
+        <div class="ml-card text-center">
+          <p class="text-xs uppercase tracking-wide text-slate-500 font-bold mb-1">Best CV ROC-AUC</p>
+          <p class="text-2xl font-sora font-extrabold text-blue-600">${fmt(w.best_cv_roc_auc||0,4)}</p>
+        </div>`;
+
+      const paramsGrid = document.getElementById("bestParamsGrid");
+      paramsGrid.innerHTML = Object.entries(w.best_params || {}).map(([k,v]) => `
+        <div class="ml-card">
+          <p class="text-xs text-slate-500 font-bold uppercase tracking-wide">${k.replace("clf__","")}</p>
+          <p class="font-semibold text-slate-800 mt-1">${v === null ? "None" : v}</p>
+        </div>`).join("");
+    }
+
+    function renderHeldOutMetrics(data) {
+      const hom = data.held_out_metrics || {};
+      const metrics = hom.metrics || [];
+      const train = hom.train || [];
+      const test  = hom.test  || [];
+      const gap   = hom.gap   || [];
+
+      makeBarChart("metricsChart", metrics, [
+        { label: "Train", data: train, backgroundColor: "rgba(59,130,246,.75)", borderRadius: 4 },
+        { label: "Test",  data: test,  backgroundColor: "rgba(16,185,129,.75)", borderRadius: 4 },
+      ], { scales: { y: { min: 0, max: 1.05 } } });
+
+      const tbody = document.getElementById("metricsTableBody");
+      tbody.innerHTML = "";
+      metrics.forEach((m, i) => {
+        const g = gap[i] || 0;
+        tbody.innerHTML += `<tr>
+          <td class="font-semibold">${m}</td>
+          <td>${fmt(train[i]||0,4)}</td>
+          <td>${fmt(test[i]||0,4)}</td>
+          <td class="${gapClass(g)}">${g >= 0 ? "+" : ""}${fmt(g,4)}</td>
+        </tr>`;
+      });
+    }
+
+    function renderConfusionMatrix(data) {
+      const cm = data.confusion_matrix || {};
+      const labels = cm.labels || ["Neg","Pos"];
+      const matrix = cm.matrix || [[0,0],[0,0]];
+      const total = matrix.flat().reduce((a,b)=>a+b,0);
+      const z = matrix.map(row => row.map(v => v));
+      const textArr = matrix.map(row => row.map(v => `${v}<br>${total>0?(v/total*100).toFixed(1):"0.0"}%`));
+
+      plotlyLine("cmPlot", [{
+        type: "heatmap", z, x: labels, y: labels,
+        colorscale: [[0,"#f0f9ff"],[1,"#1e40af"]],
+        showscale: false,
+        text: textArr, texttemplate: "%{text}", hovertemplate: "%{y} / %{x}: %{z}<extra></extra>",
+      }], {
+        title: "Confusion Matrix @ threshold 0.5",
+        xaxis: { title: "Predicted" }, yaxis: { title: "Actual", autorange: "reversed" },
+        margin: { t: 50, b: 60, l: 70, r: 20 },
+      });
+
+      const framing = [
+        { label: "TP — True Positive", desc: "Predicted click, user clicked → Revenue from conversion", cls: "bg-green-50 border-green-300", val: cm.tp },
+        { label: "FP — False Positive", desc: "Predicted click, user didn't → Wasted ad spend", cls: "bg-red-50 border-red-300", val: cm.fp },
+        { label: "FN — False Negative", desc: "Predicted no click, user did → Missed conversion", cls: "bg-amber-50 border-amber-300", val: cm.fn },
+        { label: "TN — True Negative", desc: "Predicted no click, user didn't → Saved spend", cls: "bg-blue-50 border-blue-300", val: cm.tn },
+      ];
+      document.getElementById("cmCards").innerHTML = framing.map(f => `
+        <div class="border ${f.cls} rounded-lg p-2">
+          <p class="text-xs font-bold text-slate-700">${f.label}</p>
+          <p class="text-xl font-sora font-extrabold mt-0.5">${f.val ?? "--"}</p>
+          <p class="text-xs text-slate-500 mt-0.5">${f.desc}</p>
+        </div>`).join("");
+    }
+
+    function renderRocPr(data) {
+      const roc = data.roc_curve || {};
+      const pr  = data.pr_curve  || {};
+
+      plotlyLine("rocPlot", [
+        { x: roc.fpr, y: roc.tpr, mode: "lines", name: `ROC (AUC=${roc.auc})`, line: { color: "#3b82f6", width: 2 } },
+        { x: [0,1], y: [0,1], mode: "lines", name: "Random", line: { dash: "dash", color: "#94a3b8", width: 1 } },
+      ], { title: `ROC Curve — AUC = ${roc.auc}`, xaxis: { title: "False Positive Rate", range: [0,1] }, yaxis: { title: "True Positive Rate", range: [0,1.02] } });
+
+      const baselineY = Array(pr.recall ? pr.recall.length : 2).fill(0.5);
+      plotlyLine("prPlot", [
+        { x: pr.recall, y: pr.precision, mode: "lines", name: `PR (AUC=${pr.pr_auc})`, line: { color: "#10b981", width: 2 } },
+        { x: [0,1], y: baselineY, mode: "lines", name: "Baseline (0.5)", line: { dash: "dash", color: "#94a3b8", width: 1 } },
+      ], { title: `PR Curve — AUC = ${pr.pr_auc}`, xaxis: { title: "Recall", range: [0,1] }, yaxis: { title: "Precision", range: [0,1.02] } });
+    }
+
+    function renderCalibration(data) {
+      const cal = data.calibration || {};
+
+      plotlyLine("calPlot", [
+        { x: [0,1], y: [0,1], mode: "lines", name: "Perfect calibration", line: { dash: "dash", color: "#94a3b8" } },
+        { x: cal.prob_pred, y: cal.prob_true, mode: "lines+markers", name: `Uncalibrated (Brier=${cal.uncalibrated_brier})`, line: { color: "#f59e0b" }, marker: { size: 6 } },
+        { x: cal.prob_pred_cal, y: cal.prob_true_cal, mode: "lines+markers", name: `Isotonic (Brier=${cal.isotonic_brier})`, line: { color: "#10b981" }, marker: { size: 6, symbol: "square" } },
+      ], { title: "Calibration Curve (Reliability Diagram)", xaxis: { title: "Mean Predicted Probability", range: [0,1] }, yaxis: { title: "Observed Frequency", range: [0,1] } });
+
+      document.getElementById("calCards").innerHTML = `
+        <div class="ml-card text-center">
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Uncalibrated Brier</p>
+          <p class="text-2xl font-sora font-extrabold text-amber-600">${fmt(cal.uncalibrated_brier||0,4)}</p>
+        </div>
+        <div class="ml-card text-center">
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Isotonic Brier</p>
+          <p class="text-2xl font-sora font-extrabold text-teal-600">${fmt(cal.isotonic_brier||0,4)}</p>
+        </div>`;
+
+      const banner = document.getElementById("calAdoptBanner");
+      if (cal.adopted_calibrated) {
+        banner.className = "rounded-lg p-3 text-sm font-semibold bg-green-50 border border-green-300 text-green-800";
+        banner.textContent = "✓ Isotonic calibration adopted — Brier improved by ≥5%. Production model uses the calibrated pipeline.";
+      } else {
+        banner.className = "rounded-lg p-3 text-sm font-semibold bg-slate-50 border border-slate-200 text-slate-700";
+        banner.textContent = "Isotonic calibration not adopted — improvement was <5%. Production model uses the original pipeline.";
+      }
+    }
+
+    function renderThresholdTuning(data) {
+      const tt = data.threshold_tuning || {};
+      const chosen = tt.chosen_threshold || 0.5;
+
+      plotlyLine("thresholdPlot", [
+        { x: tt.thresholds, y: tt.precision, mode: "lines", name: "Precision", line: { color: "#3b82f6" } },
+        { x: tt.thresholds, y: tt.recall,    mode: "lines", name: "Recall",    line: { color: "#f59e0b" } },
+        { x: tt.thresholds, y: tt.f1,        mode: "lines", name: "F1",        line: { color: "#10b981", width: 3 } },
+        { x: [chosen, chosen], y: [0, 1], mode: "lines", name: `Chosen t=${chosen}`,
+          line: { dash: "dot", color: "#ef4444", width: 2 } },
+      ], { title: "Precision / Recall / F1 vs Threshold",
+           xaxis: { title: "Threshold" }, yaxis: { title: "Score", range: [0, 1.05] } });
+
+      const cm = tt.chosen_metrics || {};
+      const cards = [
+        { label: "Threshold", value: fmt(chosen, 2) },
+        { label: "Accuracy",  value: fmt(cm.accuracy  || 0, 4) },
+        { label: "F1",        value: fmt(cm.f1        || 0, 4) },
+        { label: "ROC-AUC",   value: fmt(cm.roc_auc   || 0, 4) },
+        { label: "Precision", value: fmt(cm.precision || 0, 4) },
+        { label: "Recall",    value: fmt(cm.recall    || 0, 4) },
+        { label: "PR-AUC",    value: fmt(cm.pr_auc    || 0, 4) },
+        { label: "Brier",     value: fmt(cm.brier     || 0, 4) },
+      ];
+      document.getElementById("thresholdMetricCards").innerHTML = cards.map(c => `
+        <div class="ml-card text-center">
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">${c.label}</p>
+          <p class="text-lg font-sora font-extrabold text-slate-900 mt-1">${c.value}</p>
+        </div>`).join("");
+    }
+
+    function renderLearningCurve(data) {
+      const lc = data.learning_curve || {};
+      const sizes = lc.train_sizes || [];
+      const trm = lc.train_mean || []; const trs = lc.train_std || [];
+      const vam = lc.val_mean   || []; const vas = lc.val_std   || [];
+
+      const trHi = trm.map((v,i)=>v+(trs[i]||0)); const trLo = trm.map((v,i)=>v-(trs[i]||0));
+      const vaHi = vam.map((v,i)=>v+(vas[i]||0)); const vaLo = vam.map((v,i)=>v-(vas[i]||0));
+
+      plotlyLine("lcPlot", [
+        { x: sizes, y: trHi, mode: "lines", line: { color: "rgba(59,130,246,0)", width: 0 }, showlegend: false, hoverinfo: "skip" },
+        { x: sizes, y: trLo, fill: "tonexty", mode: "lines", line: { color: "rgba(59,130,246,0)", width: 0 },
+          fillcolor: "rgba(59,130,246,.15)", name: "Train ±std", showlegend: true },
+        { x: sizes, y: trm, mode: "lines+markers", name: "Train AUC", line: { color: "#3b82f6", width: 2 } },
+        { x: sizes, y: vaHi, mode: "lines", line: { color: "rgba(16,185,129,0)", width: 0 }, showlegend: false, hoverinfo: "skip" },
+        { x: sizes, y: vaLo, fill: "tonexty", mode: "lines", line: { color: "rgba(16,185,129,0)", width: 0 },
+          fillcolor: "rgba(16,185,129,.15)", name: "Val ±std", showlegend: true },
+        { x: sizes, y: vam, mode: "lines+markers", name: "Val AUC", line: { color: "#10b981", width: 2 } },
+      ], { title: "Learning Curve (ROC-AUC vs Training Set Size)",
+           xaxis: { title: "Training set size" }, yaxis: { title: "ROC-AUC", range: [0.85, 1.02] } });
+    }
+
+    function renderShap(data) {
+      const shap = data.shap || {};
+      if (shap.available === false) {
+        document.getElementById("shapSection").innerHTML =
+          `<div class="bg-slate-100 rounded-lg p-6 text-slate-500 text-center">SHAP explanations not available — ${shap.reason || "shap not installed"}</div>`;
+        return;
+      }
+
+      const fn   = shap.feature_names || [];
+      const vals = shap.values_matrix || [];
+      const dat  = shap.data_matrix   || [];
+      const base = shap.base_value    || 0;
+
+      // --- Beeswarm (scatter, one trace per feature) ---
+      if (fn.length && vals.length) {
+        const beeTraces = fn.map((name, j) => {
+          const xs = vals.map(row => row[j]);
+          const cs = dat.map(row => row[j]);
+          const n  = xs.length;
+          const jitter = xs.map(() => j + (Math.random() - 0.5) * 0.35);
+          return {
+            type: "scatter", mode: "markers", name,
+            x: xs, y: jitter,
+            marker: { size: 4, color: cs, colorscale: "Viridis", showscale: j === 0,
+              colorbar: j === 0 ? { title: "Feature value", thickness: 12 } : undefined,
+              opacity: 0.7 },
+            hovertemplate: `<b>${name}</b><br>SHAP: %{x:.3f}<br>Value: %{marker.color:.3f}<extra></extra>`,
+          };
+        });
+        plotlyLine("shapBeeswarmPlot", beeTraces, {
+          title: "SHAP Beeswarm — Global Feature Impact",
+          xaxis: { title: "SHAP value (impact on model output)", zeroline: true },
+          yaxis: { tickvals: fn.map((_,j)=>j), ticktext: fn, automargin: true },
+          height: 400,
+          showlegend: false,
+        });
+      }
+
+      // --- Dependence ---
+      const depKeys = Object.keys(shap.dependence || {});
+      if (depKeys.length) {
+        const depKey = depKeys[0];
+        const dep = shap.dependence[depKey];
+        setText("shapDepFeatureName", dep.feature || depKey);
+        plotlyLine("shapDepPlot", [
+          { type: "scatter", mode: "markers", x: dep.x, y: dep.shap,
+            marker: { color: dep.x, colorscale: "Viridis", size: 5, opacity: 0.75,
+              colorbar: { title: dep.feature, thickness: 12 } },
+            hovertemplate: `Value: %{x:.2f}<br>SHAP: %{y:.4f}<extra></extra>` },
+        ], { title: `Dependence — ${dep.feature}`,
+             xaxis: { title: dep.feature }, yaxis: { title: "SHAP value" } });
+      }
+
+      // --- Waterfall bars ---
+      function renderWaterfall(canvasId, wf) {
+        if (!wf || !wf.feature_names || !wf.shap_values) return;
+        const n = Math.min(wf.feature_names.length, 10);
+        const sorted = wf.feature_names.map((f,i) => ({ f, v: wf.shap_values[i] || 0 }))
+          .sort((a,b) => Math.abs(b.v) - Math.abs(a.v)).slice(0, n);
+        const labels = sorted.map(d => d.f);
+        const values = sorted.map(d => d.v);
+        const colors = values.map(v => v > 0 ? "rgba(239,68,68,.8)" : "rgba(59,130,246,.8)");
+        makeHBarChart(canvasId, labels, values, colors, { label: "SHAP contribution" });
+      }
+      renderWaterfall("shapWfTpChart", shap.waterfall_tp);
+      renderWaterfall("shapWfFpChart", shap.waterfall_fp);
+    }
+
+    function renderErrorSlices(data) {
+      const slices = data.error_slices || [];
+      const globalAuc = data.global_auc || 0;
+      const sliceTypes = [...new Set(slices.map(r => r.slice))];
+
+      const sel = document.getElementById("sliceFilter");
+      sel.innerHTML = `<option value="__all__">All slices</option>` +
+        sliceTypes.map(t => `<option value="${t}">${t}</option>`).join("");
+
+      let currentType = "__all__";
+      let sliceChart = null;
+
+      function renderSlices(type) {
+        const rows = type === "__all__" ? slices : slices.filter(r => r.slice === type);
+        const labels = rows.map(r => `${r.slice}=${r.value}`);
+        const gaps   = rows.map(r => parseFloat(r.auc_gap_vs_global) || 0);
+        const colors = rows.map(r => r.flag ? "rgba(220,38,38,.85)" : "rgba(59,130,246,.75)");
+
+        if (sliceChart) { sliceChart.destroy(); }
+        const canvas = document.getElementById("sliceGapChart");
+        sliceChart = new Chart(canvas, {
+          type: "bar",
+          data: { labels, datasets: [{ label: "AUC gap vs global", data: gaps, backgroundColor: colors, borderRadius: 4 }] },
+          options: {
+            indexAxis: "y", responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false },
+              annotation: { annotations: [{ type: "line", xMin: -0.05, xMax: -0.05, borderColor: "#ef4444", borderDash: [4,4] }] } },
+            scales: { x: { title: { display: true, text: "AUC gap vs global" } }, y: { ticks: { font: { size: 10 } } } },
+          },
+        });
+        chartRegistry.set("sliceGapChart", sliceChart);
+
+        const tbody = document.getElementById("sliceTableBody");
+        tbody.innerHTML = "";
+        rows.forEach(r => {
+          const gap = parseFloat(r.auc_gap_vs_global) || 0;
+          const rowCls = r.flag ? "flag-row" : "";
+          tbody.innerHTML += `<tr class="${rowCls}">
+            <td class="font-semibold">${r.slice}</td>
+            <td>${r.value}</td>
+            <td>${r.n}</td>
+            <td>${fmt(parseFloat(r.class_rate)||0,3)}</td>
+            <td>${fmt(parseFloat(r.accuracy)||0,4)}</td>
+            <td>${fmt(parseFloat(r.roc_auc)||0,4)}</td>
+            <td class="${gap < -0.05 ? "gap-bad" : gap < -0.02 ? "gap-warn" : "gap-ok"}">${gap >= 0 ? "+" : ""}${fmt(gap,4)}</td>
+          </tr>`;
+        });
+      }
+
+      sel.addEventListener("change", () => renderSlices(sel.value));
+      renderSlices("__all__");
+    }
+
+    function renderReportCard(data) {
+      const rc = data.report_card || {};
+      const hm = rc.headline_metric || {};
+      const sm = rc.secondary_metrics_at_tuned_threshold || {};
+      const cal = rc.calibration || {};
+
+      setText("rcModelName", (rc.model || "--").replace("Classifier","").replace("HistGradientBoosting","HistGBT"));
+      setText("rcAuc", fmt(hm.value || 0, 4));
+      const ci = hm.ci_95_bootstrap || [];
+      setText("rcAucCi", ci.length === 2 ? `95% CI [${fmt(ci[0],4)}, ${fmt(ci[1],4)}]` : "");
+
+      const secCards = [
+        { label: "Threshold", value: fmt(sm.threshold || 0, 2) },
+        { label: "Accuracy",  value: fmt(sm.accuracy  || 0, 4) },
+        { label: "F1",        value: fmt(sm.f1        || 0, 4) },
+        { label: "Brier",     value: fmt((cal.isotonic_brier !== undefined ? cal.isotonic_brier : sm.brier) || 0, 4) },
+      ];
+      document.getElementById("rcSecondaryCards").innerHTML = secCards.map(c => `
+        <div class="bg-slate-800 rounded-lg p-3">
+          <p class="text-xs text-slate-400 uppercase tracking-widest">${c.label}</p>
+          <p class="text-xl font-sora font-extrabold text-white mt-1">${c.value}</p>
+        </div>`).join("");
+
+      const top5 = rc.top_5_drivers_by_permutation || [];
+      document.getElementById("rcDriverChips").innerHTML = top5.map((f, i) => `
+        <span class="ml-chip bg-blue-600 text-white">${i+1}. ${f}</span>`).join("");
+
+      const wk = rc.known_weaknesses;
+      const wkEl = document.getElementById("rcWeaknesses");
+      if (typeof wk === "string") {
+        wkEl.innerHTML = `<p class="text-slate-500 italic">${wk}</p>`;
+      } else if (Array.isArray(wk) && wk.length) {
+        wkEl.innerHTML = `<ul class="list-disc ml-5 space-y-1">${wk.map(w=>`<li>${w.slice||""} = ${w.value||""}: AUC ${fmt(parseFloat(w.roc_auc)||0,3)} (gap ${fmt(parseFloat(w.auc_gap_vs_global)||0,3)})</li>`).join("")}</ul>`;
+      } else {
+        wkEl.innerHTML = `<p class="text-green-700 font-medium">No slices exceeded −0.05 AUC gap. ✓</p>`;
+      }
+
+      const ns = data.next_steps || [];
+      document.getElementById("rcNextSteps").innerHTML = ns.map(s => `<li>${s}</li>`).join("");
+    }
+
+    // ---- Main loader -------------------------------------------------------
+    async function loadAndRender() {
+      try {
+        const r = await fetch(DATA_PATH);
+        if (!r.ok) throw new Error("HTTP " + r.status + " — " + DATA_PATH);
+        const data = await r.json();
+
+        renderHeroStats(data);
+        renderEdaToMl(data);
+        renderCvComparison(data);
+        renderPermutationImportance(data);
+        renderMethodology(data);
+        renderSplitSummary(data);
+        renderRandomSearch(data);
+        renderWinner(data);
+        renderHeldOutMetrics(data);
+        renderConfusionMatrix(data);
+        renderRocPr(data);
+        renderCalibration(data);
+        renderThresholdTuning(data);
+        renderLearningCurve(data);
+        renderShap(data);
+        renderErrorSlices(data);
+        renderReportCard(data);
+      } catch (err) {
+        document.getElementById("errorBanner").classList.remove("hidden");
+        document.getElementById("errorMsg").textContent =
+          "Failed to load data: " + err.message + ". Serve via a local HTTP server (e.g. python -m http.server 8080).";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadAndRender);
+  </script>
+</body>
 </html>
