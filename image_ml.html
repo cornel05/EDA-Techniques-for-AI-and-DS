@@ -286,28 +286,136 @@
         </section>
 
         <!--- Section 3 -->
-        <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 inline-block">3.
-                Pipeline Comparison Tournament</h2>
-            <p class="text-slate-600 mb-6">A systematic comparison of feature extractors (ResNet-18 vs MobileNetV2 vs
-                Raw Pixels) combined with dimensionality reduction (PCA) and classical classifiers.</p>
+        <section class="p-6 panel mt-8">
+    <div class="mb-8">
+        <h2 class="text-2xl font-extrabold font-sora border-b-2 border-teal-500 pb-2 inline-block">3. Pipeline Comparison Tournament</h2>
+        <p class="text-sm text-slate-500 mt-2">A systematic comparison of feature extractors (ResNet vs MobileNet vs Raw) combined with PCA and classical classifiers.</p>
+    </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <table class="min-w-full text-left text-sm whitespace-nowrap">
-                    <thead class="bg-slate-900 text-white">
+    <div class="panel bg-white border border-slate-200 rounded-xl shadow-sm mb-8 overflow-hidden">
+        <div class="flex border-b border-slate-200 bg-slate-50">
+            <button id="tab-btn-pipeline" class="px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600" onclick="switchCard1Tab('pipeline')">Pipeline</button>
+            <button id="tab-btn-calc" class="px-6 py-3 font-bold text-slate-400 hover:text-slate-600" onclick="switchCard1Tab('calc')">Calculation</button>
+        </div>
+        
+        <div class="p-6">
+            <div id="tab-content-pipeline" class="block">
+                <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 mb-8">
+                    <div class="text-center px-4">
+                        <p class="text-xs text-slate-500 uppercase font-bold">Total Pipelines</p>
+                        <p class="text-2xl font-black text-slate-800">8</p>
+                    </div>
+                    <div class="h-8 w-px bg-slate-300"></div>
+                    <div class="text-center px-4">
+                        <p class="text-xs text-slate-500 uppercase font-bold">Best Accuracy</p>
+                        <p class="text-2xl font-black text-teal-600" id="bestPipeAccVal">--%</p>
+                    </div>
+                    <div class="h-8 w-px bg-slate-300"></div>
+                    <div class="text-center px-4">
+                        <p class="text-xs text-slate-500 uppercase font-bold">Fastest Training</p>
+                        <p class="text-2xl font-black text-amber-600" id="fastestPipeTrainVal">--s</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center justify-center gap-3 text-[10px] font-bold uppercase">
+                    <div class="p-3 bg-white border border-slate-200 rounded text-center shadow-sm">
+                        <i class="fas fa-image text-blue-500 mb-1 text-lg block"></i> Input<br><span class="text-[8px] text-slate-400">32x32 / 224x224</span>
+                    </div>
+                    <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                    <div class="p-3 bg-blue-100 text-blue-800 rounded text-center shadow-sm">
+                        <i class="fas fa-cogs mb-1 text-lg block"></i> Extractor (3)<br><span class="text-[8px] opacity-75">ResNet / MobileNet / Raw</span>
+                    </div>
+                    <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                    <div class="p-3 bg-purple-100 text-purple-800 rounded text-center shadow-sm">
+                        <i class="fas fa-compress-arrows-alt mb-1 text-lg block"></i> Dim Reducer (2)<br><span class="text-[8px] opacity-75">None / PCA</span>
+                    </div>
+                    <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                    <div class="p-3 bg-amber-100 text-amber-800 rounded text-center shadow-sm">
+                        <i class="fas fa-filter mb-1 text-lg block"></i> Classifier (3)<br><span class="text-[8px] opacity-75">LR / SVM / RF</span>
+                    </div>
+                    <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                    <div class="p-3 bg-teal-600 text-white rounded text-center shadow-sm">
+                        <i class="fas fa-flag-checkered mb-1 text-lg block"></i> Results<br><span class="text-[8px] opacity-75">Metrics & CM</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-calc" class="hidden text-sm text-slate-700">
+                <h4 class="font-bold text-slate-900 mb-4 border-b pb-2">Tournament Design & Calculation</h4>
+                <div class="grid md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-blue-50 p-4 rounded border border-blue-100">
+                        <h5 class="font-bold text-blue-800 mb-2">1. Feature Extractors</h5>
+                        <ul class="list-disc pl-5 space-y-1 text-xs">
+                            <li><strong>ResNet-18</strong> (Frozen, 512-D)</li>
+                            <li><strong>MobileNetV2</strong> (Frozen, 1280-D)</li>
+                            <li><strong>Raw Pixels</strong> (Flattened, 3072-D)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded border border-purple-100">
+                        <h5 class="font-bold text-purple-800 mb-2">2. Dimensionality Reduction</h5>
+                        <ul class="list-disc pl-5 space-y-1 text-xs">
+                            <li><strong>None</strong> (Use all features)</li>
+                            <li><strong>PCA-128</strong> (Reduce to 128 comps)</li>
+                            <li><strong>PCA-256</strong> (Reduce to 256 comps)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded border border-amber-100">
+                        <h5 class="font-bold text-amber-800 mb-2">3. Classifiers</h5>
+                        <ul class="list-disc pl-5 space-y-1 text-xs">
+                            <li><strong>Logistic Regression (LR)</strong> (Balanced)</li>
+                            <li><strong>Linear SVM</strong> (Balanced)</li>
+                            <li><strong>Random Forest (RF)</strong></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-slate-100 p-4 rounded text-xs">
+                    <strong>Total Pipelines:</strong> Instead of a full combinatorial grid ($3 \times 3 \times 3 = 27$), we strategically selected <strong>8 pipelines</strong> to test the most promising combinations based on EDA constraints.<br>
+                    <em>Example:</em> <code>ResNet18 -> PCA-128 -> SVM</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel bg-white border border-slate-200 rounded-xl shadow-sm mb-8 overflow-hidden">
+        <div class="flex border-b border-slate-200 bg-slate-50">
+            <button id="tab-btn-perf" class="px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600" onclick="switchCard2Tab('perf')">Performance</button>
+            <button id="tab-btn-config" class="px-6 py-3 font-bold text-slate-400 hover:text-slate-600" onclick="switchCard2Tab('config')">Configuration</button>
+        </div>
+
+        <div class="p-0">
+            <div id="tab-content-perf" class="block overflow-x-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase border-b border-slate-200">
                         <tr>
-                            <th class="px-6 py-4 font-semibold">Rank</th>
-                            <th class="px-6 py-4 font-semibold">Pipeline Configuration</th>
-                            <th class="px-6 py-4 font-semibold">Accuracy</th>
-                            <th class="px-6 py-4 font-semibold">Macro F1</th>
-                            <th class="px-6 py-4 font-semibold">Train Time (s)</th>
+                            <th class="p-4">Rank</th>
+                            <th class="p-4">Pipeline</th>
+                            <th class="p-4">Acc (%)</th>
+                            <th class="p-4">Prec (%)</th>
+                            <th class="p-4">Rec (%)</th>
+                            <th class="p-4">F1-M</th>
+                            <th class="p-4">Trn (s)</th>
+                            <th class="p-4">Inf (ms)</th>
+                            <th class="p-4">Size (KB)</th>
                         </tr>
                     </thead>
-                    <tbody id="pipelineTableBody" class="divide-y divide-slate-200">
-                    </tbody>
+                    <tbody id="pipelineTournamentBody" class="divide-y divide-slate-100">
+                        </tbody>
                 </table>
+                <div class="p-3 bg-slate-50 text-[10px] text-slate-500 text-center border-t border-slate-200">
+                    <i class="fas fa-hand-pointer mr-1"></i> Click any row to view its Confusion Matrix & Per-Class Metrics below.
+                </div>
             </div>
-        </section>
+
+            <div id="tab-content-config" class="hidden p-6 text-sm text-slate-700">
+                <div class="grid md:grid-cols-2 gap-4" id="configGridContainer">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pipelineDetailsContainer" class="space-y-8">
+        </div>
+</section>
 
         <!--- Section 4-->
         <section>
@@ -381,15 +489,18 @@
         // Configuration
         const PATHS = {
             baseline32: 'plotly_data/ml_section1_results_32.json',
-            baseline224: 'plotly_data/ml_section1_results_224.json', // Ensure path matches your new filename
+            baseline224: 'plotly_data/ml_section1_results_224.json', 
             pipelines: 'plotly_data/ml_section2_pipelines.json',
             finetune: 'plotly_data/ml_section3_finetune.json'
         };
 
-        // Global State for Section 2 (Interactive Comparison)
+        // Global States
         let mlResults224 = [];
         let selectedMethods = new Set();
-        let activeCharts = {};
+        let activeCharts = {}; // For Section 2
+        
+        let mlResultsPipelines = [];
+        let activePipelineChart = null; // For Section 3
 
         // Helper: Show Error
         function showError(msg) {
@@ -414,15 +525,15 @@
                 const dataPipe = await resPipe.json();
                 const dataFt = await resFt.json();
 
-                // Store 224 data globally for the Section 2 toggle feature
+                // Store data globally
                 mlResults224 = data224;
 
                 // Render all sections
-                renderComparison(); // Initializes Section 2 empty state
-                renderDomainGap(data32, data224);
-                renderPipelineTable(dataPipe);
-                renderTransferLearning(dataFt);
-                renderSummaryChart(data224, dataFt);
+                renderComparison(); // Sec 2 Init
+                renderDomainGap(data32, data224); // Sec 1
+                renderPipelineTournament(dataPipe); // Sec 3 Init (FIXED: Replaced old function call)
+                renderTransferLearning(dataFt); // Sec 4
+                renderSummaryChart(data224, dataFt); // Final
 
             } catch (error) {
                 showError(error.message);
@@ -430,7 +541,7 @@
         }
 
         // ==========================================
-        // NEW SECTION 2: Interactive ML Comparison
+        // SECTION 2: Interactive ML Comparison
         // ==========================================
 
         function toggleMethod(methodName) {
@@ -438,13 +549,11 @@
 
             if (selectedMethods.has(methodName)) {
                 selectedMethods.delete(methodName);
-                // Remove active styling
                 btn.classList.remove('border-blue-500', 'bg-blue-50');
                 btn.querySelector('.icon-bg').classList.replace('bg-blue-500', 'bg-slate-100');
                 btn.querySelector('.icon-svg').classList.replace('text-white', 'text-slate-500');
             } else {
                 selectedMethods.add(methodName);
-                // Add active styling
                 btn.classList.add('border-blue-500', 'bg-blue-50');
                 btn.querySelector('.icon-bg').classList.replace('bg-slate-100', 'bg-blue-500');
                 btn.querySelector('.icon-svg').classList.replace('text-slate-500', 'text-white');
@@ -455,10 +564,10 @@
         function renderComparison() {
             const tbody = document.getElementById('comparisonTableBody');
             const detailsContainer = document.getElementById('methodDetailsContainer');
-            
+
             tbody.innerHTML = '';
             detailsContainer.innerHTML = '';
-            
+
             Object.values(activeCharts).forEach(chart => chart.destroy());
             activeCharts = {};
 
@@ -469,7 +578,6 @@
 
             const selectedData = mlResults224.filter(m => selectedMethods.has(m.model_name));
 
-            // --- NEW HIGHLIGHT LOGIC ---
             let maxAcc = -1, maxPrec = -1, maxRec = -1, maxF1 = -1;
             let minTrain = Infinity, minInf = Infinity, minSize = Infinity;
 
@@ -483,7 +591,6 @@
                 minSize = Math.min(...selectedData.map(m => m.model_size_kb));
             }
 
-            // Helper to style the winning cell
             const formatCell = (val, bestVal, decimals) => {
                 const formatted = val.toFixed(decimals);
                 if (selectedData.length > 1 && val === bestVal) {
@@ -491,12 +598,11 @@
                 }
                 return `<span class="px-2 py-1 text-slate-600">${formatted}</span>`;
             };
-            // ---------------------------
 
             selectedData.forEach(model => {
                 const tr = document.createElement('tr');
                 tr.className = 'border-t border-slate-100 hover:bg-slate-50 transition-colors';
-                
+
                 tr.innerHTML = `
                     <td class="p-3 font-bold text-slate-700">${model.model_name}</td>
                     <td class="p-3">${formatCell(model.accuracy * 100, maxAcc * 100, 2)}</td>
@@ -513,13 +619,13 @@
             });
         }
 
+        // Shared Math Function
         function calculatePerClassF1(cm) {
             let f1Scores = [];
             for (let i = 0; i < 10; i++) {
                 let tp = cm[i][i], fp = 0, fn = 0;
                 for (let j = 0; j < 10; j++) { fp += cm[j][i]; fn += cm[i][j]; }
                 fp -= tp; fn -= tp;
-
                 let precision = (tp + fp === 0) ? 0 : tp / (tp + fp);
                 let recall = (tp + fn === 0) ? 0 : tp / (tp + fn);
                 let f1 = (precision + recall === 0) ? 0 : 2 * (precision * recall) / (precision + recall);
@@ -533,7 +639,7 @@
             const card = document.createElement('div');
             card.className = "panel p-6 bg-white";
             const f1Scores = calculatePerClassF1(model.confusion_matrix);
-            
+
             card.innerHTML = `
                 <h3 class="text-xl font-bold font-sora mb-6 border-b pb-2 text-slate-800">
                     ${model.model_name} - Accuracy: ${(model.accuracy * 100).toFixed(2)}%
@@ -559,16 +665,192 @@
                             </div>
                             
                             <div class="flex-grow grid grid-cols-11 gap-0.5 border border-slate-200 bg-slate-100 p-0.5" id="cm_${safeId}">
-                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
             container.appendChild(card);
 
-            // Draw F1 Chart
             const ctx = document.getElementById(`f1Chart_${safeId}`).getContext('2d');
             activeCharts[safeId] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                    datasets: [{ label: 'F1 Score', data: f1Scores.map(f => f * 100), backgroundColor: '#0ea5e9', borderRadius: 4 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'F1 Score per Digit (%)' } },
+                        x: { title: { display: true, text: 'Digit Class (0-9)' } }
+                    }
+                }
+            });
+
+            const cmContainer = document.getElementById(`cm_${safeId}`);
+            let cmHtml = `<div class="aspect-square flex items-center justify-center font-bold text-[10px] text-slate-400 bg-transparent"></div>`;
+            for (let j = 0; j < 10; j++) cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[11px] text-slate-600 bg-slate-200/60 rounded-sm">${j}</div>`;
+
+            const maxVal = Math.max(...model.confusion_matrix.flat());
+            model.confusion_matrix.forEach((row, i) => {
+                cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[11px] text-slate-600 bg-slate-200/60 rounded-sm">${i}</div>`;
+                row.forEach((val, j) => {
+                    const isDiagonal = (i === j);
+                    const opacity = val === 0 ? 0 : Math.max(0.1, Math.min(1, Math.log(val + 1) / Math.log(maxVal + 1)));
+                    let bgColor = val === 0 ? '#ffffff' : isDiagonal ? `rgba(15, 118, 110, ${opacity})` : `rgba(245, 158, 11, ${opacity})`;
+                    let textColor = (opacity > 0.5) ? 'text-white' : 'text-slate-700';
+                    if (val === 0) textColor = 'text-transparent';
+                    cmHtml += `<div class="aspect-square flex items-center justify-center text-[9px] font-bold cm-cell ${textColor} rounded-sm" style="background-color: ${bgColor};" title="Actual: ${i}, Pred: ${j} | Count: ${val}">${val > 0 ? val : ''}</div>`;
+                });
+            });
+            cmContainer.innerHTML = cmHtml;
+        }
+
+        // ==========================================
+        // SECTION 3: Pipeline Comparison Tournament
+        // ==========================================
+
+        function renderPipelineTournament(data) {
+            mlResultsPipelines = data;
+            const tbody = document.getElementById('pipelineTournamentBody');
+            const configContainer = document.getElementById('configGridContainer');
+            
+            // 1. Sort Data by Accuracy Descending & Assign Ranks
+            data.sort((a, b) => b.accuracy - a.accuracy);
+            data.forEach((p, i) => p.rank = i + 1);
+
+            // 2. Find Best/Fastest for Card 1 Summary
+            const bestAcc = data[0].accuracy * 100;
+            const fastestTrain = Math.min(...data.map(p => p.train_time_s));
+            
+            document.getElementById('bestPipeAccVal').innerText = bestAcc.toFixed(2) + '%';
+            document.getElementById('fastestPipeTrainVal').innerText = fastestTrain.toFixed(2) + 's';
+
+            // 3. Find Max/Min for Table Highlights
+            const maxAcc = Math.max(...data.map(m => m.accuracy));
+            const maxPrec = Math.max(...data.map(m => m.precision));
+            const maxRec = Math.max(...data.map(m => m.recall));
+            const maxF1 = Math.max(...data.map(m => m.macro_f1));
+            const minTrain = Math.min(...data.map(m => m.train_time_s));
+            const minInf = Math.min(...data.map(m => m.inf_latency_ms));
+            const minSize = Math.min(...data.map(m => m.model_size_kb));
+
+            const formatCell = (val, bestVal, decimals, reverse = false) => {
+                const formatted = val.toFixed(decimals);
+                if (val === bestVal) {
+                    return `<span class="bg-emerald-100 text-emerald-800 font-extrabold px-2 py-1 rounded shadow-sm border border-emerald-200">${formatted}</span>`;
+                }
+                return `<span class="px-2 py-1 text-slate-600">${formatted}</span>`;
+            };
+
+            // 4. Render Table Rows & Config Cards
+            tbody.innerHTML = '';
+            configContainer.innerHTML = '';
+
+            data.forEach((p, index) => {
+                const isTop3 = p.rank <= 3;
+                const rankBadge = isTop3 ? `<span class="bg-teal-100 text-teal-800 text-xs font-bold px-2 py-1 rounded-full">#${p.rank}</span>` : `<span class="px-2 text-slate-400">#${p.rank}</span>`;
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-teal-50 cursor-pointer transition-colors';
+                tr.onclick = () => renderPipelineDetails(p);
+                tr.innerHTML = `
+                    <td class="p-4">${rankBadge}</td>
+                    <td class="p-4 font-bold text-slate-700">${p.pipeline}</td>
+                    <td class="p-4">${formatCell(p.accuracy * 100, maxAcc * 100, 2)}</td>
+                    <td class="p-4">${formatCell(p.precision * 100, maxPrec * 100, 2)}</td>
+                    <td class="p-4">${formatCell(p.recall * 100, maxRec * 100, 2)}</td>
+                    <td class="p-4">${formatCell(p.macro_f1, maxF1, 4)}</td>
+                    <td class="p-4">${formatCell(p.train_time_s, minTrain, 2, true)}</td>
+                    <td class="p-4">${formatCell(p.inf_latency_ms, minInf, 4, true)}</td>
+                    <td class="p-4">${formatCell(p.model_size_kb, minSize, 1, true)}</td>
+                `;
+                tbody.appendChild(tr);
+
+                const parts = p.pipeline.split(' -> ');
+                configContainer.innerHTML += `
+                    <div class="border border-slate-200 p-4 rounded bg-slate-50 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Rank #${p.rank}</span>
+                            <p class="font-bold text-slate-800 text-sm mt-1">${p.pipeline}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="bg-white border border-slate-200 px-2 py-1 rounded text-xs text-slate-600 font-mono shadow-sm">
+                                Ext: ${parts[0]} | Dim: ${parts[1]} | Clf: ${parts[2]}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if(data.length > 0) renderPipelineDetails(data[0]);
+        }
+
+        // Tab Switchers
+        function switchCard1Tab(tab) {
+            document.getElementById('tab-content-pipeline').classList.toggle('hidden', tab !== 'pipeline');
+            document.getElementById('tab-content-calc').classList.toggle('hidden', tab !== 'calc');
+            document.getElementById('tab-btn-pipeline').className = tab === 'pipeline' ? "px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600" : "px-6 py-3 font-bold text-slate-400 hover:text-slate-600";
+            document.getElementById('tab-btn-calc').className = tab === 'calc' ? "px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600" : "px-6 py-3 font-bold text-slate-400 hover:text-slate-600";
+        }
+
+        function switchCard2Tab(tab) {
+            document.getElementById('tab-content-perf').classList.toggle('hidden', tab !== 'perf');
+            document.getElementById('tab-content-config').classList.toggle('hidden', tab !== 'config');
+            document.getElementById('tab-btn-perf').className = tab === 'perf' ? "px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600" : "px-6 py-3 font-bold text-slate-400 hover:text-slate-600";
+            document.getElementById('tab-btn-config').className = tab === 'config' ? "px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600" : "px-6 py-3 font-bold text-slate-400 hover:text-slate-600";
+        }
+
+        // Render Details (CM & F1)
+        function renderPipelineDetails(pipeline) {
+            const container = document.getElementById('pipelineDetailsContainer');
+            if(activePipelineChart) { activePipelineChart.destroy(); }
+            container.innerHTML = '';
+
+            const safeId = "pipe_" + pipeline.rank;
+            const f1Scores = calculatePerClassF1(pipeline.confusion_matrix); 
+            
+            const card = document.createElement('div');
+            card.className = "panel p-6 bg-white border-2 border-teal-100 shadow-md";
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-6 border-b pb-2">
+                    <h3 class="text-xl font-bold font-sora text-slate-800">
+                        <span class="text-teal-600 mr-2">#${pipeline.rank}</span> ${pipeline.pipeline}
+                    </h3>
+                    <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                        Details View
+                    </span>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-4">Per-Class F1-Score</h4>
+                        <div style="height: 250px;"><canvas id="f1Chart_${safeId}"></canvas></div>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <h4 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Confusion Matrix</h4>
+                        <div class="text-center text-[10px] font-bold text-slate-500 mb-1 ml-8 uppercase tracking-widest">
+                            X-Axis: Predicted Class
+                        </div>
+                        <div class="flex flex-1 items-stretch">
+                            <div class="flex items-center justify-center w-8 mr-1">
+                                <span class="text-[10px] font-bold text-slate-500 -rotate-90 whitespace-nowrap uppercase tracking-widest">
+                                    Y-Axis: Actual Class
+                                </span>
+                            </div>
+                            <div class="flex-grow grid grid-cols-11 gap-0.5 border border-slate-200 bg-slate-100 p-0.5" id="cm_${safeId}"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+
+            const ctx = document.getElementById(`f1Chart_${safeId}`).getContext('2d');
+            activePipelineChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ['0','1','2','3','4','5','6','7','8','9'],
@@ -577,38 +859,23 @@
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'F1 Score (%)' } }, x: { title: { display: true, text: 'Digit Class' } } }
+                    scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'F1 Score per Digit (%)' } }, x: { title: { display: true, text: 'Digit Class (0-9)' } } }
                 }
             });
 
-            // Draw Heatmap
             const cmContainer = document.getElementById(`cm_${safeId}`);
-            let cmHtml = '';
-            const maxVal = Math.max(...model.confusion_matrix.flat()); 
+            let cmHtml = `<div class="aspect-square flex items-center justify-center font-bold text-[10px] text-slate-400 bg-transparent"></div>`;
+            for (let j = 0; j < 10; j++) cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[11px] text-slate-600 bg-slate-200/60 rounded-sm">${j}</div>`;
 
-            // 1. Add Top Header Row (Predicted Classes 0-9)
-            cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[10px] text-slate-400 bg-transparent"></div>`; // Empty top-left corner
-            for (let j = 0; j < 10; j++) {
-                cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[11px] text-slate-600 bg-slate-200/60 rounded-sm">${j}</div>`;
-            }
-
-            // 2. Add Matrix Rows
-            model.confusion_matrix.forEach((row, i) => {
-                // Add Left Header Column (Actual Class)
+            const maxVal = Math.max(...pipeline.confusion_matrix.flat()); 
+            pipeline.confusion_matrix.forEach((row, i) => {
                 cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[11px] text-slate-600 bg-slate-200/60 rounded-sm">${i}</div>`;
-                
                 row.forEach((val, j) => {
                     const isDiagonal = (i === j);
                     const opacity = val === 0 ? 0 : Math.max(0.1, Math.min(1, Math.log(val + 1) / Math.log(maxVal + 1)));
-                    
-                    // Teal for correct, Soft Amber for errors
-                    let bgColor = val === 0 ? '#ffffff' : 
-                                  isDiagonal ? `rgba(15, 118, 110, ${opacity})` : 
-                                  `rgba(245, 158, 11, ${opacity})`; 
-                    
+                    let bgColor = val === 0 ? '#ffffff' : isDiagonal ? `rgba(15, 118, 110, ${opacity})` : `rgba(245, 158, 11, ${opacity})`; 
                     let textColor = (opacity > 0.5) ? 'text-white' : 'text-slate-700';
                     if (val === 0) textColor = 'text-transparent';
-
                     cmHtml += `<div class="aspect-square flex items-center justify-center text-[9px] font-bold cm-cell ${textColor} rounded-sm" style="background-color: ${bgColor};" title="Actual: ${i}, Pred: ${j} | Count: ${val}">${val > 0 ? val : ''}</div>`;
                 });
             });
@@ -619,7 +886,6 @@
         // EXISTING SECTIONS
         // ==========================================
 
-        // Chart 1: Domain Gap
         function renderDomainGap(d32, d224) {
             const labels = d224.map(m => m.model_name);
             const acc224 = d224.map(m => m.accuracy * 100);
@@ -645,29 +911,6 @@
             });
         }
 
-        // Table: Pipeline Tournament
-        function renderPipelineTable(data) {
-            const tbody = document.getElementById('pipelineTableBody');
-            data.sort((a, b) => b.accuracy - a.accuracy);
-
-            data.forEach((p, index) => {
-                const isTop3 = index < 3;
-                const rowClass = isTop3 ? 'bg-teal-50/50' : 'hover:bg-slate-50';
-                const rankBadge = isTop3 ? `<span class="bg-teal-100 text-teal-800 text-xs font-bold px-2 py-1 rounded-full">#${index + 1}</span>` : `#${index + 1}`;
-
-                tbody.innerHTML += `
-          <tr class="${rowClass} transition-colors">
-            <td class="px-6 py-4">${rankBadge}</td>
-            <td class="px-6 py-4 font-medium text-slate-900">${p.pipeline}</td>
-            <td class="px-6 py-4 font-bold ${isTop3 ? 'text-teal-600' : 'text-slate-600'}">${(p.accuracy * 100).toFixed(2)}%</td>
-            <td class="px-6 py-4">${(p.macro_f1 * 100).toFixed(2)}%</td>
-            <td class="px-6 py-4">${p.train_time_s.toFixed(2)}s</td>
-          </tr>
-        `;
-            });
-        }
-
-        // Charts: Transfer Learning
         function renderTransferLearning(data) {
             const hist = data.history;
             const epochs = Array.from({ length: data.epochs }, (_, i) => `Ep ${i + 1}`);
@@ -718,7 +961,6 @@
             });
         }
 
-        // Chart: Final Summary
         function renderSummaryChart(data224, dataFt) {
             const best224 = Math.max(...data224.map(m => m.accuracy));
             const best32 = 0.4701;
