@@ -10,19 +10,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <style>
-        body {
-            font-family: "Space Grotesk", sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
-
-        .font-sora {
-            font-family: "Sora", sans-serif;
-        }
+        body { font-family: "Space Grotesk", sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .font-sora { font-family: "Sora", sans-serif; }
+        .cm-cell { transition: all 0.2s; }
+        .cm-cell:hover { transform: scale(1.05); box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 10; border-radius: 4px; }
     </style>
 </head>
 
@@ -35,58 +28,38 @@
                         P4AI-DS <span class="text-slate-900">Project</span>
                     </a>
                 </div>
-
                 <div class="flex items-center space-x-8 font-medium text-slate-600">
                     <a href="index.html" class="hover:text-teal-600 transition">Home</a>
-
                     <div class="group relative py-4">
                         <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
                             Assignment 1 (EDA) <i class="fa-solid fa-chevron-down text-[10px]"></i>
                         </button>
-                        <div
-                            class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
-                            <a href="tabular.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Tabular
-                                EDA</a>
-                            <a href="text.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Text
-                                EDA</a>
-                            <a href="image.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Image
-                                EDA</a>
-                            <a href="multimodal.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Multimodal
-                                EDA</a>
+                        <div class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+                            <a href="tabular.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Tabular EDA</a>
+                            <a href="text.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Text EDA</a>
+                            <a href="image.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Image EDA</a>
+                            <a href="multimodal.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Multimodal EDA</a>
                         </div>
                     </div>
-
                     <div class="group relative py-4">
                         <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
                             Assignment 2 (ML) <i class="fa-solid fa-chevron-down text-[10px]"></i>
                         </button>
-                        <div
-                            class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
-                            <a href="tabular_ml.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Tabular
-                                ML</a>
-                            <a href="text_ml.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Text
-                                ML</a>
-                            <a href="image_ml.html"
-                                class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Image
-                                ML</a>
+                        <div class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+                            <a href="tabular_ml.html" class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Tabular ML</a>
+                            <a href="text_ml.html" class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Text ML</a>
+                            <a href="image_ml.html" class="block rounded-md px-4 py-2 text-sm hover:bg-teal-50 hover:text-teal-700">Image ML</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
+
     <header class="bg-slate-900 text-white py-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="font-sora text-4xl sm:text-5xl font-extrabold mb-4">Text Classification</h1>
-            <p class="text-xl text-amber-400 font-medium mb-8">Stanford SQuAD Question Classification & NLP Pipelines
-            </p>
-
+            <p class="text-xl text-amber-400 font-medium mb-8">Stanford SQuAD Question Classification & NLP Pipelines</p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
                 <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
                     <div class="text-3xl font-bold text-white mb-1" id="statDocs">--</div>
@@ -102,7 +75,7 @@
                 </div>
                 <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
                     <div class="text-3xl font-bold text-white mb-1" id="statPipelines">--</div>
-                    <div class="text-sm text-slate-400">Pipelines Tested</div>
+                    <div class="text-sm text-slate-400" id="bestPipelineName">Pipelines Tested</div>
                 </div>
             </div>
         </div>
@@ -111,35 +84,64 @@
     <main class="flex-grow mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-20">
 
         <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">
-                1. Feature Extraction Comparison</h2>
-            <div
-                class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-80 flex items-center justify-center">
-                <p class="text-slate-400">Teammate: Add a chart comparing TF-IDF vs. Bag of Words vs. Word Embeddings.
-                </p>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">1. Feature Extraction Comparison</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-96 flex items-center justify-center">
+                <canvas id="featureChart" class="w-full h-full"></canvas>
             </div>
         </section>
 
         <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">
-                2. Transformer Fine-Tuning (Optional)</h2>
-            <div
-                class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-80 flex items-center justify-center">
-                <p class="text-slate-400">Teammate: If you fine-tuned BERT/DistilBERT, add the loss curves or
-                    performance metrics here.</p>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">2. EDA Insights & Pipeline Tournament</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-teal-700 px-6 py-4">
+                        <h3 class="text-lg font-bold text-white">EDA-to-ML Connections</h3>
+                    </div>
+                    <div class="p-0 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">EDA Finding</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">ML Decision</th>
+                                </tr>
+                            </thead>
+                            <tbody id="edaTableBody" class="bg-white divide-y divide-slate-200 text-sm">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-amber-500 px-6 py-4">
+                        <h3 class="text-lg font-bold text-slate-900">Pipeline Tournament</h3>
+                    </div>
+                    <div class="p-0 overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-200">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-slate-500 uppercase">Rank</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Pipeline</th>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-slate-500 uppercase">Acc (%)</th>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-slate-500 uppercase">Train (s)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tourTableBody" class="bg-white divide-y divide-slate-200 text-sm">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">
-                3. Error Analysis & Confusion Matrix</h2>
-            <div
-                class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col items-center justify-center">
-                <p class="text-slate-400 mb-4">Teammate: Build out the HTML confusion matrix grid here, similar to the
-                    one in image_ml.html.</p>
-                <div id="cmGrid"
-                    class="w-full max-w-lg aspect-square bg-slate-50 border border-dashed border-slate-300 rounded-lg flex items-center justify-center">
-                    <span class="text-slate-400 text-sm">Matrix Placeholder</span>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">3. Error Analysis & Confusion Matrix</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 flex flex-col items-center">
+                <h3 class="font-bold text-lg mb-6 text-slate-700" id="cmTitle">Confusion Matrix</h3>
+                <div class="relative w-full max-w-2xl overflow-x-auto">
+                    <div class="absolute -left-4 top-1/2 -rotate-90 origin-center text-sm font-bold text-slate-500 tracking-widest hidden md:block">TRUE LABEL</div>
+                    <div id="cmGrid" class="w-full">
+                        </div>
+                    <div class="text-center mt-4 text-sm font-bold text-slate-500 tracking-widest">PREDICTED LABEL</div>
                 </div>
             </div>
         </section>
@@ -154,11 +156,112 @@
     </footer>
 
     <script>
-        // Teammate: Add your fetch() logic here to load your JSON files and initialize Chart.js
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log("Text ML page loaded. Ready to fetch data.");
+            try {
+                // Fetch JSON data
+                const response = await fetch('plotly_data/text_ml_data.json');
+                const data = await response.json();
+
+                // 1. Populate Hero Stats
+                document.getElementById('statDocs').textContent = data.meta.total_documents.toLocaleString();
+                document.getElementById('statClasses').textContent = data.meta.n_categories;
+                document.getElementById('statAccuracy').textContent = data.meta.best_accuracy + '%';
+                document.getElementById('statPipelines').textContent = data.meta.n_pipelines;
+                document.getElementById('bestPipelineName').textContent = `Best: ${data.meta.best_pipeline}`;
+
+                // 2. Render Chart.js (Feature Comparison)
+                const ctx = document.getElementById('featureChart').getContext('2d');
+                const classifiers = ['Logistic Regression', 'Linear SVM', 'Random Forest'];
+                
+                const tfidfData = classifiers.map(c => data.feature_comparison['TF-IDF'][c].acc);
+                const bowData = classifiers.map(c => data.feature_comparison['BoW'][c].acc);
+                const wordEmbData = classifiers.map(c => data.feature_comparison['Word Emb'][c].acc);
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: classifiers,
+                        datasets: [
+                            { label: 'TF-IDF', data: tfidfData, backgroundColor: '#0f766e', borderRadius: 4 },
+                            { label: 'Bag of Words (BoW)', data: bowData, backgroundColor: '#f59e0b', borderRadius: 4 },
+                            { label: 'Word Embeddings (Hash)', data: wordEmbData, backgroundColor: '#3b82f6', borderRadius: 4 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { min: 70, max: 90, title: { display: true, text: 'Accuracy (%)' } } }
+                    }
+                });
+
+                // 3. Populate EDA to ML Table
+                const edaTbody = document.getElementById('edaTableBody');
+                data.eda_to_ml.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 text-slate-700">${item.eda_finding}</td>
+                        <td class="px-6 py-4 font-medium text-teal-700 bg-teal-50/30">${item.ml_decision}</td>
+                    `;
+                    edaTbody.appendChild(tr);
+                });
+
+                // 4. Populate Tournament Table
+                const tourTbody = document.getElementById('tourTableBody');
+                data.tournament.slice(0, 5).forEach(row => { // Show top 5
+                    const tr = document.createElement('tr');
+                    if (row.rank === 1) tr.className = 'bg-amber-50';
+                    tr.innerHTML = `
+                        <td class="px-4 py-3 text-center font-bold ${row.rank === 1 ? 'text-amber-600' : 'text-slate-500'}">#${row.rank}</td>
+                        <td class="px-4 py-3 font-medium text-slate-800">${row.pipeline}</td>
+                        <td class="px-4 py-3 text-center font-sora ${row.rank === 1 ? 'text-amber-600 font-bold' : ''}">${row.acc}</td>
+                        <td class="px-4 py-3 text-center text-slate-500">${row.train_s}s</td>
+                    `;
+                    tourTbody.appendChild(tr);
+                });
+
+                // 5. Render Confusion Matrix (HTML Grid)
+                const bestModel = data.meta.best_pipeline;
+                document.getElementById('cmTitle').textContent = `Confusion Matrix: ${bestModel}`;
+                const cm = data.confusion_matrices[bestModel];
+                const labels = data.meta.labels;
+                const maxVal = Math.max(...cm.flat());
+                
+                const gridContainer = document.getElementById('cmGrid');
+                
+                // Build Table Structure
+                let tableHTML = `<table class="w-full text-center border-collapse"><thead><tr><th class="p-2"></th>`;
+                labels.forEach(l => tableHTML += `<th class="p-2 text-xs text-slate-500 font-medium rotate-45 md:rotate-0">${l}</th>`);
+                tableHTML += `</tr></thead><tbody>`;
+
+                for (let i = 0; i < labels.length; i++) {
+                    tableHTML += `<tr><th class="p-2 text-xs text-slate-500 font-medium text-right pr-4">${labels[i]}</th>`;
+                    for (let j = 0; j < labels.length; j++) {
+                        const val = cm[i][j];
+                        const intensity = val / maxVal;
+                        // Color scale from white to teal-700
+                        const bgAlpha = intensity > 0 ? Math.max(0.05, intensity) : 0;
+                        const textColor = intensity > 0.5 ? 'text-white' : 'text-slate-800';
+                        
+                        tableHTML += `
+                            <td class="p-1">
+                                <div class="cm-cell w-full h-10 md:h-12 flex items-center justify-center rounded font-sora text-sm ${textColor}" 
+                                     style="background-color: rgba(15, 118, 110, ${bgAlpha}); border: 1px solid rgba(15, 118, 110, 0.1);"
+                                     title="True: ${labels[i]} | Pred: ${labels[j]} | Count: ${val}">
+                                    ${val === 0 ? '-' : val}
+                                </div>
+                            </td>`;
+                    }
+                    tableHTML += `</tr>`;
+                }
+                tableHTML += `</tbody></table>`;
+                gridContainer.innerHTML = tableHTML;
+
+            } catch (error) {
+                console.error("Error loading JSON data:", error);
+                document.getElementById('cmGrid').innerHTML = `<p class="text-red-500">Failed to load data. Ensure text_ml_data.json is in the plotly_data folder.</p>`;
+            }
         });
     </script>
 </body>
-
 </html>
