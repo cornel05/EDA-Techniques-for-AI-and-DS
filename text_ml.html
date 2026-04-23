@@ -266,16 +266,29 @@
                 }
 
                 // 5. Render Confusion Matrix (HTML Grid Fix)
+                // 5. Render Confusion Matrix (Bulletproof Version)
                 const bestModel = data.meta.best_pipeline;
-                document.getElementById('cmTitle').textContent = `Confusion Matrix: ${bestModel}`;
-                
+                let displayModel = bestModel;
+                let cm = null;
+
+                // Kiểm tra xem ma trận của model tốt nhất có tồn tại không
                 if (data.confusion_matrices && data.confusion_matrices[bestModel]) {
-                    const cm = data.confusion_matrices[bestModel];
+                    cm = data.confusion_matrices[bestModel];
+                } 
+                // Nếu chưa có, lấy tạm ma trận của model đầu tiên tìm thấy để "chữa cháy"
+                else if (data.confusion_matrices && Object.keys(data.confusion_matrices).length > 0) {
+                    displayModel = Object.keys(data.confusion_matrices)[0];
+                    cm = data.confusion_matrices[displayModel];
+                    console.warn(`Matrix for ${bestModel} not found. Displaying fallback: ${displayModel}`);
+                }
+
+                if (cm) {
+                    document.getElementById('cmTitle').textContent = `Confusion Matrix: ${displayModel}` + (displayModel !== bestModel ? ' (Fallback)' : '');
                     const labels = data.meta.labels;
-                    const maxVal = Math.max(...cm.flat());
+                    // Fix lỗi nếu mảng không dùng được .flat()
+                    const maxVal = Math.max(...cm.reduce((acc, val) => acc.concat(val), []));
                     
                     const gridContainer = document.getElementById('cmGrid');
-                    
                     let tableHTML = `<table class="w-full text-center border-collapse"><thead><tr><th class="p-1"></th>`;
                     labels.forEach(l => tableHTML += `<th class="p-1 text-xs text-slate-500 font-medium">${l}</th>`);
                     tableHTML += `</tr></thead><tbody>`;
@@ -300,9 +313,11 @@
                         tableHTML += `</tr>`;
                     }
                     tableHTML += `</tbody></table>`;
-                    
-                    // Gắn HTML vào DOM
                     gridContainer.innerHTML = tableHTML;
+                } else {
+                    // Nếu JSON hoàn toàn không có ma trận nào
+                    document.getElementById('cmTitle').textContent = `Confusion Matrix: Waiting for Data...`;
+                    document.getElementById('cmGrid').innerHTML = `<div class="p-8 text-center border-2 border-dashed border-amber-300 rounded-lg bg-amber-50 text-amber-600 font-medium">Matrix data is updating. Please wait 1-2 minutes for GitHub Pages to deploy and refresh (Cmd+Shift+R).</div>`;
                 }
 
                 // 6. Populate Error Samples
