@@ -109,12 +109,12 @@
                     <div class="text-sm text-slate-400">Digit Classes</div>
                 </div>
                 <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                    <div class="text-3xl font-bold text-teal-400 mb-1">96.4%</div>
+                    <div class="text-3xl font-bold text-teal-400 mb-1">96.32%</div>
                     <div class="text-sm text-slate-400">Best Accuracy</div>
                 </div>
                 <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                    <div class="text-3xl font-bold text-white mb-1">3</div>
-                    <div class="text-sm text-slate-400">Approaches Compared</div>
+                    <div class="text-3xl font-bold text-white mb-1">18</div>
+                    <div class="text-sm text-slate-400">Pipelines Tested</div>
                 </div>
             </div>
         </div>
@@ -266,7 +266,7 @@
                             <th class="p-3">Acc (%)</th>
                             <th class="p-3">Prec (%)</th>
                             <th class="p-3">Rec (%)</th>
-                            <th class="p-3">F1 Macro</th>
+                            <th class="p-3">F1-M (%)</th>
                             <th class="p-3">Train (s)</th>
                             <th class="p-3">Inf (ms)</th>
                             <th class="p-3">Size (KB)</th>
@@ -287,191 +287,274 @@
 
         <!--- Section 3 -->
         <section class="p-6 panel mt-8">
-    <div class="mb-8">
-        <h2 class="text-2xl font-extrabold font-sora border-b-2 border-teal-500 pb-2 inline-block">3. Pipeline Comparison Tournament</h2>
-        <p class="text-sm text-slate-500 mt-2">A systematic comparison of feature extractors (ResNet vs MobileNet vs Raw) combined with PCA and classical classifiers.</p>
-    </div>
-
-    <div class="panel bg-white border border-slate-200 rounded-xl shadow-sm mb-8 overflow-hidden">
-        <div class="flex border-b border-slate-200 bg-slate-50">
-            <button id="tab-btn-pipeline" class="px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600" onclick="switchCard1Tab('pipeline')">Pipeline</button>
-            <button id="tab-btn-calc" class="px-6 py-3 font-bold text-slate-400 hover:text-slate-600" onclick="switchCard1Tab('calc')">Calculation</button>
-        </div>
-        
-        <div class="p-6">
-            <div id="tab-content-pipeline" class="block">
-                <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 mb-8">
-                    <div class="text-center px-4">
-                        <p class="text-xs text-slate-500 uppercase font-bold">Total Pipelines</p>
-                        <p class="text-2xl font-black text-slate-800">8</p>
-                    </div>
-                    <div class="h-8 w-px bg-slate-300"></div>
-                    <div class="text-center px-4">
-                        <p class="text-xs text-slate-500 uppercase font-bold">Best Accuracy</p>
-                        <p class="text-2xl font-black text-teal-600" id="bestPipeAccVal">--%</p>
-                    </div>
-                    <div class="h-8 w-px bg-slate-300"></div>
-                    <div class="text-center px-4">
-                        <p class="text-xs text-slate-500 uppercase font-bold">Fastest Training</p>
-                        <p class="text-2xl font-black text-amber-600" id="fastestPipeTrainVal">--s</p>
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row items-center justify-center gap-3 text-[10px] font-bold uppercase">
-                    <div class="p-3 bg-white border border-slate-200 rounded text-center shadow-sm">
-                        <i class="fas fa-image text-blue-500 mb-1 text-lg block"></i> Input<br><span class="text-[8px] text-slate-400">32x32 / 224x224</span>
-                    </div>
-                    <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
-                    <div class="p-3 bg-blue-100 text-blue-800 rounded text-center shadow-sm">
-                        <i class="fas fa-cogs mb-1 text-lg block"></i> Extractor (3)<br><span class="text-[8px] opacity-75">ResNet / MobileNet / Raw</span>
-                    </div>
-                    <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
-                    <div class="p-3 bg-purple-100 text-purple-800 rounded text-center shadow-sm">
-                        <i class="fas fa-compress-arrows-alt mb-1 text-lg block"></i> Dim Reducer (2)<br><span class="text-[8px] opacity-75">None / PCA</span>
-                    </div>
-                    <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
-                    <div class="p-3 bg-amber-100 text-amber-800 rounded text-center shadow-sm">
-                        <i class="fas fa-filter mb-1 text-lg block"></i> Classifier (3)<br><span class="text-[8px] opacity-75">LR / SVM / RF</span>
-                    </div>
-                    <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
-                    <div class="p-3 bg-teal-600 text-white rounded text-center shadow-sm">
-                        <i class="fas fa-flag-checkered mb-1 text-lg block"></i> Results<br><span class="text-[8px] opacity-75">Metrics & CM</span>
-                    </div>
-                </div>
+            <div class="mb-8">
+                <h2 class="text-2xl font-extrabold font-sora border-b-2 border-teal-500 pb-2 inline-block">3. Pipeline
+                    Comparison Tournament</h2>
+                <p class="text-sm text-slate-500 mt-2">A systematic comparison of feature extractors (ResNet vs
+                    MobileNet vs Raw) combined with PCA and classical classifiers.</p>
             </div>
 
-            <div id="tab-content-calc" class="hidden text-sm text-slate-700">
-                <h4 class="font-bold text-slate-900 mb-4 border-b pb-2">Tournament Design & Calculation</h4>
-                <div class="grid md:grid-cols-3 gap-6 mb-6">
-                    <div class="bg-blue-50 p-4 rounded border border-blue-100">
-                        <h5 class="font-bold text-blue-800 mb-2">1. Feature Extractors</h5>
-                        <ul class="list-disc pl-5 space-y-1 text-xs">
-                            <li><strong>ResNet-18</strong> (Frozen, 512-D)</li>
-                            <li><strong>MobileNetV2</strong> (Frozen, 1280-D)</li>
-                            <li><strong>Raw Pixels</strong> (Flattened, 3072-D)</li>
-                        </ul>
-                    </div>
-                    <div class="bg-purple-50 p-4 rounded border border-purple-100">
-                        <h5 class="font-bold text-purple-800 mb-2">2. Dimensionality Reduction</h5>
-                        <ul class="list-disc pl-5 space-y-1 text-xs">
-                            <li><strong>None</strong> (Use all features)</li>
-                            <li><strong>PCA-128</strong> (Reduce to 128 comps)</li>
-                            <li><strong>PCA-256</strong> (Reduce to 256 comps)</li>
-                        </ul>
-                    </div>
-                    <div class="bg-amber-50 p-4 rounded border border-amber-100">
-                        <h5 class="font-bold text-amber-800 mb-2">3. Classifiers</h5>
-                        <ul class="list-disc pl-5 space-y-1 text-xs">
-                            <li><strong>Logistic Regression (LR)</strong> (Balanced)</li>
-                            <li><strong>Linear SVM</strong> (Balanced)</li>
-                            <li><strong>Random Forest (RF)</strong></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="bg-slate-100 p-4 rounded text-xs">
-                    <strong>Total Pipelines:</strong> Instead of a full combinatorial grid ($3 \times 3 \times 3 = 27$), we strategically selected <strong>8 pipelines</strong> to test the most promising combinations based on EDA constraints.<br>
-                    <em>Example:</em> <code>ResNet18 -> PCA-128 -> SVM</code>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="panel bg-white border border-slate-200 rounded-xl shadow-sm mb-8 overflow-hidden">
-        <div class="flex border-b border-slate-200 bg-slate-50">
-            <button id="tab-btn-perf" class="px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600" onclick="switchCard2Tab('perf')">Performance</button>
-            <button id="tab-btn-config" class="px-6 py-3 font-bold text-slate-400 hover:text-slate-600" onclick="switchCard2Tab('config')">Configuration</button>
-        </div>
-
-        <div class="p-0">
-            <div id="tab-content-perf" class="block overflow-x-auto">
-                <table class="w-full text-left text-sm border-collapse">
-                    <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase border-b border-slate-200">
-                        <tr>
-                            <th class="p-4">Rank</th>
-                            <th class="p-4">Pipeline</th>
-                            <th class="p-4">Acc (%)</th>
-                            <th class="p-4">Prec (%)</th>
-                            <th class="p-4">Rec (%)</th>
-                            <th class="p-4">F1-M</th>
-                            <th class="p-4">Trn (s)</th>
-                            <th class="p-4">Inf (ms)</th>
-                            <th class="p-4">Size (KB)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pipelineTournamentBody" class="divide-y divide-slate-100">
-                        </tbody>
-                </table>
-                <div class="p-3 bg-slate-50 text-[10px] text-slate-500 text-center border-t border-slate-200">
-                    <i class="fas fa-hand-pointer mr-1"></i> Click any row to view its Confusion Matrix & Per-Class Metrics below.
-                </div>
-            </div>
-
-            <div id="tab-content-config" class="hidden p-6 text-sm text-slate-700">
-                <div class="grid md:grid-cols-2 gap-4" id="configGridContainer">
-                    </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="pipelineDetailsContainer" class="space-y-8">
-        </div>
-</section>
-
-        <!--- Section 4-->
-        <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 inline-block">4.
-                Deep Transfer Learning (Fine-Tuning)</h2>
-            <p class="text-slate-600 mb-6">To overcome the domain gap, the ResNet-18 architecture was fully unfreezed
-                and fine-tuned for 10 epochs using Cosine Annealing learning rate scheduling.</p>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="font-bold text-slate-900 mb-4 text-center">Accuracy & Loss Curves</h3>
-                    <div class="h-64 mb-4"><canvas id="learningCurvesChart"></canvas></div>
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800">
-                        <strong>Overfitting Note:</strong> Training accuracy hit 100% at epoch 9 while validation
-                        plateaued at ~96.4%. Best weights (epoch 10) were saved. Future mitigation: Early stopping.
-                    </div>
+            <div class="panel bg-white border border-slate-200 rounded-xl shadow-sm mb-8 overflow-hidden">
+                <div class="flex border-b border-slate-200 bg-slate-50">
+                    <button id="tab-btn-pipeline" class="px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600"
+                        onclick="switchCard1Tab('pipeline')">Pipeline</button>
+                    <button id="tab-btn-calc" class="px-6 py-3 font-bold text-slate-400 hover:text-slate-600"
+                        onclick="switchCard1Tab('calc')">Calculation</button>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="font-bold text-slate-900 mb-4 text-center">Per-Class F1 Score</h3>
-                    <div class="h-64"><canvas id="perClassF1Chart"></canvas></div>
-                    <p class="text-xs text-slate-500 mt-4 text-center">Maintained >94% F1 even on minority classes
-                        (e.g., Digit 9) thanks to balanced class weights.</p>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 max-w-3xl mx-auto">
-                <h3 class="font-bold text-slate-900 mb-4 text-center">Final Confusion Matrix (ResNet-18 Fine-Tuned)</h3>
-                <div class="flex">
-                    <div
-                        class="flex flex-col justify-center pr-4 text-xs font-bold text-slate-500 -rotate-90 origin-center tracking-widest uppercase">
-                        Actual Class</div>
-                    <div class="flex-grow">
-                        <div id="cmGrid" class="grid grid-cols-10 gap-1 bg-slate-100 p-1 rounded-lg">
+                <div class="p-6">
+                    <div id="tab-content-pipeline" class="block">
+                        <div
+                            class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 mb-8">
+                            <div class="text-center px-4">
+                                <p class="text-xs text-slate-500 uppercase font-bold">Total Pipelines</p>
+                                <p class="text-2xl font-black text-slate-800">8</p>
+                            </div>
+                            <div class="h-8 w-px bg-slate-300"></div>
+                            <div class="text-center px-4">
+                                <p class="text-xs text-slate-500 uppercase font-bold">Best Accuracy</p>
+                                <p class="text-2xl font-black text-teal-600" id="bestPipeAccVal">--%</p>
+                            </div>
+                            <div class="h-8 w-px bg-slate-300"></div>
+                            <div class="text-center px-4">
+                                <p class="text-xs text-slate-500 uppercase font-bold">Fastest Training</p>
+                                <p class="text-2xl font-black text-amber-600" id="fastestPipeTrainVal">--s</p>
+                            </div>
                         </div>
-                        <div class="text-center mt-4 text-xs font-bold text-slate-500 tracking-widest uppercase">
-                            Predicted Class (0-9)</div>
+
+                        <div
+                            class="flex flex-col md:flex-row items-center justify-center gap-3 text-[10px] font-bold uppercase">
+                            <div class="p-3 bg-white border border-slate-200 rounded text-center shadow-sm">
+                                <i class="fas fa-image text-blue-500 mb-1 text-lg block"></i> Input<br><span
+                                    class="text-[8px] text-slate-400">32x32 / 224x224</span>
+                            </div>
+                            <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                            <div class="p-3 bg-blue-100 text-blue-800 rounded text-center shadow-sm">
+                                <i class="fas fa-cogs mb-1 text-lg block"></i> Extractor (3)<br><span
+                                    class="text-[8px] opacity-75">ResNet / MobileNet / Raw</span>
+                            </div>
+                            <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                            <div class="p-3 bg-purple-100 text-purple-800 rounded text-center shadow-sm">
+                                <i class="fas fa-compress-arrows-alt mb-1 text-lg block"></i> Dim Reducer (2)<br><span
+                                    class="text-[8px] opacity-75">None / PCA</span>
+                            </div>
+                            <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                            <div class="p-3 bg-amber-100 text-amber-800 rounded text-center shadow-sm">
+                                <i class="fas fa-filter mb-1 text-lg block"></i> Classifier (3)<br><span
+                                    class="text-[8px] opacity-75">LR / SVM / RF</span>
+                            </div>
+                            <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                            <div class="p-3 bg-teal-600 text-white rounded text-center shadow-sm">
+                                <i class="fas fa-flag-checkered mb-1 text-lg block"></i> Results<br><span
+                                    class="text-[8px] opacity-75">Metrics & CM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-content-calc" class="hidden text-sm text-slate-700">
+                        <h4 class="font-bold text-slate-900 mb-4 border-b pb-2">Tournament Design & Calculation</h4>
+                        <div class="grid md:grid-cols-3 gap-6 mb-6">
+                            <div class="bg-blue-50 p-4 rounded border border-blue-100">
+                                <h5 class="font-bold text-blue-800 mb-2">1. Feature Extractors</h5>
+                                <ul class="list-disc pl-5 space-y-1 text-xs">
+                                    <li><strong>ResNet-18</strong> (Frozen, 512-D)</li>
+                                    <li><strong>MobileNetV2</strong> (Frozen, 1280-D)</li>
+                                    <li><strong>Raw Pixels</strong> (Flattened, 3072-D)</li>
+                                </ul>
+                            </div>
+                            <div class="bg-purple-50 p-4 rounded border border-purple-100">
+                                <h5 class="font-bold text-purple-800 mb-2">2. Dimensionality Reduction</h5>
+                                <ul class="list-disc pl-5 space-y-1 text-xs">
+                                    <li><strong>None</strong> (Use all features)</li>
+                                    <li><strong>PCA-128</strong> (Reduce to 128 comps)</li>
+                                    <li><strong>PCA-256</strong> (Reduce to 256 comps)</li>
+                                </ul>
+                            </div>
+                            <div class="bg-amber-50 p-4 rounded border border-amber-100">
+                                <h5 class="font-bold text-amber-800 mb-2">3. Classifiers</h5>
+                                <ul class="list-disc pl-5 space-y-1 text-xs">
+                                    <li><strong>Logistic Regression (LR)</strong> (Balanced)</li>
+                                    <li><strong>Linear SVM</strong> (Balanced)</li>
+                                    <li><strong>Random Forest (RF)</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-slate-100 p-4 rounded text-xs">
+                            <strong>Total Pipelines:</strong> Instead of a full combinatorial grid ($3 \times 3 \times 3
+                            = 27$), we strategically selected <strong>8 pipelines</strong> to test the most promising
+                            combinations based on EDA constraints.<br>
+                            <em>Example:</em> <code>ResNet18 -> PCA-128 -> SVM</code>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="panel bg-white border border-slate-200 rounded-xl shadow-sm mb-8 overflow-hidden">
+                <div class="flex border-b border-slate-200 bg-slate-50">
+                    <button id="tab-btn-perf" class="px-6 py-3 font-bold text-teal-600 border-b-2 border-teal-600"
+                        onclick="switchCard2Tab('perf')">Performance</button>
+                    <button id="tab-btn-config" class="px-6 py-3 font-bold text-slate-400 hover:text-slate-600"
+                        onclick="switchCard2Tab('config')">Configuration</button>
+                </div>
+
+                <div class="p-0">
+                    <div id="tab-content-perf" class="block overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead
+                                class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase border-b border-slate-200">
+                                <tr>
+                                    <th class="p-4">Rank</th>
+                                    <th class="p-4">Pipeline</th>
+                                    <th class="p-4">Acc (%)</th>
+                                    <th class="p-4">Prec (%)</th>
+                                    <th class="p-4">Rec (%)</th>
+                                    <th class="p-4">F1-M (%)</th>
+                                    <th class="p-4">Trn (s)</th>
+                                    <th class="p-4">Inf (ms)</th>
+                                    <th class="p-4">Size (KB)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pipelineTournamentBody" class="divide-y divide-slate-100">
+                            </tbody>
+                        </table>
+                        <div class="p-3 bg-slate-50 text-[10px] text-slate-500 text-center border-t border-slate-200">
+                            <i class="fas fa-hand-pointer mr-1"></i> Click any row to view its Confusion Matrix &
+                            Per-Class Metrics below.
+                        </div>
+                    </div>
+
+                    <div id="tab-content-config" class="hidden p-6 text-sm text-slate-700">
+                        <div class="grid md:grid-cols-2 gap-4" id="configGridContainer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pipelineDetailsContainer" class="space-y-8">
             </div>
         </section>
 
-        <section class="mb-12">
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-teal-500 pb-2 mb-6 inline-block">5.
-                Conclusion & The 3-Act Story</h2>
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div class="h-72 w-full max-w-3xl mx-auto mb-6">
-                    <canvas id="summaryChart"></canvas>
+        <!--- Section 4-->
+        <section class="p-6 panel mt-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-extrabold font-sora border-b-2 border-teal-500 pb-2 inline-block">4. Deep
+                    Transfer Learning (Fine-Tuning)</h2>
+                <p class="text-sm text-slate-500 mt-2">State-of-the-art CNN architectures compared across multiple
+                    layer-freezing strategies.</p>
+            </div>
+
+            <div class="panel bg-white border border-slate-200 rounded-xl shadow-sm mb-8 overflow-hidden">
+                <div class="bg-slate-50 border-b border-slate-200 p-4">
+                    <h3 class="font-bold text-slate-800">Transfer Learning Pipeline</h3>
                 </div>
-                <div class="bg-teal-50 border border-teal-200 rounded-lg p-6 text-center">
-                    <p class="text-teal-900 text-lg">
-                        End-to-end fine-tuning achieved a <strong>34-point improvement</strong> over the best frozen
-                        pipeline (62.5% → 96.4%). This confirms that while ImageNet features provide a solid
-                        mathematical foundation, <strong>adapting pretrained weights to the target domain</strong> is
-                        absolutely essential for cross-domain digit classification tasks.
+                <div class="p-6">
+                    <div
+                        class="flex flex-col md:flex-row items-center justify-center gap-4 text-[10px] font-bold uppercase text-center">
+                        <div class="p-4 bg-white border border-slate-200 rounded-lg shadow-sm w-32">
+                            <i class="fas fa-image text-blue-500 text-2xl mb-2 block"></i>
+                            Image Input<br><span class="text-[8px] text-slate-400">224x224 RGB</span>
+                        </div>
+                        <i class="fas fa-arrow-right text-slate-300 hidden md:block text-xl"></i>
+
+                        <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm w-48 relative">
+                            <span
+                                class="absolute -top-2 -right-2 bg-blue-500 text-white text-[8px] px-2 py-1 rounded-full">Backbone</span>
+                            <i class="fas fa-network-wired text-blue-600 text-2xl mb-2 block"></i>
+                            ResNet-18 / MobileNetV2<br>
+                            <span class="text-[8px] text-blue-600 mt-1 block bg-white p-1 rounded">Pretrained on
+                                ImageNet</span>
+                        </div>
+                        <i class="fas fa-arrow-right text-slate-300 hidden md:block text-xl"></i>
+
+                        <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg shadow-sm w-48 relative">
+                            <span
+                                class="absolute -top-2 -right-2 bg-purple-500 text-white text-[8px] px-2 py-1 rounded-full">Strategy</span>
+                            <i class="fas fa-lock-open text-purple-600 text-2xl mb-2 block"></i>
+                            Freezing Level<br>
+                            <span class="text-[8px] text-purple-600 mt-1 block bg-white p-1 rounded">Head-Only | Partial
+                                | Full</span>
+                        </div>
+                        <i class="fas fa-arrow-right text-slate-300 hidden md:block text-xl"></i>
+
+                        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-lg shadow-sm w-32">
+                            <i class="fas fa-layer-group text-emerald-600 text-2xl mb-2 block"></i>
+                            Linear Head<br><span class="text-[8px] text-emerald-600 mt-1 block bg-white p-1 rounded">10
+                                SVHN Classes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="flex justify-between items-end mb-4">
+                    <h3 class="text-lg font-bold font-sora text-slate-700">Select Models to Compare:</h3>
+                    <span class="text-xs text-slate-500"><i class="fas fa-info-circle text-blue-400"></i> Select 2 or
+                        more to activate highlighting</span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="ftMethodSelector">
+                </div>
+            </div>
+
+            <div class="panel overflow-hidden mb-8">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-50 text-slate-500 uppercase text-[9px] font-bold">
+                        <tr>
+                            <th class="p-3">Model Strategy</th>
+                            <th class="p-3">Params (Trainable)</th>
+                            <th class="p-3">Acc (%)</th>
+                            <th class="p-3">Prec (%)</th>
+                            <th class="p-3">Rec (%)</th>
+                            <th class="p-3">F1-M (%)</th>
+                            <th class="p-3">Train (min)</th>
+                            <th class="p-3">Inf (ms)</th>
+                            <th class="p-3">Size (MB)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ftComparisonTableBody">
+                        <tr>
+                            <td colspan="9" class="p-4 text-center text-slate-400 italic">Select methods above to
+                                compare</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="ftDetailsContainer" class="space-y-8">
+            </div>
+        </section>
+
+        <!--- Section 5-->
+        <section class="p-6 panel mt-8 mb-12">
+            <h2 class="text-2xl font-extrabold font-sora border-b-2 border-teal-500 pb-2 mb-6 inline-block">5.
+                Conclusion & The 3-Act Story</h2>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="md:col-span-2">
+                    <p class="text-slate-700 leading-relaxed mb-4">
+                        The journey to solving the SVHN dataset is a classic story of data representation.
+                        We started by feeding <strong>Raw 32x32 pixels</strong> directly into classical models, yielding
+                        a fragile ~47% accuracy. The models simply couldn't untangle the foreground digits from the
+                        noisy, cluttered backgrounds.
                     </p>
+                    <p class="text-slate-700 leading-relaxed mb-4">
+                        Act II involved <strong>Feature Extraction</strong>. By pushing resized images through a frozen
+                        ResNet-18, we mapped the pixels into a 512-dimensional semantic space. This structural
+                        understanding immediately jumped our baseline up to ~63%, proving that "better features beat
+                        better algorithms."
+                    </p>
+                    <p class="text-slate-700 leading-relaxed">
+                        Act III was <strong>Deep Transfer Learning</strong>. By unfreezing the convolutional layers and
+                        allowing the network to adapt its 11 million parameters directly to the house numbers, we solved
+                        the problem. The model learned to ignore the background artifacts completely, pushing our final
+                        performance to a state-of-the-art <strong>96.32%</strong>.
+                    </p>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 class="text-center font-bold text-slate-800 mb-4 font-sora">Performance Evolution</h4>
+                    <div style="height: 250px;">
+                        <canvas id="summaryChart"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
@@ -489,18 +572,24 @@
         // Configuration
         const PATHS = {
             baseline32: 'plotly_data/ml_section1_results_32.json',
-            baseline224: 'plotly_data/ml_section1_results_224.json', 
+            baseline224: 'plotly_data/ml_section1_results_224.json',
             pipelines: 'plotly_data/ml_section2_pipelines.json',
             finetune: 'plotly_data/ml_section3_finetune.json'
         };
 
+        // ==========================================
         // Global States
+        // ==========================================
         let mlResults224 = [];
         let selectedMethods = new Set();
         let activeCharts = {}; // For Section 2
-        
+
         let mlResultsPipelines = [];
         let activePipelineChart = null; // For Section 3
+
+        let mlResultsFinetune = [];
+        let selectedFinetune = new Set();
+        let activeFtCharts = {}; // For Section 4
 
         // Helper: Show Error
         function showError(msg) {
@@ -532,7 +621,7 @@
                 renderComparison(); // Sec 2 Init
                 renderDomainGap(data32, data224); // Sec 1
                 renderPipelineTournament(dataPipe); // Sec 3 Init (FIXED: Replaced old function call)
-                renderTransferLearning(dataFt); // Sec 4
+                initFinetuneSection(dataFt); // Sec 4
                 renderSummaryChart(data224, dataFt); // Final
 
             } catch (error) {
@@ -608,7 +697,7 @@
                     <td class="p-3">${formatCell(model.accuracy * 100, maxAcc * 100, 2)}</td>
                     <td class="p-3">${formatCell(model.precision * 100, maxPrec * 100, 2)}</td>
                     <td class="p-3">${formatCell(model.recall * 100, maxRec * 100, 2)}</td>
-                    <td class="p-3">${formatCell(model.macro_f1, maxF1, 4)}</td>
+                    <td class="p-3">${formatCell(model.macro_f1 * 100, maxF1 * 100, 2)}</td>
                     <td class="p-3">${formatCell(model.train_time_s, minTrain, 2)}</td>
                     <td class="p-3">${formatCell(model.inf_latency_ms, minInf, 4)}</td>
                     <td class="p-3">${formatCell(model.model_size_kb, minSize, 2)}</td>
@@ -664,7 +753,25 @@
                                 </span>
                             </div>
                             
-                            <div class="flex-grow grid grid-cols-11 gap-0.5 border border-slate-200 bg-slate-100 p-0.5" id="cm_${safeId}">
+                            <div class="flex-grow">
+                                <div class="grid grid-cols-11 gap-0.5 border border-slate-200 bg-slate-100 p-0.5" id="cm_${safeId}"></div>
+                                
+                                <div class="mt-3 grid grid-cols-2 gap-6 px-1">
+                                    <div>
+    <div class="flex justify-between text-[8px] text-slate-500 mb-1 font-bold uppercase tracking-wider">
+        <span>0 Errors</span>
+        <span>Max Errors</span>
+    </div>
+    <div class="h-1.5 w-full rounded-full border border-slate-200" style="background: linear-gradient(to right, #ffffff, rgba(220, 38, 38, 1));"></div>
+</div>
+                                    <div>
+                                        <div class="flex justify-between text-[8px] text-slate-500 mb-1 font-bold uppercase tracking-wider">
+                                            <span>0 Correct</span>
+                                            <span>Max Correct</span>
+                                        </div>
+                                        <div class="h-1.5 w-full rounded-full border border-slate-200" style="background: linear-gradient(to right, #ffffff, rgba(15, 118, 110, 1));"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -699,7 +806,7 @@
                 row.forEach((val, j) => {
                     const isDiagonal = (i === j);
                     const opacity = val === 0 ? 0 : Math.max(0.1, Math.min(1, Math.log(val + 1) / Math.log(maxVal + 1)));
-                    let bgColor = val === 0 ? '#ffffff' : isDiagonal ? `rgba(15, 118, 110, ${opacity})` : `rgba(245, 158, 11, ${opacity})`;
+                    let bgColor = val === 0 ? '#ffffff' : isDiagonal ? `rgba(15, 118, 110, ${opacity})` : `rgba(220, 38, 38, ${opacity})`;
                     let textColor = (opacity > 0.5) ? 'text-white' : 'text-slate-700';
                     if (val === 0) textColor = 'text-transparent';
                     cmHtml += `<div class="aspect-square flex items-center justify-center text-[9px] font-bold cm-cell ${textColor} rounded-sm" style="background-color: ${bgColor};" title="Actual: ${i}, Pred: ${j} | Count: ${val}">${val > 0 ? val : ''}</div>`;
@@ -716,7 +823,7 @@
             mlResultsPipelines = data;
             const tbody = document.getElementById('pipelineTournamentBody');
             const configContainer = document.getElementById('configGridContainer');
-            
+
             // 1. Sort Data by Accuracy Descending & Assign Ranks
             data.sort((a, b) => b.accuracy - a.accuracy);
             data.forEach((p, i) => p.rank = i + 1);
@@ -724,7 +831,7 @@
             // 2. Find Best/Fastest for Card 1 Summary
             const bestAcc = data[0].accuracy * 100;
             const fastestTrain = Math.min(...data.map(p => p.train_time_s));
-            
+
             document.getElementById('bestPipeAccVal').innerText = bestAcc.toFixed(2) + '%';
             document.getElementById('fastestPipeTrainVal').innerText = fastestTrain.toFixed(2) + 's';
 
@@ -762,7 +869,7 @@
                     <td class="p-4">${formatCell(p.accuracy * 100, maxAcc * 100, 2)}</td>
                     <td class="p-4">${formatCell(p.precision * 100, maxPrec * 100, 2)}</td>
                     <td class="p-4">${formatCell(p.recall * 100, maxRec * 100, 2)}</td>
-                    <td class="p-4">${formatCell(p.macro_f1, maxF1, 4)}</td>
+                    <td class="p-4">${formatCell(p.macro_f1 * 100, maxF1 * 100, 2)}</td>
                     <td class="p-4">${formatCell(p.train_time_s, minTrain, 2, true)}</td>
                     <td class="p-4">${formatCell(p.inf_latency_ms, minInf, 4, true)}</td>
                     <td class="p-4">${formatCell(p.model_size_kb, minSize, 1, true)}</td>
@@ -785,7 +892,7 @@
                 `;
             });
 
-            if(data.length > 0) renderPipelineDetails(data[0]);
+            if (data.length > 0) renderPipelineDetails(data[0]);
         }
 
         // Tab Switchers
@@ -806,15 +913,15 @@
         // Render Details (CM & F1)
         function renderPipelineDetails(pipeline) {
             const container = document.getElementById('pipelineDetailsContainer');
-            if(activePipelineChart) { activePipelineChart.destroy(); }
+            if (activePipelineChart) { activePipelineChart.destroy(); }
             container.innerHTML = '';
 
             const safeId = "pipe_" + pipeline.rank;
-            const f1Scores = calculatePerClassF1(pipeline.confusion_matrix); 
-            
+            const f1Scores = calculatePerClassF1(pipeline.confusion_matrix);
+
             const card = document.createElement('div');
             card.className = "panel p-6 bg-white border-2 border-teal-100 shadow-md";
-            
+
             card.innerHTML = `
                 <div class="flex justify-between items-center mb-6 border-b pb-2">
                     <h3 class="text-xl font-bold font-sora text-slate-800">
@@ -833,16 +940,38 @@
                     
                     <div class="flex flex-col">
                         <h4 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Confusion Matrix</h4>
+                        
                         <div class="text-center text-[10px] font-bold text-slate-500 mb-1 ml-8 uppercase tracking-widest">
                             X-Axis: Predicted Class
                         </div>
+                        
                         <div class="flex flex-1 items-stretch">
                             <div class="flex items-center justify-center w-8 mr-1">
                                 <span class="text-[10px] font-bold text-slate-500 -rotate-90 whitespace-nowrap uppercase tracking-widest">
                                     Y-Axis: Actual Class
                                 </span>
                             </div>
-                            <div class="flex-grow grid grid-cols-11 gap-0.5 border border-slate-200 bg-slate-100 p-0.5" id="cm_${safeId}"></div>
+                            
+                            <div class="flex-grow">
+                                <div class="grid grid-cols-11 gap-0.5 border border-slate-200 bg-slate-100 p-0.5" id="cm_${safeId}"></div>
+                                
+                                <div class="mt-3 grid grid-cols-2 gap-6 px-1">
+                                    <div>
+    <div class="flex justify-between text-[8px] text-slate-500 mb-1 font-bold uppercase tracking-wider">
+        <span>0 Errors</span>
+        <span>Max Errors</span>
+    </div>
+    <div class="h-1.5 w-full rounded-full border border-slate-200" style="background: linear-gradient(to right, #ffffff, rgba(220, 38, 38, 1));"></div>
+</div>
+                                    <div>
+                                        <div class="flex justify-between text-[8px] text-slate-500 mb-1 font-bold uppercase tracking-wider">
+                                            <span>0 Correct</span>
+                                            <span>Max Correct</span>
+                                        </div>
+                                        <div class="h-1.5 w-full rounded-full border border-slate-200" style="background: linear-gradient(to right, #ffffff, rgba(15, 118, 110, 1));"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -853,7 +982,7 @@
             activePipelineChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['0','1','2','3','4','5','6','7','8','9'],
+                    labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
                     datasets: [{ label: 'F1 Score', data: f1Scores.map(f => f * 100), backgroundColor: '#0ea5e9', borderRadius: 4 }]
                 },
                 options: {
@@ -867,13 +996,13 @@
             let cmHtml = `<div class="aspect-square flex items-center justify-center font-bold text-[10px] text-slate-400 bg-transparent"></div>`;
             for (let j = 0; j < 10; j++) cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[11px] text-slate-600 bg-slate-200/60 rounded-sm">${j}</div>`;
 
-            const maxVal = Math.max(...pipeline.confusion_matrix.flat()); 
+            const maxVal = Math.max(...pipeline.confusion_matrix.flat());
             pipeline.confusion_matrix.forEach((row, i) => {
                 cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[11px] text-slate-600 bg-slate-200/60 rounded-sm">${i}</div>`;
                 row.forEach((val, j) => {
                     const isDiagonal = (i === j);
                     const opacity = val === 0 ? 0 : Math.max(0.1, Math.min(1, Math.log(val + 1) / Math.log(maxVal + 1)));
-                    let bgColor = val === 0 ? '#ffffff' : isDiagonal ? `rgba(15, 118, 110, ${opacity})` : `rgba(245, 158, 11, ${opacity})`; 
+                    let bgColor = val === 0 ? '#ffffff' : isDiagonal ? `rgba(15, 118, 110, ${opacity})` : `rgba(220, 38, 38, ${opacity})`;
                     let textColor = (opacity > 0.5) ? 'text-white' : 'text-slate-700';
                     if (val === 0) textColor = 'text-transparent';
                     cmHtml += `<div class="aspect-square flex items-center justify-center text-[9px] font-bold cm-cell ${textColor} rounded-sm" style="background-color: ${bgColor};" title="Actual: ${i}, Pred: ${j} | Count: ${val}">${val > 0 ? val : ''}</div>`;
@@ -911,67 +1040,278 @@
             });
         }
 
-        function renderTransferLearning(data) {
-            const hist = data.history;
-            const epochs = Array.from({ length: data.epochs }, (_, i) => `Ep ${i + 1}`);
+        // ==========================================
+        // SECTION 4: DEEP TRANSFER LEARNING
+        // ==========================================
 
-            new Chart(document.getElementById('learningCurvesChart'), {
+        function initFinetuneSection(data) {
+            mlResultsFinetune = data;
+
+            // Build Selector Buttons
+            const selectorContainer = document.getElementById('ftMethodSelector');
+            selectorContainer.innerHTML = '';
+
+            data.forEach(model => {
+                const btn = document.createElement('button');
+                btn.className = 'p-3 panel text-center transition-all border-2 border-transparent bg-white hover:border-blue-400 flex flex-col items-center justify-center';
+                btn.dataset.id = model.model_id;
+                btn.onclick = () => toggleFinetuneMethod(model.model_id, btn);
+
+                let icon = model.model_name.includes("ResNet") ? "fa-project-diagram" : "fa-mobile-alt";
+                let color = model.model_name.includes("Full") ? "text-emerald-500" : (model.model_name.includes("Partial") ? "text-blue-500" : "text-slate-500");
+
+                btn.innerHTML = `
+                    <i class="fas ${icon} ${color} text-xl mb-2 icon-svg"></i>
+                    <p class="text-[9px] font-bold leading-tight">${model.model_name}</p>
+                `;
+                selectorContainer.appendChild(btn);
+            });
+
+            // Auto-select the top 2 models to show comparison immediately
+            if (data.length >= 2) {
+                const sorted = [...data].sort((a, b) => b.accuracy - a.accuracy);
+                toggleFinetuneMethod(sorted[0].model_id, selectorContainer.querySelector(`[data-id="${sorted[0].model_id}"]`));
+                toggleFinetuneMethod(sorted[1].model_id, selectorContainer.querySelector(`[data-id="${sorted[1].model_id}"]`));
+            }
+        }
+
+        function toggleFinetuneMethod(modelId, btnElement) {
+            if (selectedFinetune.has(modelId)) {
+                selectedFinetune.delete(modelId);
+                btnElement.classList.remove('border-blue-500', 'bg-blue-50', 'shadow-md');
+            } else {
+                selectedFinetune.add(modelId);
+                btnElement.classList.add('border-blue-500', 'bg-blue-50', 'shadow-md');
+            }
+            renderFinetuneComparison();
+        }
+
+        function renderFinetuneComparison() {
+            const tbody = document.getElementById('ftComparisonTableBody');
+            const detailsContainer = document.getElementById('ftDetailsContainer');
+
+            tbody.innerHTML = '';
+            detailsContainer.innerHTML = '';
+
+            // Cleanup old charts
+            Object.values(activeFtCharts).forEach(chart => chart.destroy());
+            activeFtCharts = {};
+
+            if (selectedFinetune.size === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400 italic">Select methods above to compare</td></tr>`;
+                return;
+            }
+
+            const selectedData = mlResultsFinetune.filter(m => selectedFinetune.has(m.model_id));
+
+            // Sort by accuracy descending
+            selectedData.sort((a, b) => b.accuracy - a.accuracy);
+
+            // Highlight Logic
+            let maxAcc = -1, maxPrec = -1, maxRec = -1, maxF1 = -1, minTrain = Infinity, minInf = Infinity, minSize = Infinity;
+            if (selectedData.length > 1) {
+                maxAcc = Math.max(...selectedData.map(m => m.accuracy));
+                maxPrec = Math.max(...selectedData.map(m => m.precision));
+                maxRec = Math.max(...selectedData.map(m => m.recall));
+                maxF1 = Math.max(...selectedData.map(m => m.macro_f1));
+                minTrain = Math.min(...selectedData.map(m => m.train_time_s));
+                minInf = Math.min(...selectedData.map(m => m.inf_latency_ms));
+                minSize = Math.min(...selectedData.map(m => m.model_size_mb));
+            }
+
+            const formatCell = (val, bestVal, decimals) => {
+                const formatted = val.toFixed(decimals);
+                if (selectedData.length > 1 && val === bestVal) {
+                    return `<span class="bg-emerald-100 text-emerald-800 font-extrabold px-2 py-1 rounded shadow-sm border border-emerald-200">${formatted}</span>`;
+                }
+                return `<span class="px-2 py-1 text-slate-600">${formatted}</span>`;
+            };
+
+            // Format large numbers
+            const numFormat = new Intl.NumberFormat('en-US');
+
+            selectedData.forEach(model => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-t border-slate-100 hover:bg-slate-50 transition-colors';
+                const pctTrainable = ((model.trainable_params / model.total_params) * 100).toFixed(1);
+
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-slate-800">${model.model_name}</td>
+                    <td class="p-3 text-[11px]"><span class="font-mono bg-slate-200 px-1 rounded">${numFormat.format(model.trainable_params)}</span> <span class="text-slate-400">(${pctTrainable}%)</span></td>
+                    <td class="p-3">${formatCell(model.accuracy * 100, maxAcc * 100, 2)}</td>
+                    <td class="p-3">${formatCell(model.precision * 100, maxPrec * 100, 2)}</td>
+                    <td class="p-3">${formatCell(model.recall * 100, maxRec * 100, 2)}</td>
+                    <td class="p-3">${formatCell(model.macro_f1 * 100, maxF1 * 100, 2)}</td>
+                    <td class="p-3">${formatCell(model.train_time_s / 60, minTrain / 60, 1)}</td>
+                    <td class="p-3">${formatCell(model.inf_latency_ms, minInf, 3)}</td>
+                    <td class="p-3">${formatCell(model.model_size_mb, minSize, 1)}</td>
+                `;
+                tbody.appendChild(tr);
+
+                // 2. Build Detailed Card
+                renderFinetuneDetailCard(model, detailsContainer);
+            });
+        }
+
+        function renderFinetuneDetailCard(model, container) {
+            const safeId = model.model_id;
+            const card = document.createElement('div');
+            card.className = "panel p-6 bg-white border-t-4 border-blue-500 shadow-lg rounded-xl mb-6";
+
+            const epochsArray = Array.from({ length: model.epochs }, (_, i) => `Ep ${i + 1}`);
+
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                    <h3 class="text-xl font-bold font-sora text-slate-800">
+                        <i class="fas fa-microchip text-blue-500 mr-2"></i>${model.model_name}
+                    </h3>
+                    <div class="text-right">
+                        <span class="block text-xl font-black text-emerald-600">${(model.accuracy * 100).toFixed(2)}% Acc</span>
+                    </div>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">Accuracy Curve</h4>
+                        <div style="height: 200px;"><canvas id="accChart_${safeId}"></canvas></div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">Loss Curve</h4>
+                        <div style="height: 200px;"><canvas id="lossChart_${safeId}"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-4">Per-Class F1-Score</h4>
+                        <div style="height: 250px;"><canvas id="f1Chart_${safeId}"></canvas></div>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <h4 class="text-sm font-bold text-slate-600 uppercase tracking-wider mb-2">Confusion Matrix</h4>
+                        
+                        <div class="text-center text-[10px] font-bold text-slate-500 mb-1 ml-8 uppercase tracking-widest">
+                            X-Axis: Predicted Class
+                        </div>
+                        
+                        <div class="flex flex-1 items-stretch">
+                            <div class="flex items-center justify-center w-8 mr-1">
+                                <span class="text-[10px] font-bold text-slate-500 -rotate-90 whitespace-nowrap uppercase tracking-widest">
+                                    Y-Axis: Actual Class
+                                </span>
+                            </div>
+                            
+                            <div class="flex-grow">
+                                <div class="grid grid-cols-11 gap-0.5 border border-slate-200 bg-slate-100 p-0.5" id="cm_${safeId}"></div>
+                                
+                                <div class="mt-3 grid grid-cols-2 gap-6 px-1">
+                                    <div>
+    <div class="flex justify-between text-[8px] text-slate-500 mb-1 font-bold uppercase tracking-wider">
+        <span>0 Errors</span>
+        <span>Max Errors</span>
+    </div>
+    <div class="h-1.5 w-full rounded-full border border-slate-200" style="background: linear-gradient(to right, #ffffff, rgba(220, 38, 38, 1));"></div>
+</div>
+                                    <div>
+                                        <div class="flex justify-between text-[8px] text-slate-500 mb-1 font-bold uppercase tracking-wider">
+                                            <span>0 Correct</span>
+                                            <span>Max Correct</span>
+                                        </div>
+                                        <div class="h-1.5 w-full rounded-full border border-slate-200" style="background: linear-gradient(to right, #ffffff, rgba(15, 118, 110, 1));"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+
+            // Draw Accuracy Chart
+            const ctxAcc = document.getElementById(`accChart_${safeId}`).getContext('2d');
+            activeFtCharts[`acc_${safeId}`] = new Chart(ctxAcc, {
                 type: 'line',
                 data: {
-                    labels: epochs,
+                    labels: epochsArray,
                     datasets: [
-                        { label: 'Train Acc', data: hist.train_acc.map(x => x * 100), borderColor: '#cbd5e1', borderDash: [5, 5], tension: 0.3 },
-                        { label: 'Val Acc', data: hist.val_acc.map(x => x * 100), borderColor: '#0f766e', borderWidth: 3, tension: 0.3 }
+                        { label: 'Train Acc', data: model.history.train_acc.map(x => x * 100), borderColor: '#94a3b8', borderDash: [5, 5], tension: 0.3, pointRadius: 2 },
+                        { label: 'Val Acc', data: model.history.val_acc.map(x => x * 100), borderColor: '#10b981', borderWidth: 3, tension: 0.3, pointRadius: 4 }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'Accuracy (%)' } } } }
             });
 
-            const classLabels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-            new Chart(document.getElementById('perClassF1Chart'), {
+            // Draw Loss Chart
+            const ctxLoss = document.getElementById(`lossChart_${safeId}`).getContext('2d');
+            activeFtCharts[`loss_${safeId}`] = new Chart(ctxLoss, {
+                type: 'line',
+                data: {
+                    labels: epochsArray,
+                    datasets: [
+                        { label: 'Train Loss', data: model.history.train_loss, borderColor: '#94a3b8', borderDash: [5, 5], tension: 0.3, pointRadius: 2 },
+                        { label: 'Val Loss', data: model.history.val_loss, borderColor: '#ef4444', borderWidth: 3, tension: 0.3, pointRadius: 4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { title: { display: true, text: 'CrossEntropy Loss' } } } }
+            });
+
+            // Draw F1 Bar Chart
+            const ctxF1 = document.getElementById(`f1Chart_${safeId}`).getContext('2d');
+            activeFtCharts[`f1_${safeId}`] = new Chart(ctxF1, {
                 type: 'bar',
                 data: {
-                    labels: classLabels,
-                    datasets: [{ label: 'F1 Score (%)', data: data.per_class_f1.map(x => x * 100), backgroundColor: '#3b82f6', borderRadius: 4 }]
+                    labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                    datasets: [{ label: 'F1 Score', data: model.per_class_f1.map(f => f * 100), backgroundColor: '#3b82f6', borderRadius: 4 }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 90, max: 100 } }, plugins: { legend: { display: false } } }
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'F1 Score (%)' } }, x: { title: { display: true, text: 'Digit Class' } } }
+                }
             });
 
-            const cmGrid = document.getElementById('cmGrid');
-            const maxVal = Math.max(...data.confusion_matrix.flat().filter((_, i) => i % 11 !== 0));
+            // Draw Heatmap
+            const cmContainer = document.getElementById(`cm_${safeId}`);
+            let cmHtml = `<div class="aspect-square flex items-center justify-center font-bold text-[10px] text-slate-400 bg-transparent"></div>`;
+            for (let j = 0; j < 10; j++) cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[11px] text-slate-600 bg-slate-200/60 rounded-sm">${j}</div>`;
 
-            data.confusion_matrix.forEach((row, i) => {
+            const maxVal = Math.max(...model.confusion_matrix.flat());
+            model.confusion_matrix.forEach((row, i) => {
+                cmHtml += `<div class="aspect-square flex items-center justify-center font-bold text-[11px] text-slate-600 bg-slate-200/60 rounded-sm">${i}</div>`;
                 row.forEach((val, j) => {
-                    const isDiagonal = i === j;
-                    let bgColor, textColor, title;
-
-                    if (isDiagonal) {
-                        bgColor = '#0f766e';
-                        textColor = 'text-white font-bold';
-                        title = `Actual ${i}, Pred ${j} (Correct)`;
-                    } else {
-                        const intensity = val === 0 ? 0 : Math.max(0.1, val / maxVal);
-                        bgColor = val === 0 ? '#ffffff' : `rgba(220, 38, 38, ${intensity})`;
-                        textColor = intensity > 0.5 ? 'text-white' : 'text-slate-600';
-                        title = `Actual ${i}, Pred ${j} (Error: ${val})`;
-                    }
-
-                    cmGrid.innerHTML += `<div class="aspect-square flex items-center justify-center rounded-sm text-xs ${textColor} cm-cell" style="background-color: ${bgColor}" title="${title}">${val > 0 ? val : ''}</div>`;
+                    const isDiagonal = (i === j);
+                    const opacity = val === 0 ? 0 : Math.max(0.1, Math.min(1, Math.log(val + 1) / Math.log(maxVal + 1)));
+                    let bgColor = val === 0 ? '#ffffff' : isDiagonal ? `rgba(15, 118, 110, ${opacity})` : `rgba(220, 38, 38, ${opacity})`;
+                    let textColor = (opacity > 0.5) ? 'text-white' : 'text-slate-700';
+                    if (val === 0) textColor = 'text-transparent';
+                    cmHtml += `<div class="aspect-square flex items-center justify-center text-[9px] font-bold cm-cell ${textColor} rounded-sm" style="background-color: ${bgColor};" title="Actual: ${i}, Pred: ${j} | Count: ${val}">${val > 0 ? val : ''}</div>`;
                 });
             });
+            cmContainer.innerHTML = cmHtml;
         }
 
         function renderSummaryChart(data224, dataFt) {
             const best224 = Math.max(...data224.map(m => m.accuracy));
             const best32 = 0.4701;
+            // FIXED: dataFt is now an array of 5 models, so we map to find the max
+            const bestFt = Math.max(...dataFt.map(m => m.accuracy));
 
             new Chart(document.getElementById('summaryChart'), {
                 type: 'bar',
                 data: {
-                    labels: ['Frozen ResNet (32x32)', 'Frozen ResNet (224x224)', 'Fine-Tuned ResNet-18'],
-                    datasets: [{ data: [best32 * 100, best224 * 100, dataFt.final_accuracy * 100], backgroundColor: ['#94a3b8', '#3b82f6', '#0f766e'], borderRadius: 6 }]
+                    labels: ['Raw Pixels (32x32)', 'Frozen ResNet (224x224)', 'Best Fine-Tuned Model'],
+                    datasets: [{
+                        data: [best32 * 100, best224 * 100, bestFt * 100],
+                        backgroundColor: ['#94a3b8', '#3b82f6', '#0f766e'],
+                        borderRadius: 6
+                    }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Accuracy (%)' } } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Accuracy (%)' } } }
+                }
             });
         }
 
