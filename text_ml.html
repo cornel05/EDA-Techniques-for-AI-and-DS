@@ -517,7 +517,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 'Transformer': 'bg-purple-100 text-purple-800',
             }[row.feature] ?? 'bg-slate-100 text-slate-700';
 
-            const trainDisplay = row.train_s === 'N/A (GPU)' ? '<span class="text-purple-500 font-medium">GPU</span>' : `${row.train_s}s`;
+            const trainDisplay = `${row.train_s}s`;
 
             tr.innerHTML = `
                 <td class="px-3 py-3 text-center font-bold ${row.rank === 1 ? 'text-amber-600 text-lg' : 'text-slate-400 text-sm'}">
