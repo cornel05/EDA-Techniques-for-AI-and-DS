@@ -729,7 +729,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                          How:C.purple, Which:'#ec4899', Why:C.rose, Other:C.slate };
 
     try {
-        const clf = await pipeline('zero-shot-classification', 'Xenova/distilbert-base-uncased-mnli');
+        const clf = await pipeline('text-classification', 'hoangnguyenthe/squad-question-classifier');
         btn.disabled = false;
         btn.innerHTML = `<i class="fa-solid fa-bolt mr-2"></i>Predict`;
         resultDiv.innerHTML = `<span class="text-slate-400 text-xs"><i class="fa-solid fa-check-circle text-teal-500 mr-1"></i>AI Engine ready — type a question above</span>`;
@@ -740,29 +740,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Thinking…`;
             resultDiv.innerHTML = ''; confBars.style.display = 'none';
             try {
-                const out = await clf(text, QTYPES);
-                const label = out.labels[0], score = (out.scores[0] * 100).toFixed(1);
-                const col = typeColors[label] ?? C.amber;
-                resultDiv.innerHTML = `
-                    <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-slate-800 border border-slate-700">
-                        <span class="text-slate-400 text-sm font-normal">Predicted:</span>
-                        <span class="text-xl font-bold" style="color:${col}">${label}</span>
-                        <span class="text-xs text-slate-500">${score}% confidence</span>
-                    </div>`;
-                // Confidence distribution
-                confBars.style.display = 'block';
-                confBars.innerHTML = `<p class="text-xs text-slate-400 mb-2 font-semibold uppercase tracking-wide">Confidence Distribution</p>` +
-                    out.labels.map((lbl, i) => {
-                        const pct = (out.scores[i] * 100).toFixed(1);
-                        const bc = typeColors[lbl] ?? C.slate;
-                        return `<div class="flex items-center gap-2">
-                            <span class="w-10 text-right text-xs text-slate-300 shrink-0">${lbl}</span>
-                            <div class="flex-1 bg-slate-800 rounded-full h-3 overflow-hidden">
-                                <div class="conf-bar h-full rounded-full" style="--cw:${pct}%;width:${pct}%;background:${bc};opacity:0.85"></div>
-                            </div>
-                            <span class="text-xs text-slate-400 w-10 shrink-0">${pct}%</span>
-                        </div>`;
-                    }).join('');
+                const out = await clf(text, { topk: 8 });
+const results = Array.isArray(out[0]) ? out[0] : out;
+const top = results[0];
+const label = top.label, score = (top.score * 100).toFixed(1);
+const col = typeColors[label] ?? C.amber;
+resultDiv.innerHTML = `
+    <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-slate-800 border border-slate-700">
+        <span class="text-slate-400 text-sm font-normal">Predicted:</span>
+        <span class="text-xl font-bold" style="color:${col}">${label}</span>
+        <span class="text-xs text-slate-500">${score}% confidence</span>
+    </div>`;
+// Confidence distribution
+confBars.style.display = 'block';
+confBars.innerHTML = `<p class="text-xs text-slate-400 mb-2 font-semibold uppercase tracking-wide">Confidence Distribution</p>` +
+    results.map(r => {
+        const pct = (r.score * 100).toFixed(1);
+        const bc = typeColors[r.label] ?? C.slate;
+        return `<div class="flex items-center gap-2">
+            <span class="w-10 text-right text-xs text-slate-300 shrink-0">${r.label}</span>
+            <div class="flex-1 bg-slate-800 rounded-full h-3 overflow-hidden">
+                <div class="conf-bar h-full rounded-full" style="--cw:${pct}%;width:${pct}%;background:${bc};opacity:0.85"></div>
+            </div>
+            <span class="text-xs text-slate-400 w-10 shrink-0">${pct}%</span>
+        </div>`;
+    }).join('');
             } catch { resultDiv.textContent = 'Error during prediction.'; }
             finally {
                 btn.disabled = false;
