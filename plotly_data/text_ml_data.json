@@ -3,7 +3,7 @@
     "total_documents": 98169,
     "n_categories": 8,
     "best_accuracy": 99.99,
-    "n_pipelines": 9,
+    "n_pipelines": 10,
     "best_pipeline": "DistilBERT (Fine-tuned)",
     "labels": [
       "What",
@@ -141,7 +141,9 @@
       "f1_macro": 99.98,
       "train_s": 18143.0,
       "inf_ms": "N/A",
-      "rank": 1
+      "rank": 1,
+      "inf_mean_ms": 20.049,
+      "inf_std_ms": 0.2139
     },
     {
       "pipeline": "TF-IDF + Random Forest",
@@ -153,7 +155,9 @@
       "f1_macro": 88.04,
       "train_s": 20.55,
       "inf_ms": 0.046,
-      "rank": 2
+      "rank": 2,
+      "inf_mean_ms": 0.0508,
+      "inf_std_ms": 0.0054
     },
     {
       "pipeline": "TF-IDF + Linear SVM",
@@ -165,7 +169,9 @@
       "f1_macro": 87.86,
       "train_s": 1.11,
       "inf_ms": 0.0,
-      "rank": 3
+      "rank": 3,
+      "inf_mean_ms": 0.0001,
+      "inf_std_ms": 0.0
     },
     {
       "pipeline": "TF-IDF + Logistic Regression",
@@ -177,7 +183,9 @@
       "f1_macro": 86.77,
       "train_s": 1.64,
       "inf_ms": 0.0,
-      "rank": 4
+      "rank": 4,
+      "inf_mean_ms": 0.0002,
+      "inf_std_ms": 0.0002
     },
     {
       "pipeline": "BoW + Random Forest",
@@ -189,7 +197,9 @@
       "f1_macro": 85.99,
       "train_s": 29.75,
       "inf_ms": 0.058,
-      "rank": 5
+      "rank": 5,
+      "inf_mean_ms": 0.0655,
+      "inf_std_ms": 0.0047
     },
     {
       "pipeline": "Word Emb + Random Forest",
@@ -201,7 +211,9 @@
       "f1_macro": 84.33,
       "train_s": 64.9,
       "inf_ms": 0.011,
-      "rank": 6
+      "rank": 6,
+      "inf_mean_ms": 0.0134,
+      "inf_std_ms": 0.0022
     },
     {
       "pipeline": "BoW + Logistic Regression",
@@ -213,7 +225,9 @@
       "f1_macro": 86.17,
       "train_s": 2.35,
       "inf_ms": 0.0,
-      "rank": 7
+      "rank": 7,
+      "inf_mean_ms": 0.0002,
+      "inf_std_ms": 0.0002
     },
     {
       "pipeline": "Word Emb + Linear SVM",
@@ -225,7 +239,9 @@
       "f1_macro": 82.88,
       "train_s": 5.54,
       "inf_ms": 0.0,
-      "rank": 8
+      "rank": 8,
+      "inf_mean_ms": 0.0004,
+      "inf_std_ms": 0.0
     },
     {
       "pipeline": "BoW + Linear SVM",
@@ -237,7 +253,9 @@
       "f1_macro": 85.0,
       "train_s": 1.82,
       "inf_ms": 0.0,
-      "rank": 9
+      "rank": 9,
+      "inf_mean_ms": 0.0001,
+      "inf_std_ms": 0.0
     },
     {
       "pipeline": "Word Emb + Logistic Regression",
@@ -249,7 +267,9 @@
       "f1_macro": 83.08,
       "train_s": 4.2,
       "inf_ms": 0.0,
-      "rank": 10
+      "rank": 10,
+      "inf_mean_ms": 0.0012,
+      "inf_std_ms": 0.0011
     }
   ],
   "confusion_matrices": {
@@ -1640,5 +1660,721 @@
       "true": "Other",
       "pred": "Which"
     }
-  ]
+  ],
+  "inference_times": {
+    "TF-IDF + Logistic Regression": {
+      "mean_ms": 0.0002,
+      "std_ms": 0.0002,
+      "total_ms": 2.11
+    },
+    "TF-IDF + Linear SVM": {
+      "mean_ms": 0.0001,
+      "std_ms": 0.0,
+      "total_ms": 1.06
+    },
+    "TF-IDF + Random Forest": {
+      "mean_ms": 0.0508,
+      "std_ms": 0.0054,
+      "total_ms": 536.96
+    },
+    "BoW + Logistic Regression": {
+      "mean_ms": 0.0002,
+      "std_ms": 0.0002,
+      "total_ms": 2.11
+    },
+    "BoW + Linear SVM": {
+      "mean_ms": 0.0001,
+      "std_ms": 0.0,
+      "total_ms": 1.06
+    },
+    "BoW + Random Forest": {
+      "mean_ms": 0.0655,
+      "std_ms": 0.0047,
+      "total_ms": 692.34
+    },
+    "Word Emb + Logistic Regression": {
+      "mean_ms": 0.0012,
+      "std_ms": 0.0011,
+      "total_ms": 12.68
+    },
+    "Word Emb + Linear SVM": {
+      "mean_ms": 0.0004,
+      "std_ms": 0.0,
+      "total_ms": 4.23
+    },
+    "Word Emb + Random Forest": {
+      "mean_ms": 0.0134,
+      "std_ms": 0.0022,
+      "total_ms": 141.64
+    },
+    "DistilBERT (Fine-tuned)": {
+      "mean_ms": 20.049,
+      "std_ms": 0.2139,
+      "total_ms": 211917.93,
+      "note": "Measured on Apple MPS (M-series GPU)"
+    }
+  },
+  "baselines": {
+    "Baseline: Majority Class": {
+      "acc": 44.97,
+      "f1_macro": 7.75
+    },
+    "Baseline: Random (Stratified)": {
+      "acc": 26.16,
+      "f1_macro": 12.87
+    }
+  },
+  "model_info": {
+    "TF-IDF + Logistic Regression": {
+      "hyperparams": {
+        "vectorizer": "TfidfVectorizer(ngram_range=(1,2), max_features=20000, sublinear_tf=True)",
+        "classifier": "LogisticRegression(max_iter=1000, class_weight=\"balanced\")",
+        "C": 1.0,
+        "solver": "lbfgs (default)"
+      },
+      "feature_dim": 20000,
+      "feature_mem_mb": 8.04,
+      "n_params": "n_classes × n_features = 8 × 20,000 = 160,000"
+    },
+    "TF-IDF + Linear SVM": {
+      "hyperparams": {
+        "vectorizer": "TfidfVectorizer(ngram_range=(1,2), max_features=20000, sublinear_tf=True)",
+        "classifier": "LinearSVC(max_iter=2000, class_weight=\"balanced\")",
+        "C": 1.0
+      },
+      "feature_dim": 20000,
+      "feature_mem_mb": 8.04,
+      "n_params": "8 × 20,000 = 160,000"
+    },
+    "TF-IDF + Random Forest": {
+      "hyperparams": {
+        "vectorizer": "TfidfVectorizer(ngram_range=(1,2), max_features=20000, sublinear_tf=True)",
+        "classifier": "RandomForestClassifier(n_estimators=200, class_weight=\"balanced\")",
+        "n_estimators": 200,
+        "max_features": "sqrt (default)"
+      },
+      "feature_dim": 20000,
+      "feature_mem_mb": 8.04,
+      "n_params": "~200 trees × ~depth 20 nodes ≈ millions of node conditions"
+    },
+    "BoW + Logistic Regression": {
+      "hyperparams": {
+        "vectorizer": "CountVectorizer(ngram_range=(1,1), max_features=20000)",
+        "classifier": "LogisticRegression(max_iter=1000, class_weight=\"balanced\")"
+      },
+      "feature_dim": 20000,
+      "feature_mem_mb": 6.88,
+      "n_params": "8 × 20,000 = 160,000"
+    },
+    "BoW + Linear SVM": {
+      "hyperparams": {
+        "vectorizer": "CountVectorizer(ngram_range=(1,1), max_features=20000)",
+        "classifier": "LinearSVC(max_iter=2000, class_weight=\"balanced\")"
+      },
+      "feature_dim": 20000,
+      "feature_mem_mb": 6.88,
+      "n_params": "8 × 20,000 = 160,000"
+    },
+    "BoW + Random Forest": {
+      "hyperparams": {
+        "vectorizer": "CountVectorizer(ngram_range=(1,1), max_features=20000)",
+        "classifier": "RandomForestClassifier(n_estimators=200, class_weight=\"balanced\")",
+        "n_estimators": 200
+      },
+      "feature_dim": 20000,
+      "feature_mem_mb": 6.88,
+      "n_params": "~millions of node conditions"
+    },
+    "Word Emb + Logistic Regression": {
+      "hyperparams": {
+        "vectorizer": "HashingVectorizer(analyzer=\"char_wb\", ngram_range=(3,5), n_features=512)",
+        "classifier": "LogisticRegression(max_iter=1000, class_weight=\"balanced\")"
+      },
+      "feature_dim": 512,
+      "feature_mem_mb": null,
+      "n_params": "8 × 512 = 4,096"
+    },
+    "Word Emb + Linear SVM": {
+      "hyperparams": {
+        "vectorizer": "HashingVectorizer(analyzer=\"char_wb\", ngram_range=(3,5), n_features=512)",
+        "classifier": "LinearSVC(max_iter=2000, class_weight=\"balanced\")"
+      },
+      "feature_dim": 512,
+      "feature_mem_mb": null,
+      "n_params": "8 × 512 = 4,096"
+    },
+    "Word Emb + Random Forest": {
+      "hyperparams": {
+        "vectorizer": "HashingVectorizer(analyzer=\"char_wb\", ngram_range=(3,5), n_features=512)",
+        "classifier": "RandomForestClassifier(n_estimators=200, class_weight=\"balanced\")",
+        "n_estimators": 200
+      },
+      "feature_dim": 512,
+      "feature_mem_mb": null,
+      "n_params": "~millions of node conditions"
+    },
+    "DistilBERT (Fine-tuned)": {
+      "hyperparams": {
+        "base_model": "distilbert-base-uncased",
+        "epochs": 3,
+        "learning_rate": "2e-5",
+        "batch_size": 16,
+        "weight_decay": 0.01,
+        "optimizer": "AdamW (default HF Trainer)",
+        "device": "Apple MPS (M-series GPU)"
+      },
+      "feature_dim": 768,
+      "feature_mem_mb": null,
+      "n_params": "66,362,880 (~66M parameters)",
+      "model_size_mb": 255
+    }
+  },
+  "preprocessing_flow": [
+    {
+      "step": 1,
+      "name": "Raw Input",
+      "description": "Original question string from SQuAD JSON",
+      "example_in": "When did the first Olympic Games take place?",
+      "example_out": "When did the first Olympic Games take place?"
+    },
+    {
+      "step": 2,
+      "name": "Lowercase",
+      "description": "Convert all characters to lowercase",
+      "example_in": "When did the first Olympic Games take place?",
+      "example_out": "when did the first olympic games take place?"
+    },
+    {
+      "step": 3,
+      "name": "Remove Punctuation",
+      "description": "Replace non-alphanumeric characters with space (regex: [^a-z0-9\\s])",
+      "example_in": "when did the first olympic games take place?",
+      "example_out": "when did the first olympic games take place "
+    },
+    {
+      "step": 4,
+      "name": "Stopword Removal",
+      "description": "Remove common English stopwords — BUT keep question words (what, who, when, where, how, which, why) as they are the primary classification signal",
+      "example_in": "when did the first olympic games take place",
+      "example_out": "when first olympic games take place"
+    },
+    {
+      "step": 5,
+      "name": "Label Extraction",
+      "description": "Extract label from first word of ORIGINAL (pre-processed) question",
+      "example_in": "When did the first Olympic Games take place?",
+      "example_out": "Label → When"
+    },
+    {
+      "step": 6,
+      "name": "Feature Extraction",
+      "description": "Three parallel paths: (A) TF-IDF bigrams, (B) BoW unigrams, (C) Char n-gram hash embeddings (512-D)",
+      "example_in": "when first olympic games take place",
+      "example_out": "Sparse vector (20,000-D) or Dense vector (512-D)"
+    }
+  ],
+  "error_analysis_extended": [
+    {
+      "question": "That does TARDIS stand for?",
+      "true": "Other",
+      "pred": "Which",
+      "pair": "Other→Which"
+    }
+  ],
+  "error_distribution": {
+    "Other→Which": 1
+  },
+  "visual_eda": {
+    "imbalance_ratio": 31.3,
+    "majority_class": "What",
+    "minority_class": "Why",
+    "majority_count": 37604,
+    "minority_count": 1202,
+    "word_stats_by_label": {
+      "What": {
+        "mean": 9.9,
+        "median": 9.0,
+        "max": 34,
+        "min": 2,
+        "std": 3.4
+      },
+      "Who": {
+        "mean": 9.0,
+        "median": 8.0,
+        "max": 37,
+        "min": 3,
+        "std": 3.5
+      },
+      "When": {
+        "mean": 8.6,
+        "median": 8.0,
+        "max": 29,
+        "min": 4,
+        "std": 3.1
+      },
+      "Where": {
+        "mean": 8.2,
+        "median": 8.0,
+        "max": 24,
+        "min": 3,
+        "std": 2.9
+      },
+      "How": {
+        "mean": 9.9,
+        "median": 9.0,
+        "max": 31,
+        "min": 3,
+        "std": 3.0
+      },
+      "Which": {
+        "mean": 10.3,
+        "median": 10.0,
+        "max": 40,
+        "min": 3,
+        "std": 3.3
+      },
+      "Why": {
+        "mean": 9.6,
+        "median": 9.0,
+        "max": 28,
+        "min": 3,
+        "std": 3.2
+      },
+      "Other": {
+        "mean": 11.6,
+        "median": 11.0,
+        "max": 36,
+        "min": 1,
+        "std": 3.8
+      }
+    },
+    "top_words_by_label": {
+      "What": [
+        {
+          "word": "name",
+          "count": 2204
+        },
+        {
+          "word": "type",
+          "count": 1522
+        },
+        {
+          "word": "used",
+          "count": 1247
+        },
+        {
+          "word": "year",
+          "count": 1103
+        },
+        {
+          "word": "called",
+          "count": 956
+        },
+        {
+          "word": "first",
+          "count": 887
+        },
+        {
+          "word": "new",
+          "count": 790
+        },
+        {
+          "word": "city",
+          "count": 754
+        }
+      ],
+      "Who": [
+        {
+          "word": "first",
+          "count": 474
+        },
+        {
+          "word": "wrote",
+          "count": 262
+        },
+        {
+          "word": "president",
+          "count": 154
+        },
+        {
+          "word": "new",
+          "count": 147
+        },
+        {
+          "word": "led",
+          "count": 134
+        },
+        {
+          "word": "war",
+          "count": 130
+        },
+        {
+          "word": "american",
+          "count": 119
+        },
+        {
+          "word": "created",
+          "count": 112
+        }
+      ],
+      "When": [
+        {
+          "word": "first",
+          "count": 456
+        },
+        {
+          "word": "begin",
+          "count": 319
+        },
+        {
+          "word": "become",
+          "count": 179
+        },
+        {
+          "word": "start",
+          "count": 148
+        },
+        {
+          "word": "die",
+          "count": 114
+        },
+        {
+          "word": "new",
+          "count": 109
+        },
+        {
+          "word": "released",
+          "count": 108
+        },
+        {
+          "word": "end",
+          "count": 105
+        }
+      ],
+      "Where": [
+        {
+          "word": "located",
+          "count": 437
+        },
+        {
+          "word": "first",
+          "count": 118
+        },
+        {
+          "word": "found",
+          "count": 108
+        },
+        {
+          "word": "held",
+          "count": 91
+        },
+        {
+          "word": "place",
+          "count": 85
+        },
+        {
+          "word": "come",
+          "count": 76
+        },
+        {
+          "word": "live",
+          "count": 74
+        },
+        {
+          "word": "rank",
+          "count": 73
+        }
+      ],
+      "How": [
+        {
+          "word": "many",
+          "count": 4262
+        },
+        {
+          "word": "much",
+          "count": 948
+        },
+        {
+          "word": "long",
+          "count": 569
+        },
+        {
+          "word": "people",
+          "count": 457
+        },
+        {
+          "word": "new",
+          "count": 166
+        },
+        {
+          "word": "city",
+          "count": 164
+        },
+        {
+          "word": "year",
+          "count": 148
+        },
+        {
+          "word": "first",
+          "count": 135
+        }
+      ],
+      "Which": [
+        {
+          "word": "two",
+          "count": 199
+        },
+        {
+          "word": "first",
+          "count": 140
+        },
+        {
+          "word": "country",
+          "count": 134
+        },
+        {
+          "word": "city",
+          "count": 127
+        },
+        {
+          "word": "group",
+          "count": 120
+        },
+        {
+          "word": "company",
+          "count": 98
+        },
+        {
+          "word": "used",
+          "count": 92
+        },
+        {
+          "word": "state",
+          "count": 90
+        }
+      ],
+      "Why": [
+        {
+          "word": "used",
+          "count": 40
+        },
+        {
+          "word": "use",
+          "count": 32
+        },
+        {
+          "word": "would",
+          "count": 32
+        },
+        {
+          "word": "many",
+          "count": 27
+        },
+        {
+          "word": "believe",
+          "count": 24
+        },
+        {
+          "word": "important",
+          "count": 23
+        },
+        {
+          "word": "people",
+          "count": 22
+        },
+        {
+          "word": "want",
+          "count": 20
+        }
+      ],
+      "Other": [
+        {
+          "word": "year",
+          "count": 2089
+        },
+        {
+          "word": "many",
+          "count": 993
+        },
+        {
+          "word": "along",
+          "count": 609
+        },
+        {
+          "word": "first",
+          "count": 601
+        },
+        {
+          "word": "new",
+          "count": 601
+        },
+        {
+          "word": "city",
+          "count": 596
+        },
+        {
+          "word": "type",
+          "count": 515
+        },
+        {
+          "word": "name",
+          "count": 477
+        }
+      ]
+    }
+  },
+  "error_analysis_traditional": [
+    {
+      "question": "How does the level of tuition in German private schools compare to private schools in other Western European countries?",
+      "true": "How",
+      "pred": "Other",
+      "pair": "How→Other",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "How many men older than 18 are there for every 100 women?",
+      "true": "How",
+      "pred": "Other",
+      "pair": "How→Other",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "How did Luther's tutors advise him to test what he learned?",
+      "true": "How",
+      "pred": "What",
+      "pair": "How→What",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "Peyton Manning took how many different teams to the Super Bowl?",
+      "true": "Other",
+      "pred": "How",
+      "pair": "Other→How",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "According to the text, how much money did the Host Committee raise?",
+      "true": "Other",
+      "pred": "How",
+      "pair": "Other→How",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "If Roman numerals were used, what would Super Bowl 50 have been called?",
+      "true": "Other",
+      "pred": "What",
+      "pair": "Other→What",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "In early 2012, Goodell said that Super Bowl 50 would be what?",
+      "true": "Other",
+      "pred": "What",
+      "pair": "Other→What",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "Prior to this consideration, when did San Francisco last host a Super Bowl?",
+      "true": "Other",
+      "pred": "When",
+      "pair": "Other→When",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "Prior to Super Bowl 50, when were the Broncos last there?",
+      "true": "Other",
+      "pred": "When",
+      "pair": "Other→When",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "To where did Ethelred flee?",
+      "true": "Other",
+      "pred": "Where",
+      "pair": "Other→Where",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "Other than New York where did Tesla conduct experiments?",
+      "true": "Other",
+      "pred": "Where",
+      "pair": "Other→Where",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "At which Super Bowl did Beyonce headline the halftime show?",
+      "true": "Other",
+      "pred": "Which",
+      "pair": "Other→Which",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "Manning was the number one pick in which draft?",
+      "true": "Other",
+      "pred": "Which",
+      "pair": "Other→Which",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "During the Bronco's playoff games, who did not throw at all?",
+      "true": "Other",
+      "pred": "Who",
+      "pair": "Other→Who",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "Prior to Manning, who was the oldest quarterback to play in a Super Bowl?",
+      "true": "Other",
+      "pred": "Who",
+      "pair": "Other→Who",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "Other than the desert city why do many locals and tourists frequent southern California?",
+      "true": "Other",
+      "pred": "Why",
+      "pair": "Other→Why",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "Besides constant flooding, why else was there regulation of the Rhine?",
+      "true": "Other",
+      "pred": "Why",
+      "pair": "Other→Why",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "What is the estimate of how many physicians give out drugs on their own?",
+      "true": "What",
+      "pred": "How",
+      "pair": "What→How",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "What day was the Super Bowl played on?",
+      "true": "What",
+      "pred": "Other",
+      "pair": "What→Other",
+      "model": "TF-IDF + Random Forest"
+    },
+    {
+      "question": "What venue did Super Bowl 50 take place in?",
+      "true": "What",
+      "pred": "Other",
+      "pair": "What→Other",
+      "model": "TF-IDF + Random Forest"
+    }
+  ],
+  "error_distribution_traditional": {
+    "Other→What": 887,
+    "What→Other": 159,
+    "Other→Which": 153,
+    "Other→How": 93,
+    "Other→Who": 40,
+    "Other→Where": 36,
+    "When→What": 23,
+    "Which→Other": 14,
+    "Other→When": 13,
+    "When→Who": 9
+  }
 }
