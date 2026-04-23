@@ -289,10 +289,7 @@
 <section>
     <h2 class="sec-head">9. Visual EDA — Top Words by Category</h2>
     <p class="text-slate-500 text-sm mb-5">Most frequent content words per question type, revealing distinct lexical signals.</p>
-    <div class="flex flex-wrap gap-2 mb-4" id="topWordTabs"></div>
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5" style="height:280px">
-        <canvas id="topWordsChart"></canvas>
-    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4" id="topWordsGrid"></div>
 </section>
 
 <!-- S10: Live AI Inference -->
@@ -687,39 +684,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         }).join('');
     }
 
-    // S9: Top words
+// S9: Top words — all categories side by side
     if (visual_eda?.top_words_by_label) {
         const allLabels = Object.keys(visual_eda.top_words_by_label);
-        let _activeLabel = allLabels[0];
-        let _twChart = null;
+        const CAT_COLORS_ARR = ['#0f766e','#7c3aed','#d97706','#2563eb','#db2777','#16a34a','#dc2626','#64748b'];
 
-        const tabsEl = document.getElementById('topWordTabs');
-        tabsEl.innerHTML = allLabels.map((lbl, i) => `
-            <button class="tab-btn text-xs px-3 py-1 rounded-full border font-semibold
-                ${i===0?'active border-teal-600':'border-slate-300 text-slate-600'}"
-                data-label="${lbl}">${lbl}</button>`).join('');
+        const grid = document.getElementById('topWordsGrid');
+        grid.innerHTML = allLabels.map((lbl, idx) => `
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                <h3 class="font-bold text-sm mb-3" style="color:${CAT_COLORS_ARR[idx % CAT_COLORS_ARR.length]}">${lbl} Keywords</h3>
+                <div style="height:220px"><canvas id="twChart_${lbl}"></canvas></div>
+            </div>`).join('');
 
-        function renderTopWords(lbl) {
+        allLabels.forEach((lbl, idx) => {
             const words = visual_eda.top_words_by_label[lbl] || [];
-            if (_twChart) _twChart.destroy();
-            _twChart = new Chart(document.getElementById('topWordsChart').getContext('2d'), {
+            const color = CAT_COLORS_ARR[idx % CAT_COLORS_ARR.length];
+            new Chart(document.getElementById(`twChart_${lbl}`).getContext('2d'), {
                 type: 'bar',
-                data: { labels: words.map(w => w.word), datasets: [{
-                    label: `Top words — "${lbl}"`, data: words.map(w => w.count),
-                    backgroundColor: C.teal, borderRadius: 4
-                }] },
-                options: { responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.y.toLocaleString()} occurrences` } } },
-                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Frequency' } } }
+                data: {
+                    labels: words.map(w => w.word),
+                    datasets: [{ data: words.map(w => w.count), backgroundColor: color + 'cc', borderRadius: 4 }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false },
+                        tooltip: { callbacks: { label: c => ` ${c.parsed.x.toLocaleString()} occurrences` } } },
+                    scales: {
+                        x: { beginAtZero: true, ticks: { font: { size: 9 } } },
+                        y: { ticks: { font: { size: 10 } } }
+                    }
                 }
             });
-        }
-        renderTopWords(_activeLabel);
-        tabsEl.addEventListener('click', e => {
-            const b = e.target.closest('[data-label]'); if (!b) return;
-            _activeLabel = b.dataset.label;
-            tabsEl.querySelectorAll('.tab-btn').forEach(t => t.classList.toggle('active', t===b));
-            renderTopWords(_activeLabel);
         });
     }
 
