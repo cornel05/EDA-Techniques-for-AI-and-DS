@@ -140,7 +140,8 @@
       "acc": 99.99,
       "f1_macro": 99.98,
       "train_s": "N/A (GPU)",
-      "inf_ms": "N/A"
+      "inf_ms": "N/A",
+      "rank": 1
     },
     {
       "pipeline": "TF-IDF + Random Forest",
@@ -152,7 +153,7 @@
       "f1_macro": 88.04,
       "train_s": 20.55,
       "inf_ms": 0.046,
-      "rank": 1
+      "rank": 2
     },
     {
       "pipeline": "TF-IDF + Linear SVM",
@@ -164,7 +165,7 @@
       "f1_macro": 87.86,
       "train_s": 1.11,
       "inf_ms": 0.0,
-      "rank": 2
+      "rank": 3
     },
     {
       "pipeline": "TF-IDF + Logistic Regression",
@@ -176,7 +177,7 @@
       "f1_macro": 86.77,
       "train_s": 1.64,
       "inf_ms": 0.0,
-      "rank": 3
+      "rank": 4
     },
     {
       "pipeline": "BoW + Random Forest",
@@ -188,7 +189,7 @@
       "f1_macro": 85.99,
       "train_s": 29.75,
       "inf_ms": 0.058,
-      "rank": 4
+      "rank": 5
     },
     {
       "pipeline": "Word Emb + Random Forest",
@@ -200,7 +201,7 @@
       "f1_macro": 84.33,
       "train_s": 64.9,
       "inf_ms": 0.011,
-      "rank": 5
+      "rank": 6
     },
     {
       "pipeline": "BoW + Logistic Regression",
@@ -212,7 +213,7 @@
       "f1_macro": 86.17,
       "train_s": 2.35,
       "inf_ms": 0.0,
-      "rank": 6
+      "rank": 7
     },
     {
       "pipeline": "Word Emb + Linear SVM",
@@ -224,7 +225,7 @@
       "f1_macro": 82.88,
       "train_s": 5.54,
       "inf_ms": 0.0,
-      "rank": 7
+      "rank": 8
     },
     {
       "pipeline": "BoW + Linear SVM",
@@ -236,7 +237,7 @@
       "f1_macro": 85.0,
       "train_s": 1.82,
       "inf_ms": 0.0,
-      "rank": 8
+      "rank": 9
     },
     {
       "pipeline": "Word Emb + Logistic Regression",
@@ -248,7 +249,7 @@
       "f1_macro": 83.08,
       "train_s": 4.2,
       "inf_ms": 0.0,
-      "rank": 9
+      "rank": 10
     }
   ],
   "confusion_matrices": {
@@ -1523,63 +1524,113 @@
         "f1": 31.57,
         "support": 1932
       }
+    },
+    "DistilBERT (Fine-tuned)": {
+      "What": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "support": 4753
+      },
+      "Who": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "support": 1061
+      },
+      "When": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "support": 696
+      },
+      "Where": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "support": 433
+      },
+      "How": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "support": 1090
+      },
+      "Which": {
+        "precision": 99.78,
+        "recall": 100.0,
+        "f1": 99.89,
+        "support": 454
+      },
+      "Why": {
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "support": 151
+      },
+      "Other": {
+        "precision": 100.0,
+        "recall": 99.95,
+        "f1": 99.97,
+        "support": 1932
+      }
     }
   },
   "best_per_class": [
     {
       "label": "What",
-      "f1": 89.53,
-      "precision": 83.4,
-      "recall": 96.63,
+      "f1": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
       "support": 4753
     },
     {
       "label": "Who",
-      "f1": 96.82,
-      "precision": 94.6,
-      "recall": 99.15,
+      "f1": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
       "support": 1061
     },
     {
       "label": "When",
-      "f1": 96.27,
-      "precision": 97.92,
-      "recall": 94.68,
+      "f1": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
       "support": 696
     },
     {
       "label": "Where",
-      "f1": 95.01,
-      "precision": 91.45,
-      "recall": 98.85,
+      "f1": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
       "support": 433
     },
     {
       "label": "How",
-      "f1": 95.64,
-      "precision": 91.89,
-      "recall": 99.72,
+      "f1": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
       "support": 1090
     },
     {
       "label": "Which",
-      "f1": 82.58,
-      "precision": 73.33,
-      "recall": 94.49,
+      "f1": 99.89,
+      "precision": 99.78,
+      "recall": 100.0,
       "support": 454
     },
     {
       "label": "Why",
-      "f1": 98.35,
-      "precision": 98.03,
-      "recall": 98.68,
+      "f1": 100.0,
+      "precision": 100.0,
+      "recall": 100.0,
       "support": 151
     },
     {
       "label": "Other",
-      "f1": 50.11,
-      "precision": 79.44,
-      "recall": 36.59,
+      "f1": 99.97,
+      "precision": 100.0,
+      "recall": 99.95,
       "support": 1932
     }
   ],
