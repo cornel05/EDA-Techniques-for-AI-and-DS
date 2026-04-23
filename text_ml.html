@@ -734,7 +734,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                          How:C.purple, Which:'#ec4899', Why:C.rose, Other:C.slate };
 
     try {
-        const clf = await pipeline('text-classification', 'hoangnguyenthe/squad-question-classifier');
+        const clf = await pipeline('text-classification', 'hoangnguyenthe/squad-question-classifier', {
+    quantized: false,
+});
         btn.disabled = false;
         btn.innerHTML = `<i class="fa-solid fa-bolt mr-2"></i>Predict`;
         resultDiv.innerHTML = `<span class="text-slate-400 text-xs"><i class="fa-solid fa-check-circle text-teal-500 mr-1"></i>AI Engine ready — type a question above</span>`;
