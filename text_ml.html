@@ -16,8 +16,6 @@
         .font-sora { font-family: "Sora", sans-serif; }
         .cm-cell { transition: all 0.2s; }
         .cm-cell:hover { transform: scale(1.05); box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 10; border-radius: 4px; }
-        .loading-shimmer { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
 
@@ -32,6 +30,17 @@
                 </div>
                 <div class="flex items-center space-x-8 font-medium text-slate-600">
                     <a href="index.html" class="hover:text-teal-600 transition">Home</a>
+                    <div class="group relative py-4">
+                        <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
+                            Assignment 1 (EDA) <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                        <div class="absolute left-0 top-full hidden w-48 rounded-lg border border-slate-200 bg-white p-2 shadow-xl group-hover:block transition-all">
+                            <a href="tabular.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Tabular EDA</a>
+                            <a href="text.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Text EDA</a>
+                            <a href="image.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Image EDA</a>
+                            <a href="multimodal.html" class="block rounded-md px-4 py-2 text-sm hover:bg-slate-50 hover:text-teal-600">Multimodal EDA</a>
+                        </div>
+                    </div>
                     <div class="group relative py-4">
                         <button class="flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 transition">
                             Assignment 2 (ML) <i class="fa-solid fa-chevron-down text-[10px]"></i>
@@ -50,11 +59,11 @@
     <header class="bg-slate-900 text-white py-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="font-sora text-4xl sm:text-5xl font-extrabold mb-4">Text Classification</h1>
-            <p class="text-xl text-amber-400 font-medium mb-8">Stanford SQuAD 1.1 Question Classification & Transformers</p>
+            <p class="text-xl text-amber-400 font-medium mb-8">Stanford SQuAD Question Classification & NLP Pipelines</p>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
                 <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
                     <div class="text-3xl font-bold text-white mb-1" id="statDocs">--</div>
-                    <div class="text-sm text-slate-400">Total Samples</div>
+                    <div class="text-sm text-slate-400">Total Documents</div>
                 </div>
                 <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
                     <div class="text-3xl font-bold text-white mb-1" id="statClasses">--</div>
@@ -65,8 +74,8 @@
                     <div class="text-sm text-slate-400">Best Accuracy</div>
                 </div>
                 <div class="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                    <div class="text-xl font-bold text-white mb-1 truncate" id="bestPipelineName">--</div>
-                    <div class="text-sm text-slate-400">SOTA Model</div>
+                    <div class="text-3xl font-bold text-white mb-1" id="statPipelines">--</div>
+                    <div class="text-sm text-slate-400 truncate" id="bestPipelineName">Pipelines Tested</div>
                 </div>
             </div>
         </div>
@@ -75,25 +84,25 @@
     <main class="flex-grow mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 space-y-20">
 
         <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">1. Model Tournament & Comparison</h2>
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-96">
-                <canvas id="featureChart"></canvas>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">1. Feature Extraction Comparison</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 h-96 flex items-center justify-center">
+                <canvas id="featureChart" class="w-full h-full"></canvas>
             </div>
         </section>
 
         <section>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">2. EDA Insights & Pipeline Tournament</h2>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="bg-teal-700 px-6 py-4 flex justify-between items-center">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="bg-teal-700 px-6 py-4">
                         <h3 class="text-lg font-bold text-white">EDA-to-ML Connections</h3>
-                        <i class="fa-solid fa-link text-teal-200"></i>
                     </div>
-                    <div class="p-0 overflow-x-auto">
+                    <div class="p-0 overflow-x-auto flex-grow">
                         <table class="min-w-full divide-y divide-slate-200">
                             <thead class="bg-slate-50">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">EDA Finding</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">ML Strategy</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">ML Decision</th>
                                 </tr>
                             </thead>
                             <tbody id="edaTableBody" class="bg-white divide-y divide-slate-200 text-sm"></tbody>
@@ -101,18 +110,18 @@
                     </div>
                 </div>
                 
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="bg-amber-500 px-6 py-4 flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-slate-900">Leaderboard</h3>
-                        <i class="fa-solid fa-trophy text-amber-700"></i>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="bg-amber-500 px-6 py-4">
+                        <h3 class="text-lg font-bold text-slate-900">Pipeline Tournament</h3>
                     </div>
-                    <div class="p-0 overflow-x-auto">
+                    <div class="p-0 overflow-x-auto flex-grow">
                         <table class="min-w-full divide-y divide-slate-200">
                             <thead class="bg-slate-50">
                                 <tr>
                                     <th class="px-4 py-3 text-center text-xs font-medium text-slate-500 uppercase">Rank</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Pipeline</th>
                                     <th class="px-4 py-3 text-center text-xs font-medium text-slate-500 uppercase">Acc (%)</th>
+                                    <th class="px-4 py-3 text-center text-xs font-medium text-slate-500 uppercase">Train (s)</th>
                                 </tr>
                             </thead>
                             <tbody id="tourTableBody" class="bg-white divide-y divide-slate-200 text-sm"></tbody>
@@ -123,18 +132,27 @@
         </section>
 
         <section>
-            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">2. Deep Error Analysis</h2>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">3. Error Analysis & Confusion Matrix</h2>
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h3 class="font-bold text-center text-slate-700 mb-6" id="cmTitle">Confusion Matrix</h3>
-                    <div id="cmGrid" class="w-full overflow-x-auto"></div>
+                
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 flex flex-col items-center">
+                    <h3 class="font-bold text-lg mb-6 text-slate-700" id="cmTitle">Confusion Matrix</h3>
+                    <div class="relative w-full max-w-2xl overflow-x-auto">
+                        <div class="absolute -left-6 top-1/2 -rotate-90 origin-center text-[10px] font-bold text-slate-400 tracking-widest hidden md:block">TRUE LABEL</div>
+                        
+                        <div id="cmGrid" class="w-full"></div>
+                        
+                        <div class="text-center mt-6 text-[10px] font-bold text-slate-400 tracking-widest">PREDICTED LABEL</div>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <h3 class="font-bold p-6 border-b text-slate-700">Hard-to-Classify Samples</h3>
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+                        <h3 class="font-bold text-lg text-slate-700">Hard-to-Classify Samples</h3>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-slate-200 text-sm">
-                            <thead class="bg-slate-50">
+                            <thead class="bg-white">
                                 <tr>
                                     <th class="px-4 py-3 text-left font-medium text-slate-500 uppercase">Question</th>
                                     <th class="px-4 py-3 text-center font-medium text-teal-600 uppercase">True</th>
@@ -145,163 +163,224 @@
                         </table>
                     </div>
                 </div>
+
             </div>
         </section>
 
-        <section class="bg-slate-900 rounded-2xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden">
-            <div class="relative z-10">
-                <h2 class="text-3xl font-sora font-bold mb-2">3. Live AI Playground</h2>
-                <p class="text-slate-400 mb-8 max-w-2xl">Test the SOTA 99.98% DistilBERT model. Type any question below to see how the AI categorizes it in real-time.</p>
-                
-                <div class="flex flex-col sm:flex-row gap-4 max-w-3xl">
-                    <input type="text" id="questionInput" 
-                           placeholder="e.g., When was the Eiffel Tower built?" 
-                           class="flex-grow p-4 rounded-xl text-slate-900 focus:ring-4 focus:ring-teal-500/50 outline-none text-lg">
-                    <button id="predictBtn" class="bg-teal-500 hover:bg-teal-400 text-slate-900 px-10 py-4 rounded-xl font-bold transition-all transform hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-bolt"></i> Predict
-                    </button>
-                </div>
-                
-                <div id="liveResultContainer" class="mt-8 hidden">
-                    <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-slate-800 border border-slate-700">
-                        <span class="text-slate-400">Result:</span>
-                        <span id="liveResultLabel" class="text-2xl font-bold text-teal-400">WHAT</span>
-                        <span id="liveResultScore" class="text-sm text-slate-500 ml-2">--</span>
+        <section>
+            <h2 class="text-2xl font-sora font-bold text-slate-900 border-b-2 border-amber-500 pb-2 mb-6 inline-block">4. Live AI Inference</h2>
+            <div class="bg-slate-900 rounded-xl shadow-xl border border-slate-700 p-8 text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <p class="mb-6 text-slate-400">Test the DistilBERT model directly in your browser using Transformers.js (Running 100% locally).</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <input type="text" id="questionInput" placeholder="Type a question (e.g. When did the Olympic games start?)" 
+                               class="w-full p-4 rounded-lg text-slate-900 focus:ring-4 focus:ring-amber-500/50 outline-none text-lg">
+                        <button id="predictBtn" class="bg-amber-500 hover:bg-amber-600 text-slate-900 px-8 py-4 rounded-lg font-bold transition whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fa-solid fa-spinner fa-spin mr-2" id="btnIcon"></i> Loading Model...
+                        </button>
                     </div>
+                    <div id="liveResult" class="mt-6 text-xl font-sora font-bold text-teal-400 min-h-[2rem]"></div>
                 </div>
+                <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl"></div>
             </div>
-            <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl"></div>
         </section>
 
     </main>
 
-    <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500">
-            <p class="font-medium mb-2">Assignment 2 – Ho Chi Minh City University of Technology</p>
-            <p>&copy; 2026 P4AI-DS Analysis Portfolio.</p>
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm text-slate-500">
+            <p>&copy; 2026 P4AI-DS Group Assignment.</p>
+            <p>Built for Ho Chi Minh City University of Technology (HCMUT)</p>
         </div>
     </footer>
 
     <script type="module">
-        // Import Transformers.js for Live Inference
         import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0';
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
+                // Fetch JSON data
                 const response = await fetch('plotly_data/text_ml_data.json');
                 const data = await response.json();
 
-                // 1. Hero Stats
+                // 1. Populate Hero Stats
                 document.getElementById('statDocs').textContent = data.meta.total_documents.toLocaleString();
                 document.getElementById('statClasses').textContent = data.meta.n_categories;
                 document.getElementById('statAccuracy').textContent = data.meta.best_accuracy + '%';
-                document.getElementById('bestPipelineName').textContent = data.meta.best_pipeline;
+                document.getElementById('statPipelines').textContent = data.meta.n_pipelines;
+                document.getElementById('bestPipelineName').textContent = `Best: ${data.meta.best_pipeline}`;
 
-                // 2. Main Comparison Chart
+                // 2. Render Chart.js (Feature Comparison)
                 const ctx = document.getElementById('featureChart').getContext('2d');
                 const classifiers = ['Logistic Regression', 'Linear SVM', 'Random Forest'];
                 
-                const tfidfData = classifiers.map(c => data.feature_comparison['TF-IDF'][c].acc);
-                const bowData = classifiers.map(c => data.feature_comparison['BoW'][c].acc);
-                const wordEmbData = classifiers.map(c => data.feature_comparison['Word Emb'][c].acc);
+                const tfidfData = classifiers.map(c => data.feature_comparison['TF-IDF'] && data.feature_comparison['TF-IDF'][c] ? data.feature_comparison['TF-IDF'][c].acc : 0);
+                const bowData = classifiers.map(c => data.feature_comparison['BoW'] && data.feature_comparison['BoW'][c] ? data.feature_comparison['BoW'][c].acc : 0);
+                const wordEmbData = classifiers.map(c => data.feature_comparison['Word Emb'] && data.feature_comparison['Word Emb'][c] ? data.feature_comparison['Word Emb'][c].acc : 0);
 
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: classifiers,
                         datasets: [
-                            { label: 'TF-IDF', data: tfidfData, backgroundColor: '#0f766e', borderRadius: 6 },
-                            { label: 'Bag of Words', data: bowData, backgroundColor: '#f59e0b', borderRadius: 6 },
-                            { label: 'Word Embeddings', data: wordEmbData, backgroundColor: '#3b82f6', borderRadius: 6 }
+                            { label: 'TF-IDF', data: tfidfData, backgroundColor: '#0f766e', borderRadius: 4 },
+                            { label: 'Bag of Words (BoW)', data: bowData, backgroundColor: '#f59e0b', borderRadius: 4 },
+                            { label: 'Word Embeddings (Hash)', data: wordEmbData, backgroundColor: '#3b82f6', borderRadius: 4 }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { position: 'bottom' } },
-                        scales: { y: { min: 60, max: 100, grid: { color: '#f1f5f9' } } }
+                        plugins: { legend: { position: 'top' } },
+                        scales: { y: { min: 70, max: 100, title: { display: true, text: 'Accuracy (%)' } } }
                     }
                 });
 
-                // 3. Tables
+                // 3. Populate EDA to ML Table
                 const edaTbody = document.getElementById('edaTableBody');
-                data.eda_to_ml.forEach(item => {
-                    edaTbody.innerHTML += `<tr><td class="px-6 py-4 text-slate-700">${item.eda_finding}</td><td class="px-6 py-4 font-medium text-teal-700 bg-teal-50/30">${item.ml_decision}</td></tr>`;
-                });
+                if (data.eda_to_ml) {
+                    data.eda_to_ml.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 text-slate-700">${item.eda_finding}</td>
+                            <td class="px-6 py-4 font-medium text-teal-700 bg-teal-50/30">${item.ml_decision}</td>
+                        `;
+                        edaTbody.appendChild(tr);
+                    });
+                }
 
+                // 4. Populate Tournament Table
                 const tourTbody = document.getElementById('tourTableBody');
-                data.tournament.slice(0, 6).forEach(row => {
-                    tourTbody.innerHTML += `
-                        <tr class="${row.rank === 1 ? 'bg-amber-50' : ''}">
-                            <td class="px-4 py-3 text-center font-bold ${row.rank === 1 ? 'text-amber-600' : 'text-slate-400'}">#${row.rank}</td>
+                if (data.tournament) {
+                    data.tournament.slice(0, 6).forEach(row => { // Show top 6
+                        const tr = document.createElement('tr');
+                        if (row.rank === 1) tr.className = 'bg-amber-50';
+                        tr.innerHTML = `
+                            <td class="px-4 py-3 text-center font-bold ${row.rank === 1 ? 'text-amber-600' : 'text-slate-500'}">#${row.rank}</td>
                             <td class="px-4 py-3 font-medium text-slate-800">${row.pipeline}</td>
-                            <td class="px-4 py-3 text-center font-bold ${row.rank === 1 ? 'text-amber-600' : 'text-teal-600'}">${row.acc}%</td>
-                        </tr>`;
-                });
+                            <td class="px-4 py-3 text-center font-sora ${row.rank === 1 ? 'text-amber-600 font-bold' : ''}">${row.acc}</td>
+                            <td class="px-4 py-3 text-center text-slate-500">${row.train_s === 'N/A (GPU)' ? 'N/A' : row.train_s + 's'}</td>
+                        `;
+                        tourTbody.appendChild(tr);
+                    });
+                }
 
-                // 4. Confusion Matrix
+                // 5. Render Confusion Matrix (HTML Grid Fix)
                 const bestModel = data.meta.best_pipeline;
-                document.getElementById('cmTitle').textContent = `Best Model: ${bestModel}`;
-                const cm = data.confusion_matrices[bestModel];
-                const labels = data.meta.labels;
-                const maxVal = Math.max(...cm.flat());
+                document.getElementById('cmTitle').textContent = `Confusion Matrix: ${bestModel}`;
                 
-                let tableHTML = `<table class="w-full text-center border-collapse"><thead><tr><th></th>`;
-                labels.forEach(l => tableHTML += `<th class="p-2 text-[10px] text-slate-400 font-bold uppercase">${l}</th>`);
-                tableHTML += `</tr></thead><tbody>`;
+                if (data.confusion_matrices && data.confusion_matrices[bestModel]) {
+                    const cm = data.confusion_matrices[bestModel];
+                    const labels = data.meta.labels;
+                    const maxVal = Math.max(...cm.flat());
+                    
+                    const gridContainer = document.getElementById('cmGrid');
+                    
+                    let tableHTML = `<table class="w-full text-center border-collapse"><thead><tr><th class="p-1"></th>`;
+                    labels.forEach(l => tableHTML += `<th class="p-1 text-xs text-slate-500 font-medium">${l}</th>`);
+                    tableHTML += `</tr></thead><tbody>`;
 
-                for (let i = 0; i < labels.length; i++) {
-                    tableHTML += `<tr><th class="p-2 text-[10px] text-slate-400 font-bold uppercase text-right">${labels[i]}</th>`;
-                    for (let j = 0; j < labels.length; j++) {
-                        const val = cm[i][j];
-                        const intensity = val / maxVal;
-                        tableHTML += `<td class="p-0.5"><div class="cm-cell h-8 md:h-10 flex items-center justify-center rounded text-[10px] md:text-xs font-bold ${intensity > 0.5 ? 'text-white' : 'text-slate-800'}" style="background-color: rgba(15, 118, 110, ${Math.max(0.05, intensity)})">${val || '-'}</div></td>`;
+                    for (let i = 0; i < labels.length; i++) {
+                        tableHTML += `<tr><th class="p-2 text-xs text-slate-500 font-medium text-right pr-4">${labels[i]}</th>`;
+                        for (let j = 0; j < labels.length; j++) {
+                            const val = cm[i][j];
+                            const intensity = val / maxVal;
+                            const bgAlpha = intensity > 0 ? Math.max(0.05, intensity) : 0;
+                            const textColor = intensity > 0.5 ? 'text-white' : 'text-slate-800';
+                            
+                            tableHTML += `
+                                <td class="p-0.5 md:p-1">
+                                    <div class="cm-cell w-full h-8 md:h-10 flex items-center justify-center rounded font-sora text-xs ${textColor}" 
+                                         style="background-color: rgba(15, 118, 110, ${bgAlpha}); border: 1px solid rgba(15, 118, 110, 0.1);"
+                                         title="True: ${labels[i]} | Pred: ${labels[j]} | Count: ${val}">
+                                        ${val === 0 ? '-' : val}
+                                    </div>
+                                </td>`;
+                        }
+                        tableHTML += `</tr>`;
                     }
-                    tableHTML += `</tr>`;
+                    tableHTML += `</tbody></table>`;
+                    
+                    // Gắn HTML vào DOM
+                    gridContainer.innerHTML = tableHTML;
                 }
-                document.getElementById('cmGrid').innerHTML = tableHTML + `</tbody></table>`;
 
-                // 5. Error Samples
+                // 6. Populate Error Samples
+                const errorTbody = document.getElementById('errorTableBody');
                 if (data.error_analysis) {
-                    const errorTbody = document.getElementById('errorTableBody');
                     data.error_analysis.forEach(item => {
-                        errorTbody.innerHTML += `<tr><td class="px-4 py-3 truncate max-w-xs">"${item.question}"</td><td class="px-4 py-3 text-center font-bold text-teal-600">${item.true}</td><td class="px-4 py-3 text-center font-bold text-red-500">${item.pred}</td></tr>`;
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="px-4 py-3 text-slate-700 italic text-xs md:text-sm">"${item.question}"</td>
+                            <td class="px-4 py-3 text-center font-bold text-teal-600">${item.true}</td>
+                            <td class="px-4 py-3 text-center font-bold text-red-500">${item.pred}</td>
+                        `;
+                        errorTbody.appendChild(tr);
                     });
-                }
-
-                // 6. Transformers.js Live Inference
-                const btn = document.getElementById('predictBtn');
-                const input = document.getElementById('questionInput');
-                const resultCont = document.getElementById('liveResultContainer');
-                const resultLabel = document.getElementById('liveResultLabel');
-                const resultScore = document.getElementById('liveResultScore');
-
-                // Initialize classifier (Loading might take time)
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Loading AI...`;
-                
-                try {
-                    const classifier = await pipeline('text-classification', 'Xenova/distilbert-base-uncased-mnli');
-                    btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Predict`;
-
-                    btn.addEventListener('click', async () => {
-                        if (!input.value) return;
-                        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Analyzing...`;
-                        const out = await classifier(input.value);
-                        
-                        resultCont.classList.remove('hidden');
-                        resultLabel.innerText = out[0].label.split('_').pop().toUpperCase();
-                        resultScore.innerText = `(${(out[0].score * 100).toFixed(1)}% confidence)`;
-                        btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Predict`;
-                    });
-                } catch (e) {
-                    btn.innerText = "Live AI Offline";
-                    console.error(e);
+                } else {
+                    errorTbody.innerHTML = `<tr><td colspan="3" class="px-4 py-6 text-center text-slate-400">Model is too perfect! No major errors found to display.</td></tr>`;
                 }
 
             } catch (error) {
-                console.error("Data error:", error);
+                console.error("Error loading JSON data:", error);
+                document.getElementById('cmGrid').innerHTML = `<p class="text-red-500 py-4">Failed to load data. Ensure text_ml_data.json is deployed correctly.</p>`;
+            }
+
+            // 7. Live Inference Logic (Transformers.js)
+            const btn = document.getElementById('predictBtn');
+            const icon = document.getElementById('btnIcon');
+            const input = document.getElementById('questionInput');
+            const resultDiv = document.getElementById('liveResult');
+
+            try {
+                // Tải model nhẹ chuyên dùng cho Zero-shot Classification
+                const classifier = await pipeline('text-classification', 'Xenova/distilbert-base-uncased-mnli');
+                
+                btn.disabled = false;
+                icon.className = "fa-solid fa-bolt mr-2";
+                btn.innerHTML = `<i class="fa-solid fa-bolt mr-2"></i> Predict Category`;
+                resultDiv.innerHTML = `<span class="text-slate-400 text-sm"><i class="fa-solid fa-check-circle text-teal-500"></i> AI Engine Ready!</span>`;
+
+                btn.addEventListener('click', async () => {
+                    const text = input.value.trim();
+                    if (!text) return;
+                    
+                    btn.disabled = true;
+                    btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Thinking...`;
+                    resultDiv.innerText = "";
+                    
+                    try {
+                        const out = await classifier(text);
+                        // Lấy nhãn cuối cùng (vì MNLI có định dạng khác)
+                        let predLabel = out[0].label.toUpperCase();
+                        
+                        resultDiv.innerHTML = `
+                            <div class="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-slate-800 border border-slate-700">
+                                <span class="text-slate-400 font-normal">Prediction:</span>
+                                <span class="text-2xl font-bold text-amber-400">${predLabel}</span>
+                                <span class="text-sm text-slate-500 font-normal ml-2">(${(out[0].score * 100).toFixed(1)}% confidence)</span>
+                            </div>
+                        `;
+                    } catch (err) {
+                        resultDiv.innerText = "Error making prediction.";
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = `<i class="fa-solid fa-bolt mr-2"></i> Predict Category`;
+                    }
+                });
+
+                // Cho phép nhấn Enter để chạy
+                input.addEventListener("keypress", function(event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        btn.click();
+                    }
+                });
+
+            } catch (e) {
+                console.error("Transformers.js failed to load:", e);
+                btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> AI Offline`;
+                resultDiv.innerText = "Could not load the local AI model.";
             }
         });
     </script>
