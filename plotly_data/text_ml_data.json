@@ -139,7 +139,7 @@
       "classifier": "DistilBERT",
       "acc": 99.99,
       "f1_macro": 99.98,
-      "train_s": "N/A (GPU)",
+      "train_s": 18143.0,
       "inf_ms": "N/A",
       "rank": 1
     },
