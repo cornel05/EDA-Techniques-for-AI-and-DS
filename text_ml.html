@@ -254,36 +254,32 @@
     </div>
 </section>
 
-<!-- S8: Inference Time & Model Size -->
-<section>
-    <h2 class="sec-head">8. Inference Time &amp; Model Size Trade-off</h2>
-    <p class="text-slate-500 text-sm mb-5">Speed vs accuracy: which pipeline is practical for production?</p>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5" style="height:380px">
-            <canvas id="inferenceChart"></canvas>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="bg-slate-800 px-5 py-3">
-                <h3 class="font-bold text-white text-sm"><i class="fa-solid fa-microchip mr-2 text-teal-300"></i>Model Size &amp; Parameters</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-slate-100 text-xs">
-                    <thead class="bg-slate-50"><tr>
-                        <th class="px-3 py-2 text-left font-semibold text-slate-500 uppercase">Pipeline</th>
-                        <th class="px-3 py-2 text-center font-semibold text-slate-500 uppercase">Feat Dim</th>
-                        <th class="px-3 py-2 text-center font-semibold text-slate-500 uppercase">Parameters</th>
-                        <th class="px-3 py-2 text-center font-semibold text-slate-500 uppercase">MB</th>
-                    </tr></thead>
-                    <tbody id="modelInfoTable" class="divide-y divide-slate-100 bg-white"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="mt-6">
-        <h3 class="font-bold text-slate-700 text-sm mb-3">Key Hyperparameters</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="hyperparamCards"></div>
-    </div>
-</section>
+// S8: Inference time
+    if (inference_times) {
+        const infNames  = Object.keys(inference_times);
+        const infMeans  = infNames.map(k => inference_times[k].mean_ms ?? 0);
+        const infStds   = infNames.map(k => inference_times[k].std_ms  ?? 0);
+        new Chart(document.getElementById('inferenceChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: infNames.map(n => n.replace(' (Fine-tuned)', '')),
+                datasets: [{
+                    label: 'Inference Time (ms/sample)', data: infMeans,
+                    backgroundColor: infNames.map(n => n.includes('Distil')?C.purple:n.includes('Forest')?C.amber:C.teal),
+                    borderRadius: 4,
+                }]
+            },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { callbacks: {
+                    label: c => {
+                        const v = c.parsed.x, std = infStds[c.dataIndex];
+                        return ` ${v===0?'<0.001':v} ms/sample${std?' ± '+std:''}`;
+                    }
+                }}},
+                scales: { x: { type: 'logarithmic', title: { display: true, text: 'ms/sample (log scale)' } } }
+            }
+        });
+    }
 
 <!-- S9: Visual EDA — Top Words -->
 <section>
