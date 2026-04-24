@@ -622,7 +622,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // S8: Inference time
+// S8: Inference time
     if (inference_times) {
         const infNames  = Object.keys(inference_times);
         const infMeans  = infNames.map(k => inference_times[k].mean_ms ?? 0);
@@ -635,7 +635,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     label: 'Inference Time (ms/sample)', data: infMeans,
                     backgroundColor: infNames.map(n => n.includes('Distil')?C.purple:n.includes('Forest')?C.amber:C.teal),
                     borderRadius: 4,
-                    error: infStds,
                 }]
             },
             options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
@@ -648,36 +647,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 scales: { x: { type: 'logarithmic', title: { display: true, text: 'ms/sample (log scale)' } } }
             }
         });
-    }
-
-    if (model_info) {
-        document.getElementById('modelInfoTable').innerHTML = Object.entries(model_info).map(([name, info]) => {
-            const isBert = name.includes('Distil');
-            return `<tr class="${isBert?'bg-purple-50':''}">
-                <td class="px-3 py-2 font-medium text-xs text-slate-800">${name.replace(' (Fine-tuned)','')}</td>
-                <td class="px-3 py-2 text-center text-xs text-slate-600">${info.feature_dim.toLocaleString()}</td>
-                <td class="px-3 py-2 text-center text-xs text-slate-600">${info.n_params}</td>
-                <td class="px-3 py-2 text-center text-xs ${info.feature_mem_mb?'text-slate-600':'text-slate-300'}">${info.feature_mem_mb??'—'}</td>
-            </tr>`;
-        }).join('');
-
-        const keyPipes = ['TF-IDF + Linear SVM','TF-IDF + Random Forest','Word Emb + Logistic Regression','DistilBERT (Fine-tuned)'];
-        document.getElementById('hyperparamCards').innerHTML = keyPipes.map(name => {
-            const info = model_info[name]; if (!info) return '';
-            const isBert = name.includes('Distil');
-            return `<div class="rounded-xl border ${isBert?'border-purple-200':'border-slate-200'} overflow-hidden shadow-sm">
-                <div class="${isBert?'bg-purple-700':'bg-slate-700'} px-4 py-2">
-                    <p class="text-white text-xs font-bold truncate">${name.replace(' (Fine-tuned)','')}</p>
-                </div>
-                <div class="p-3 space-y-1 bg-white">
-                    ${Object.entries(info.hyperparams).slice(0,4).map(([k,v])=>`
-                    <div class="flex gap-2 text-xs">
-                        <span class="text-slate-400 shrink-0 w-20 truncate">${k}</span>
-                        <span class="text-slate-700 font-mono text-[10px] truncate">${v}</span>
-                    </div>`).join('')}
-                </div>
-            </div>`;
-        }).join('');
     }
 
 // S9: Top words — all categories side by side
